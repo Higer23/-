@@ -1,0 +1,17 @@
+{
+    "pageTitle": "متجر هايגר",
+    "welcomeHeader": "أهلاً بك",
+    "welcomeSubtitle": "يرجى تأكيد المعلومات للمتابعة.",
+    "telegramButton": "انضم إلى مجموعة التليجرام الخاصة بنا",
+    "modalTitle": "معلومات",
+    "modalSubtitle": "يطلب هذا الموقع الإذن باستخدام بيانات موقعك لأغراض إحصائية. يرجى إدخال اسمك والتأكيد للمتابعة.",
+    "namePlaceholder": "أدخل اسمك...",
+    "rejectButton": "رفض",
+    "acceptButton": "قبول",
+    "rejectError": "يجب أن تقبل للمتابعة.",
+    "choiceError": "الرجاء تحديد اختيار.",
+    "nameError": "الرجاء إدخال اسمك.",
+    "successMessage": "تم التحقق بنجاح ✅",
+    "errorMessage": "فشل التحقق ❌",
+    "criticalError": "لم نتمكن من جمع البيانات ❌"
+}
