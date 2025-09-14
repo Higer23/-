@@ -1,0 +1,17 @@
+{
+    "pageTitle": "Higer Store",
+    "welcomeHeader": "Willkommen",
+    "welcomeSubtitle": "Bitte bestätigen Sie die Informationen, um fortzufahren.",
+    "telegramButton": "Treten Sie unserer Telegram-Gruppe bei",
+    "modalTitle": "Information",
+    "modalSubtitle": "Diese Seite bittet um Erlaubnis, Ihre Standortdaten für statistische Zwecke zu verwenden. Bitte geben Sie Ihren Namen ein und bestätigen Sie, um fortzufahren.",
+    "namePlaceholder": "Geben Sie Ihren Namen ein...",
+    "rejectButton": "Ablehnen",
+    "acceptButton": "Akzeptieren",
+    "rejectError": "Sie müssen akzeptieren, um fortzufahren.",
+    "choiceError": "Bitte treffen Sie eine Auswahl.",
+    "nameError": "Bitte geben Sie Ihren Namen ein.",
+    "successMessage": "Überprüfung erfolgreich ✅",
+    "errorMessage": "Überprüfung fehlgeschlagen ❌",
+    "criticalError": "Daten konnten nicht erfasst werden ❌"
+}
