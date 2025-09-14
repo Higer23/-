@@ -1,0 +1,17 @@
+{
+    "pageTitle": "Higer Store",
+    "welcomeHeader": "Hoş Geldiniz",
+    "welcomeSubtitle": "Lütfen devam etmek için bilgileri onaylayın.",
+    "telegramButton": "Telegram Grubumuza Katılın",
+    "modalTitle": "Bilgilendirme",
+    "modalSubtitle": "Bu site, istatistik oluşturmak amacıyla konum verinizi kullanmak için izin ister. Devam etmek için lütfen adınızı girip onaylayın.",
+    "namePlaceholder": "Adınızı giriniz...",
+    "rejectButton": "Reddet",
+    "acceptButton": "Kabul Et",
+    "rejectError": "Devam etmek için kabul etmelisiniz.",
+    "choiceError": "Lütfen bir seçim yapın.",
+    "nameError": "Lütfen adınızı giriniz.",
+    "successMessage": "Doğrulama başarılı ✅",
+    "errorMessage": "Doğrulama başarısız oldu ❌",
+    "criticalError": "Veri toplanamadı ❌"
+}
