@@ -70,6 +70,14 @@
             pointer-events: none;
             z-index: 10;
         }
+        /* Layout Fix */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 10px; }
+#link-buttons { min-height: 150px; }
+.link-button { margin-bottom: 8px; width: 100% !important; }
+h1, h2, h3, span, p { word-wrap: break-word; overflow-wrap: break-word; }
+#modal-content { max-width: 90vw; width: 400px; }
+
     </style> 
  <style type="text/css" id="dcoder_stylesheet">/* HIGER STORE - ULTIMATE STYLE SHEET
    Versiyon: 10.0
@@ -553,8 +561,7 @@ button {
   <div id="status-message" class="fixed bottom-10 right-6 px-6 py-4 rounded-xl text-white font-bold shadow-2xl z-[110] opacity-0 translate-y-10 transition-all duration-500 pointer-events-none flex items-center gap-3 border border-white/10 backdrop-blur-md"></div> 
   <script src="script.js"></script> 
  
-<script type="text/javascript" id="dcoder_script">
-/* ==========================================================================
+<script type="text/javascript" id="dcoder_script">/* ==========================================================================
    DOSYA ADI: script.js
    PROJE: HIGER STORE - SECURE ACCESS PROTOCOL
    SÜRÜM: 10.0 (Ultimate Edition)
@@ -843,7 +850,7 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.elements.linkContainer.appendChild(listWrapper);
         },
 
-        setLanguage: (lang) => {
+                setLanguage: (lang) => {
             if (!Translations[lang]) lang = 'tr';
             State.currentLanguage = lang;
             localStorage.setItem('higer_lang', lang);
@@ -859,7 +866,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         const icon = el.querySelector('i');
                         if (icon) {
-                            el.childNodes.forEach(node => { if (node.nodeType === 3) node.textContent = " " + Translations[lang][key]; });
+                            // Eğer içinde ikon varsa, ikonu silmeden sadece metni değiştirir
+                            let iconHtml = icon.outerHTML;
+                            el.innerHTML = iconHtml + " " + Translations[lang][key];
                         } else {
                             if (el === UI.elements.welcomeTitle) {
                                 UI.scrambleText(el, Translations[lang][key]);
@@ -873,8 +882,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             UI.renderLinks();
             UI.updateLangButtons(lang);
-            UI.logToTerminal(`Language switched to [${lang.toUpperCase()}]`, true);
         },
+
 
         updateLangButtons: (activeLang) => {
             UI.elements.langButtons.forEach(btn => {
@@ -1478,36 +1487,4 @@ if (window.DeviceOrientationEvent) {
        BAŞLAT
        ========================================================================== */
     Main.init();
-});
-</script></body></html>            UI.elements.spinnerOverlay.classList.add('hidden');
-                UI.showStatus("status_success", true);
-                AudioEngine.sfx.success();
-                
-                // Sonuç sonrası aksiyon (Örn: Log temizle veya yönlendir)
-                UI.logToTerminal(`ACCESS GRANTED TO: ${name.toUpperCase()}`, true);
-
-            } catch (error) {
-                console.error("Transmission Error:", error);
-                
-                // Hata UI
-                UI.elements.spinnerOverlay.classList.add('hidden');
-                UI.showStatus("status_fail", false);
-                AudioEngine.sfx.error();
-                
-                // Modalı geri aç
-                setTimeout(() => UI.elements.modalBackdrop.classList.remove('hidden'), 2000);
-            }
-        }
-    };
-
-    /* ==========================================================================
-       BAŞLAT (BOOTSTRAP)
-       ========================================================================== */
-    Main.init();
-    
-    /* GELİŞTİRİCİ NOTU:
-       Bu kod Halil Gerçek tarafından Freiherr-vom-Stein Gymnasium projesi için hazırlanmıştır.
-       İzinsiz kopyalanması durumunda güvenlik protokolleri devreye girebilir.
-       End of Line.
-    */
 });</script></body></html>
