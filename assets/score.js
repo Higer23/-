@@ -1,4 +1,4 @@
-import { DAY } from './utils.js';
+const DAY = 86400000;
 
 // Her kriterin üst sınırı. Toplam 100.
 export const CAPS = { contrib: 25, curStreak: 5, longStreak: 10, repos: 15, stars: 15, followers: 10, profile: 10, langs: 10 };
