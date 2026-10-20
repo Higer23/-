@@ -4,133 +4,217 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover'>
 <meta name='color-scheme' content='dark'>
-<title>Higer23 - GitHub Puani</title>
+<meta name='theme-color' content='#000000'>
+<title>Higer23 · GitHub Puanı ve Hikâyem</title>
+<meta name='description' content='Canlı GitHub verileriyle puanlanan kısa hikâye, projeler ve destek sayfası.'>
+<link rel='canonical' href='https://higer23.github.io/-/'>
+<meta property='og:type' content='website'>
+<meta property='og:title' content='Higer23 · GitHub Puanı'>
+<meta property='og:description' content='Canlı GitHub verileriyle puanlanan kısa hikâye, projeler ve destek sayfası.'>
+<meta property='og:url' content='https://higer23.github.io/-/'>
+<meta property='og:locale' content='tr_TR'>
+<meta name='twitter:card' content='summary'>
+<script type='application/ld+json'>{"@context":"https://schema.org","@type":"ProfilePage","mainEntity":{"@type":"Person","name":"Higer23","sameAs":["https://github.com/Higer23"],"description":"Kod yazmayı öğrenen genç bir geliştirici."}}</script>
+<link rel='preconnect' href='https://api.github.com' crossorigin>
+<link rel='preconnect' href='https://cdnjs.cloudflare.com' crossorigin>
 <style>
-:root{color-scheme:dark;--bg:#000;--card:#0a0a0a;--line:#1f1f1f;--text:#eee;--mute:#8a8a8a;--acc:#ff7a1a;--bad:#ff4d4d}
+:root{--bg:#000;--line:#1d1d1d;--text:#ededed;--mute:#a3a3a3;--accent:#ff7a1a;--bad:#ff6b6b;--focus:#ffd000;--serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;--sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 *{box-sizing:border-box}
-html,body{background:#000}
-body{margin:0;color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-text-size-adjust:100%;overflow-wrap:anywhere}
-.wrap{max-width:960px;margin:0 auto;padding:20px 16px calc(60px + env(safe-area-inset-bottom))}
-h1{letter-spacing:-.02em;margin:0;font-size:clamp(24px,6vw,34px)}
-h2{font-size:20px;margin:0 0 12px;color:#fff}
-section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:16px 0;min-width:0}
-.hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-.hero-text{flex:1 1 220px;min-width:0}
-.avatar{width:84px;height:84px;border-radius:50%;border:1px solid var(--line);background:#000}
+html{background:#000;scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--text);font:400 17px/1.65 var(--sans);-webkit-font-smoothing:antialiased;overflow-wrap:anywhere}
+img,canvas{max-width:100%;display:block}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.skip{position:absolute;left:12px;top:-80px;background:var(--accent);color:#000;padding:10px 14px;border-radius:8px;z-index:40;font-weight:700;text-decoration:none}
+.skip:focus{top:12px}
+.progress{position:fixed;left:0;top:0;height:2px;width:100%;background:var(--accent);transform-origin:0 50%;transform:scaleX(0);z-index:30}
+.top{position:sticky;top:0;z-index:10;background:#000;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px 12px;padding:8px 16px;flex-wrap:wrap}
+.brand{font-family:var(--mono);color:#fff;text-decoration:none;font-weight:700;min-height:44px;display:inline-flex;align-items:center}
+.top nav{display:flex;flex-wrap:wrap;gap:0 12px;font-size:14px}
+.top nav a{color:var(--mute);text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+.top nav a:hover,.top nav a:focus-visible{color:#fff}
+main{max-width:1040px;margin:0 auto;padding:0 18px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
 .muted{color:var(--mute)}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media(min-width:620px){.grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
-.stat{background:#000;border:1px solid var(--line);border-radius:12px;padding:12px}
-.stat b{display:block;font-size:22px;color:#fff;word-break:break-word}
-.stat span{font-size:13px}
-.score{width:100%;text-align:center}
-@media(min-width:620px){.score{width:auto;margin-left:auto}}
-.grade{width:110px;height:110px;border-radius:50%;border:6px solid var(--acc);display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:800;color:#fff;margin:0 auto 6px}
-.bar{height:8px;background:#1a1a1a;border-radius:8px;overflow:hidden;margin:6px 0 14px}
-.bar i{display:block;height:100%;background:var(--acc)}
-.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font-size:15px;flex-wrap:wrap}
-ul{padding-left:20px;margin:0}
-li{margin:10px 0}
-a{color:var(--acc)}
-.btns{display:flex;flex-wrap:wrap;gap:10px}
-.btn{display:inline-flex;justify-content:center;align-items:center;flex:1 1 200px;min-height:48px;padding:12px 16px;border:1px solid var(--acc);border-radius:12px;text-decoration:none;color:#fff;font-weight:600;text-align:center}
-.btn.primary{background:var(--acc);color:#000;border-color:var(--acc)}
-.proj{border-top:1px solid var(--line);padding:12px 0}
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,10vw,92px);line-height:.98;letter-spacing:-.025em;margin:6px 0 10px}
+h2{font-family:var(--serif);font-weight:500;font-size:clamp(28px,5vw,44px);line-height:1.05;margin:0 0 14px;letter-spacing:-.02em}
+h3{font-family:var(--serif);font-weight:500;font-size:26px;margin:0}
+.hero{display:grid;gap:28px;padding:36px 0 16px;align-items:center}
+@media(min-width:860px){.hero{grid-template-columns:1.1fr .9fr;padding:72px 0 40px}}
+.handle{font-family:var(--mono);margin:0}
+.handle a{color:var(--mute)}
+.lead{font-size:clamp(18px,2.2vw,22px);max-width:34ch;color:#e6e6e6;margin:14px 0 0}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 20px;border:1px solid var(--accent);border-radius:10px;color:#fff;text-decoration:none;font-weight:600;text-align:center;flex:1 1 220px;max-width:100%}
+.btn.primary{background:var(--accent);color:#000}
+.btn:hover{background:#161616}
+.btn.primary:hover{background:#ff8e3a}
+.scene-box{position:relative;width:100%;max-width:440px;aspect-ratio:1/1;margin:0 auto}
+#scene{width:100%;height:100%}
+.scene-box.no-gl #scene{display:none}
+.scene-box.no-gl::after{content:'';position:absolute;inset:14%;border-radius:50%;border:6px solid var(--accent);border-top-color:#2a2a2a}
+.status{font-family:var(--mono);font-size:13px;color:var(--mute);min-height:1.4em;margin:8px 0 0}
+.status.err{color:var(--bad)}
+section.panel{border-top:1px solid var(--line);padding:48px 0}
+.score-row{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;margin-bottom:24px}
+@media(max-width:520px){.score-row{grid-template-columns:1fr;justify-items:start}}
+.grade{width:120px;height:120px;border-radius:50%;border:6px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:44px;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin-top:24px}
+@media(min-width:720px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.stat{border-top:1px solid var(--line);padding:14px 0}
+.stat b{display:block;font-family:var(--serif);font-weight:500;font-size:clamp(24px,4vw,34px);color:#fff;word-break:break-word}
+.stat span{font-size:13px;color:var(--mute)}
+.row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:15px}
+.bar{height:6px;background:#171717;border-radius:6px;overflow:hidden;margin:8px 0 16px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.story p{max-width:64ch;font-size:18px;margin:0 0 16px}
+.story p.lead2{font-family:var(--serif);font-size:clamp(22px,3vw,28px);line-height:1.35;max-width:40ch}
+.proj{display:grid;gap:6px;padding:20px 0;border-top:1px solid var(--line)}
 .proj:first-child{border-top:0;padding-top:0}
-.err{color:var(--bad)}
-.entry{border-top:1px solid var(--line);padding:12px 0}
-input,textarea{width:100%;background:#000;color:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;font:inherit;margin:6px 0;font-size:16px}
-button{background:var(--acc);color:#000;border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer;width:100%;min-height:48px;font-size:16px}
-@media(min-width:620px){button{width:auto}}
-footer{margin-top:24px;font-size:13px}
+.proj a{color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:14px;word-break:break-all}
+ul.crit{padding:0;list-style:none;margin:0}
+ul.crit li{padding:14px 0 14px 18px;border-top:1px solid var(--line);position:relative}
+ul.crit li::before{content:'';position:absolute;left:0;top:24px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+label{display:block;font-size:14px;color:var(--mute);margin-top:12px}
+input,textarea{width:100%;background:#000;color:#fff;border:1px solid #2a2a2a;border-radius:10px;padding:12px 14px;font:inherit;font-size:16px;margin:6px 0 4px}
+button.submit{background:var(--accent);color:#000;border:0;border-radius:10px;min-height:48px;padding:12px 22px;font-weight:700;font-size:16px;cursor:pointer;width:100%;margin-top:10px}
+@media(min-width:620px){button.submit{width:auto}}
+button:disabled{opacity:.5;cursor:wait}
+.entry{padding:14px 0;border-top:1px solid var(--line)}
+.entry small{color:var(--mute)}
+footer{border-top:1px solid var(--line);margin:0 auto;padding:28px 18px calc(28px + env(safe-area-inset-bottom));color:var(--mute);font-size:14px;max-width:1040px}
+html.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+html.js .reveal.is-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}html.js .reveal{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-<div class='wrap'>
-
-<header class='hero'>
-  <img class='avatar' id='avatar' alt=''>
-  <div class='hero-text'>
-    <h1 id='name'>Yukleniyor...</h1>
-    <div class='muted' id='login'></div>
-    <p id='bio' style='margin:8px 0 0'></p>
-  </div>
-  <div class='score'>
-    <div class='grade' id='grade'>-</div>
-    <div class='muted'>GitHub Puani <span id='score'></span>/100</div>
-  </div>
+<a class='skip' href='#main'>İçeriğe geç</a>
+<div class='progress' id='progress' aria-hidden='true'></div>
+<header class='top'>
+  <a class='brand' href='#top'>Higer23</a>
+  <nav aria-label='Ana gezinme'>
+    <a href='#hakkimda'>Hakkımda</a>
+    <a href='#projeler'>Projeler</a>
+    <a href='#puan'>Puan</a>
+    <a href='#elestiri'>Eleştiri</a>
+    <a href='#destek'>Destek</a>
+  </nav>
 </header>
-<div id='status' class='muted'></div>
 
-<section>
-  <h2>Bagis yap</h2>
-  <p class='muted' style='margin-top:0'>Projelerin ayakta kalmasina destek olabilirsin. Tesekkurler!</p>
-  <div class='btns'>
-    <a class='btn primary' href='https://opencollective.com/kontakt-notizbuch' target='_blank' rel='noopener'>Open Collective ile destekle</a>
-    <a class='btn' href='https://github.com/sponsors/Higer23' target='_blank' rel='noopener'>GitHub Sponsors</a>
-  </div>
-</section>
+<main id='main'>
+  <section class='hero' id='top' aria-labelledby='name'>
+    <div>
+      <p class='kicker'>GitHub puanı · canlı veri</p>
+      <h1 id='name'>Yükleniyor…</h1>
+      <p class='handle'><a href='https://github.com/Higer23' rel='noopener'>@Higer23</a></p>
+      <p id='bio' class='lead'></p>
+      <div class='ctas'>
+        <a class='btn primary' href='https://opencollective.com/kontakt-notizbuch' target='_blank' rel='noopener'>Open Collective ile destekle</a>
+        <a class='btn' href='#projeler'>Projelerimi gör</a>
+      </div>
+    </div>
+    <div class='scene-box' id='sceneBox'>
+      <canvas id='scene' aria-hidden='true'></canvas>
+    </div>
+  </section>
+  <p id='status' class='status' role='status'></p>
+  <button id='retry' class='btn' type='button' hidden>Tekrar dene</button>
 
-<section>
-  <h2>Hakkimda</h2>
-  <p>Ben Halil Ibrahim. Su an 16 yasindayim ve kod yazmayi ogrenmeye calisiyorum. Python ile baslayip Bash, web ve guvenlik araclarina dogru ilerliyorum.</p>
-  <p>Kendimi bir script kiddie olarak goruyorum: hazir araclari ve scriptleri inceleyip degistirerek ogreniyorum, ama bunun yerine kendi kodumu yazmayi ve temelleri saglamlastirmayi hedefliyorum.</p>
-  <p>Elimdeki cihazlar bu is icin pek yeterli degil. Eski ve yavas bir telefon ve sinirli bir bilgisayar ile calismak, bazi araclari denemeyi ve buyuk projeleri derlemeyi zorlastiriyor. Yine de her imkanla ogrenmeye devam ediyorum.</p>
-</section>
+  <section class='panel reveal' id='puan' aria-labelledby='puan-h'>
+    <p class='kicker'>01 · Puan</p>
+    <h2 id='puan-h'>Verilerle puan</h2>
+    <div class='score-row'>
+      <div class='grade' id='grade' aria-label='GitHub puan notu'>–</div>
+      <p class='muted'>100 üzerinden puan, yalnızca GitHub'daki açık verilerden hesaplanır. Katkı, seri, depo, yıldız, takipçi, profil ve dil çeşitliliği farklı ağırlıklarla değerlendirilir. Toplam: <span id='score'>–</span>/100</p>
+    </div>
+    <div id='breakdown'></div>
+    <div class='grid' id='stats'></div>
+    <noscript><p class='muted'>JavaScript kapalıyken canlı veriler gösterilemez. Profil: github.com/Higer23</p></noscript>
+  </section>
 
-<section>
-  <h2>Projelerim</h2>
-  <div class='proj'>
-    <b>HigerZero</b>
-    <div class='muted'>Bash tabanli kablosuz guvenlik denetim cercevesi. Sadece kendi aglarinda ve izin verilen ortamlarda kullanilmalidir.</div>
-    <a href='https://github.com/Higer23/HigerZero' target='_blank' rel='noopener'>github.com/Higer23/HigerZero</a>
-  </div>
-  <div class='proj'>
-    <b>Kontakt-Notizbuch</b>
-    <div class='muted'>Kisisel kontakt ve not uygulamasi. Cloudflare Workers, D1 ve R2 uzerinde calisiyor, admin girisi ve giris kayitlari var.</div>
-    <a href='https://opencollective.com/kontakt-notizbuch' target='_blank' rel='noopener'>Destekle</a>
-  </div>
-</section>
+  <section class='panel reveal' id='hakkimda' aria-labelledby='hakkimda-h'>
+    <p class='kicker'>02 · Hikâye</p>
+    <h2 id='hakkimda-h'>Hakkımda</h2>
+    <div class='story'>
+      <p class='lead2'>Ben 16 yaşındayım ve kod yazmayı öğrenmeye çalışıyorum. Python ile başladım; şimdi Bash, web ve güvenlik araçlarına doğru ilerliyorum.</p>
+      <p>Kendimi bir script kiddie olarak görüyorum: hazır araçları ve scriptleri inceleyip değiştirerek öğreniyorum. Hedefim, bu alışkanlığı kendi kodumu yazmaya ve temelleri sağlamlaştırmaya çevirmek.</p>
+      <p>Elimdeki cihazlar bu iş için pek yeterli değil. Yavaş bir telefon ve sınırlı bir bilgisayarla büyük projeleri derlemek ve bazı araçları denemek zorlaşıyor. Yine de elimden geldiğince öğrenmeye devam ediyorum.</p>
+      <p>Bu sayfa GitHub izimin canlı bir özeti. Puanım burada hesaplanıyor, eleştirilerim yazılıyor, hikâyem zamanla genişleyecek.</p>
+    </div>
+  </section>
 
-<section>
-  <h2>Canli GitHub istatistikleri</h2>
-  <div class='grid' id='stats'></div>
-</section>
-<section><h2>Puan dokumu</h2><div id='breakdown'></div></section>
-<section><h2>Diller (depolara gore)</h2><div id='langs'></div></section>
-<section><h2>Elestiri</h2><p class='muted' style='margin-top:0'>Veriye dayali, yapici notlar. Bunlar bir sonraki adimlar icin.</p><ul id='critique'></ul></section>
+  <section class='panel reveal' id='projeler' aria-labelledby='projeler-h'>
+    <p class='kicker'>03 · Projeler</p>
+    <h2 id='projeler-h'>Üzerinde çalıştığım işler</h2>
+    <div class='proj'>
+      <h3>HigerZero</h3>
+      <p class='muted' style='margin:0'>Bash ile yazılmış kablosuz ağ güvenlik denetim çerçevesi. Yalnızca kendi ağlarında ve yazılı izin verilen ortamlarda kullanılmalıdır.</p>
+      <a href='https://github.com/Higer23/HigerZero' rel='noopener'>github.com/Higer23/HigerZero</a>
+    </div>
+    <div class='proj'>
+      <h3>Kontakt-Notizbuch</h3>
+      <p class='muted' style='margin:0'>Kişisel kişi ve not uygulaması. Cloudflare Workers, D1 ve R2 üzerinde çalışıyor; admin girişi ve giriş kayıtları var.</p>
+      <a href='https://opencollective.com/kontakt-notizbuch' target='_blank' rel='noopener'>opencollective.com/kontakt-notizbuch</a>
+    </div>
+  </section>
 
-<section id='guestbookSec' hidden>
-  <h2>Ziyaretci defteri</h2>
-  <p class='muted'>Kayitlar Cloudflare D1 veritabaninda tutulur.</p>
-  <form id='gbForm'>
-    <input id='gbName' placeholder='Adin' maxlength='40' required>
-    <textarea id='gbMsg' rows='3' placeholder='Mesajin' maxlength='500' required></textarea>
-    <button type='submit'>Gonder</button>
-  </form>
-  <div id='gbList'></div>
-</section>
+  <section class='panel reveal' aria-labelledby='diller-h'>
+    <p class='kicker'>04 · Diller</p>
+    <h2 id='diller-h'>Depolara göre diller</h2>
+    <div id='langs'></div>
+  </section>
 
-<footer class='muted'>Veriler GitHub REST API uzerinden canli cekilir. Sayfa GitHub Pages'te calisir.</footer>
-</div>
+  <section class='panel reveal' id='elestiri' aria-labelledby='elestiri-h'>
+    <p class='kicker'>05 · Eleştiri</p>
+    <h2 id='elestiri-h'>Yapıcı eleştiri</h2>
+    <p class='muted'>Her madde GitHub'daki gerçek bir sinyale bağlı. Bunlar bir sonraki adımlar için.</p>
+    <ul class='crit' id='critique'></ul>
+  </section>
+
+  <section class='panel reveal' id='destek' aria-labelledby='destek-h'>
+    <p class='kicker'>06 · Destek</p>
+    <h2 id='destek-h'>Bağış</h2>
+    <p class='muted'>Projelerin ayakta kalmasına destek olabilirsin. Bağış tamamen gönüllüdür; sayfanın hiçbir özelliği bağışa bağlı değildir. Teşekkür ederim.</p>
+    <div class='ctas'>
+      <a class='btn primary' href='https://opencollective.com/kontakt-notizbuch' target='_blank' rel='noopener'>Open Collective</a>
+      <a class='btn' href='https://github.com/sponsors/Higer23' target='_blank' rel='noopener'>GitHub Sponsors</a>
+    </div>
+  </section>
+
+  <section class='panel reveal' id='defter' aria-labelledby='defter-h' hidden>
+    <p class='kicker'>07 · Ziyaretçi defteri</p>
+    <h2 id='defter-h'>Bir not bırak</h2>
+    <p class='muted'>Kayıtlar Cloudflare D1 veritabanında tutulur.</p>
+    <form id='gbForm' novalidate>
+      <label for='gbName'>Adın</label>
+      <input id='gbName' name='name' maxlength='40' autocomplete='name' required>
+      <label for='gbMsg'>Mesajın</label>
+      <textarea id='gbMsg' name='message' rows='3' maxlength='500' required></textarea>
+      <button class='submit' type='submit'>Gönder</button>
+      <p id='gbStatus' class='status' role='status'></p>
+    </form>
+    <div id='gbList'></div>
+  </section>
+</main>
+
+<footer>Veriler GitHub REST API üzerinden canlı çekilir. Sayfa GitHub Pages üzerinde statik olarak çalışır. Kaynak: github.com/Higer23/-</footer>
 
 <script>
-const CONFIG={
-  user:'Higer23',
-  workerUrl:''
-};
-
+document.documentElement.classList.add('js');
 const $=id=>document.getElementById(id);
 const DAY=86400000;
+const CONFIG={user:'Higer23',workerUrl:''};
+const THREE_URL='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+function el(tag,text,cls){const e=document.createElement(tag);if(text!=null)e.textContent=text;if(cls)e.className=cls;return e;}
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+function grade(s){return s>=90?'A+':s>=80?'A':s>=70?'B':s>=60?'C':s>=50?'D':'E';}
 async function gh(path){
   const r=await fetch('https://api.github.com'+path,{headers:{Accept:'application/vnd.github+json'}});
   if(!r.ok) throw new Error('GitHub '+r.status);
   return r.json();
 }
-
-function el(tag,text,cls){const e=document.createElement(tag);if(text!=null)e.textContent=text;if(cls)e.className=cls;return e;}
-
 function streaks(days){
   let longest=0,run=0;
   days.forEach(d=>{if(d.count>0){run++;if(run>longest)longest=run;}else run=0;});
@@ -140,11 +224,102 @@ function streaks(days){
   return {current,longest};
 }
 
-function grade(s){return s>=90?'A+':s>=80?'A':s>=70?'B':s>=60?'C':s>=50?'D':'E';}
+/* 3D: yalnizca WebGL varsa, hareket azaltma kapali degilse ve scroll ile senkron */
+let sceneApi=null,sceneVisible=true;
+function hasWebGL(){try{const c=document.createElement('canvas');return !!(c.getContext('webgl')||c.getContext('experimental-webgl'));}catch(e){return false;}}
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.async=true;s.onload=()=>res();s.onerror=()=>rej(new Error('script yuklenemedi'));document.head.append(s);});}
+function createScene(canvas){
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(35,1,0.1,100);
+  camera.position.z=5.2;
+  const geo=new THREE.TorusKnotGeometry(1.05,0.32,180,24);
+  const mat=new THREE.MeshStandardMaterial({color:0x141414,metalness:0.7,roughness:0.3});
+  const mesh=new THREE.Mesh(geo,mat);
+  const wireGeo=new THREE.WireframeGeometry(geo);
+  const wireMat=new THREE.LineBasicMaterial({color:0xff7a1a,transparent:true,opacity:0.5});
+  const wire=new THREE.LineSegments(wireGeo,wireMat);
+  const group=new THREE.Group();
+  group.add(mesh,wire);
+  scene.add(group);
+  scene.add(new THREE.AmbientLight(0xffffff,0.35));
+  const key=new THREE.DirectionalLight(0xffffff,1.1);
+  key.position.set(3,4,5);
+  scene.add(key);
+  const rim=new THREE.PointLight(0xff7a1a,1.4,20);
+  rim.position.set(-4,-2,-3);
+  scene.add(rim);
+  let progress=0,lastW=0,lastH=0;
+  function resize(){
+    const w=canvas.clientWidth,h=canvas.clientHeight;
+    if(!w||!h||(w===lastW&&h===lastH))return;
+    lastW=w;lastH=h;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h;
+    camera.updateProjectionMatrix();
+  }
+  function draw(){
+    resize();
+    group.rotation.y=progress*Math.PI*2;
+    group.rotation.x=progress*0.8;
+    renderer.render(scene,camera);
+  }
+  canvas.addEventListener('webglcontextlost',e=>e.preventDefault());
+  canvas.addEventListener('webglcontextrestored',draw);
+  return {
+    setProgress(p){progress=p;},
+    draw,
+    dispose(){geo.dispose();mat.dispose();wireGeo.dispose();wireMat.dispose();renderer.dispose();}
+  };
+}
+function updateScrollScene(){
+  if(!sceneApi||!sceneVisible)return;
+  const r=$('sceneBox').getBoundingClientRect();
+  sceneApi.setProgress(clamp((window.innerHeight-r.top)/(window.innerHeight+r.height),0,1));
+  sceneApi.draw();
+}
+async function setupScene(){
+  const box=$('sceneBox');
+  if(RM||!hasWebGL()){box.classList.add('no-gl');return;}
+  await new Promise(res=>(window.requestIdleCallback?window.requestIdleCallback(()=>res(),{timeout:1500}):setTimeout(res,300)));
+  try{
+    await loadScript(THREE_URL);
+    sceneApi=createScene($('scene'));
+  }catch(e){
+    sceneApi=null;
+    box.classList.add('no-gl');
+    return;
+  }
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(es=>{sceneVisible=es[0].isIntersecting;if(sceneVisible)updateScrollScene();}).observe(box);
+  }
+  updateScrollScene();
+}
 
+/* Scroll ilerleme cubugu ve sahne: tek rAF dongusu */
+let ticking=false;
+function onScroll(){
+  if(ticking)return;
+  ticking=true;
+  requestAnimationFrame(()=>{
+    ticking=false;
+    const max=document.documentElement.scrollHeight-window.innerHeight;
+    $('progress').style.transform='scaleX('+(max>0?window.scrollY/max:0)+')';
+    updateScrollScene();
+  });
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+window.addEventListener('resize',onScroll);
+
+/* Bolum girisleri */
+const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-in');io.unobserve(e.target);}}),{threshold:0.12}):null;
+document.querySelectorAll('.reveal').forEach(n=>{if(io)io.observe(n);else n.classList.add('is-in');});
+
+/* GitHub verileri */
 function render(u,repos,contrib){
   const now=Date.now();
-  const days=(contrib.contributions||[]);
+  const days=contrib.contributions||[];
   const total=days.reduce((a,d)=>a+(d.count||0),0);
   const {current,longest}=streaks(days);
   const stars=repos.reduce((a,r)=>a+r.stargazers_count,0);
@@ -155,99 +330,118 @@ function render(u,repos,contrib){
   const langSum=langs.reduce((a,l)=>a+l[1],0)||1;
   const active30=repos.filter(r=>now-new Date(r.pushed_at).getTime()<30*DAY).length;
   const noDesc=owned.filter(r=>!r.description).length;
+  const ageYears=Math.max(0,Math.round((now-new Date(u.created_at).getTime())/(365*DAY)*10)/10);
 
   const parts=[
-    {label:'Katki (son 1 yil)',val:Math.min(total/500,1)*25,cap:25,txt:total+' katki'},
-    {label:'Guncel seri',val:Math.min(current/7,1)*5,cap:5,txt:current+' gun'},
-    {label:'En uzun seri',val:Math.min(longest/30,1)*10,cap:10,txt:longest+' gun'},
+    {label:'Katkı (son 1 yıl)',val:Math.min(total/500,1)*25,cap:25,txt:total+' katkı'},
+    {label:'Güncel seri',val:Math.min(current/7,1)*5,cap:5,txt:current+' gün'},
+    {label:'En uzun seri',val:Math.min(longest/30,1)*10,cap:10,txt:longest+' gün'},
     {label:'Public depo',val:Math.min(u.public_repos/20,1)*15,cap:15,txt:u.public_repos+' depo'},
-    {label:'Yildiz',val:Math.min(stars/100,1)*15,cap:15,txt:stars+' yildiz'},
-    {label:'Takipci',val:Math.min(u.followers/50,1)*10,cap:10,txt:u.followers+' takipci'},
-    {label:'Profil tamligi',val:(u.bio?4:0)+(u.blog?3:0)+((u.location||u.company)?3:0),cap:10,txt:(u.bio?'bio var':'bio yok')+', '+(u.blog?'site var':'site yok')},
-    {label:'Dil cesitliligi',val:Math.min(langs.length/4,1)*10,cap:10,txt:langs.length+' dil'}
+    {label:'Yıldız',val:Math.min(stars/100,1)*15,cap:15,txt:stars+' yıldız'},
+    {label:'Takipçi',val:Math.min(u.followers/50,1)*10,cap:10,txt:u.followers+' takipçi'},
+    {label:'Profil tamlığı',val:(u.bio?4:0)+(u.blog?3:0)+((u.location||u.company)?3:0),cap:10,txt:(u.bio?'bio var':'bio yok')+', '+(u.blog?'site var':'site yok')},
+    {label:'Dil çeşitliliği',val:Math.min(langs.length/4,1)*10,cap:10,txt:langs.length+' dil'}
   ];
   const score=Math.round(parts.reduce((a,p)=>a+p.val,0));
 
-  $('avatar').src=u.avatar_url;
   $('name').textContent=u.name||u.login;
-  $('login').textContent='@'+u.login;
   $('bio').textContent=u.bio||'';
-  $('score').textContent=score;
+  $('score').textContent=String(score);
   $('grade').textContent=grade(score);
-  document.title='Higer23 - GitHub Puani '+score+'/100';
+  document.title='Higer23 · GitHub Puanı '+score+'/100';
 
   const statsList=[
-    ['Takipci',u.followers],['Public depo',u.public_repos],['Toplam yildiz',stars],
-    ['Katki (1 yil)',total],['Guncel seri',current+' gun'],['En uzun seri',longest+' gun'],['Son 30 gun aktif depo',active30]
+    ['Takipçi',u.followers],['Public depo',u.public_repos],['Toplam yıldız',stars],['Katkı (1 yıl)',total],
+    ['Güncel seri',current+' gün'],['En uzun seri',longest+' gün'],['Son 30 gün aktif depo',active30]
   ];
-  const sg=$('stats');
-  statsList.forEach(([k,v])=>{const d=el('div',null,'stat');d.append(el('b',String(v)),el('span',k,'muted'));sg.append(d);});
+  statsList.forEach(([k,v])=>{const d=el('div',null,'stat');d.append(el('b',String(v)),el('span',k));$('stats').append(d);});
 
-  const bd=$('breakdown');
   parts.forEach(p=>{
     const row=el('div',null,'row');
-    row.append(el('span',p.label),el('span',p.txt+'  ('+p.val.toFixed(1)+'/'+p.cap+')','muted'));
+    row.append(el('span',p.label),el('span',p.txt+' ('+p.val.toFixed(1)+'/'+p.cap+')','muted'));
     const bar=el('div',null,'bar');const fill=el('i');fill.style.width=Math.min(100,p.val/p.cap*100)+'%';bar.append(fill);
-    bd.append(row,bar);
+    $('breakdown').append(row,bar);
   });
 
-  const lg=$('langs');
-  if(!langs.length) lg.append(el('p','Dil verisi yok.','muted'));
+  if(!langs.length) $('langs').append(el('p','Dil verisi yok.','muted'));
   langs.slice(0,8).forEach(([name,n])=>{
     const row=el('div',null,'row');row.append(el('span',name),el('span',Math.round(n/langSum*100)+'%','muted'));
     const bar=el('div',null,'bar');const fill=el('i');fill.style.width=(n/langSum*100)+'%';bar.append(fill);
-    lg.append(row,bar);
+    $('langs').append(row,bar);
   });
 
-  const cr=$('critique');
   const notes=[];
-  if(!u.bio) notes.push('Profil aciklamasi (bio) bos. Ne yaptigini ve neye ilgi duydugunu anlatan tek bir cumle eklemek ilk izlenimi degistirir.');
-  if(owned.length && noDesc/owned.length>=0.3) notes.push('Depolarinin yaklasik %'+Math.round(noDesc/owned.length*100)+'i aciklamasiz. Her depoya kisa bir aciklama eklemek ziyaretciye ne oldugunu hemen anlatir.');
-  if(langs.length && langs[0][1]/langSum>0.8) notes.push('Dil dagilimi tek tarafa yatik ('+langs[0][0]+' baskin). Pinned repolarda farkli dillerdeki projeleri one cikarmak cesitliligi gosterir.');
-  if(longest>current*3 && longest>=5) notes.push('Katki serisi kopuk: en uzun seri '+longest+' gun, guncel seri '+current+' gun. Haftada birkac kucuk commit, arada buyuk bir patlamadan daha surdurulebilir.');
-  if(stars<10) notes.push('Yildiz sayisi dusuk. README icine ekran goruntusu, kurulum adimi ve kisa bir demo eklemek yildiz almayi kolaylastirir.');
-  if(u.followers<10) notes.push('Takipci sayisi az. Bir profil README si ve duzenli guncellemeler gorunurlugu artirir.');
-  if(active30===0) notes.push('Son 30 gunde hic push yok. Kucuk bir iyilestirme bile profili canli tutar.');
-  notes.push('Guclu yan: '+Math.max(0,Math.round((now-new Date(u.created_at).getTime())/(365*DAY)*10)/10)+' yillik hesap, '+u.public_repos+' public depo ve duzenli gelistirme sinyali.');
-  notes.forEach(n=>cr.append(el('li',n)));
+  if(!u.bio) notes.push('Profil açıklaması (bio) boş. Ne yaptığını ve neye ilgi duyduğunu anlatan tek bir cümle, ilk izlenimi değiştirir.');
+  if(owned.length&&noDesc/owned.length>=0.3) notes.push(`Depolarının yaklaşık %${Math.round(noDesc/owned.length*100)}'i açıklamasız. Her depoya kısa bir açıklama, ziyaretçiye ne olduğunu hemen anlatır.`);
+  if(langs.length&&langs[0][1]/langSum>0.8) notes.push(`Dil dağılımı tek tarafa yatık (${langs[0][0]} baskın). Öne çıkan depolarda farklı dillerdeki projeleri göstermek çeşitliliği görünür kılar.`);
+  if(longest>current*3&&longest>=5) notes.push(`Katkı serisi kopuk: en uzun seri ${longest} gün, güncel seri ${current} gün. Haftada birkaç küçük commit, arada büyük bir patlamadan daha sürdürülebilir.`);
+  if(stars<10) notes.push('Yıldız sayısı düşük. README içine ekran görüntüsü, kurulum adımı ve kısa bir demo eklemek yıldız almayı kolaylaştırır.');
+  if(u.followers<10) notes.push('Takipçi sayısı az. Bir profil README'si ve düzenli güncellemeler görünürlüğü artırır.');
+  if(active30===0) notes.push('Son 30 günde hiç push yok. Küçük bir iyileştirme bile profili canlı tutar.');
+  notes.push(`Güçlü yan: ${ageYears} yıllık hesap, ${u.public_repos} public depo ve düzenli geliştirme sinyali.`);
+  notes.forEach(n=>$('critique').append(el('li',n)));
 }
 
 async function loadGithub(){
+  const st=$('status');
+  st.classList.remove('err');
+  st.textContent='GitHub verileri yükleniyor…';
+  $('retry').hidden=true;
+  ['stats','breakdown','langs','critique'].forEach(id=>{$(id).textContent='';});
   try{
     const [u,repos]=await Promise.all([gh('/users/'+CONFIG.user),gh('/users/'+CONFIG.user+'/repos?per_page=100&sort=pushed')]);
     let contrib={contributions:[]};
     try{const r=await fetch('https://github-contributions-api.jogruber.de/v4/'+CONFIG.user+'?y=last');if(r.ok)contrib=await r.json();}catch(e){}
-    $('status').textContent='';
     render(u,repos,contrib);
+    st.textContent='Veriler GitHub'dan az önce çekildi.';
   }catch(e){
-    $('status').className='err';
-    $('status').textContent='Veri cekilemedi: '+e.message;
+    st.classList.add('err');
+    st.textContent=`Veri çekilemedi: ${e.message}`;
+    $('retry').hidden=false;
   }
 }
+$('retry').addEventListener('click',loadGithub);
 
+/* Ziyaretçi defteri: yalnizca Worker URL'si tanimliysa */
 async function initGuestbook(){
-  if(!CONFIG.workerUrl) return;
-  $('guestbookSec').hidden=false;
+  if(!CONFIG.workerUrl)return;
+  $('defter').hidden=false;
   const list=$('gbList');
   async function refresh(){
     list.textContent='';
     try{
       const r=await fetch(CONFIG.workerUrl+'/api/entries');
+      if(!r.ok) throw new Error(String(r.status));
       const items=await r.json();
-      items.forEach(it=>{const d=el('div',null,'entry');d.append(el('b',it.name),el('div',it.message),el('small',it.created_at,'muted'));list.append(d);});
-    }catch(e){list.append(el('p','Defter yuklenemedi.','err'));}
+      items.forEach(it=>{const d=el('div',null,'entry');d.append(el('b',it.name),el('div',it.message),el('small',it.created_at));list.append(d);});
+    }catch(e){list.append(el('p','Defter yüklenemedi.','muted'));}
   }
   $('gbForm').addEventListener('submit',async ev=>{
     ev.preventDefault();
-    const body={name:$('gbName').value,message:$('gbMsg').value};
-    const r=await fetch(CONFIG.workerUrl+'/api/entries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(r.ok){$('gbForm').reset();refresh();}
+    const name=$('gbName').value.trim(),message=$('gbMsg').value.trim();
+    const gbStatus=$('gbStatus');
+    if(!name||!message){gbStatus.classList.add('err');gbStatus.textContent='Adını ve mesajını yazmalısın.';return;}
+    const btn=$('gbForm').querySelector('button');
+    btn.disabled=true;
+    gbStatus.classList.remove('err');gbStatus.textContent='Gönderiliyor…';
+    try{
+      const r=await fetch(CONFIG.workerUrl+'/api/entries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,message})});
+      if(!r.ok) throw new Error(String(r.status));
+      $('gbForm').reset();
+      gbStatus.textContent='Mesajın kaydedildi. Teşekkürler!';
+      refresh();
+    }catch(e){
+      gbStatus.classList.add('err');
+      gbStatus.textContent='Gönderilemedi, yazdıkların duruyor. Tekrar dene.';
+    }finally{btn.disabled=false;}
   });
   refresh();
 }
 
 loadGithub();
+setupScene();
 initGuestbook();
+onScroll();
 </script>
 </body>
 </html>
