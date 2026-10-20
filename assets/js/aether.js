@@ -1,4 +1,21 @@
-/* Lightweight enhancement layer: navigation state, reveal observer, scroll progress. */
+/* Lightweight enhancement layer: device-specific CSS, scroll state and accessible reveals. */
+const mobileLayout = window.matchMedia('(max-width: 700px)');
+function syncDeviceLayout() {
+  let link = document.getElementById('aether-mobile-css');
+  if (mobileLayout.matches && !link) {
+    link = document.createElement('link');
+    link.id = 'aether-mobile-css';
+    link.rel = 'stylesheet';
+    link.href = 'assets/css/aether-mobile.css';
+    document.head.appendChild(link);
+  } else if (!mobileLayout.matches && link) {
+    link.remove();
+  }
+}
+syncDeviceLayout();
+if (mobileLayout.addEventListener) mobileLayout.addEventListener('change', syncDeviceLayout);
+else mobileLayout.addListener(syncDeviceLayout);
+
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const progress = document.getElementById('progress');
 let scheduled = false;
