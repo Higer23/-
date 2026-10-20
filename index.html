@@ -371,12 +371,12 @@ function render(u,repos,contrib){
   });
 
   const notes=[];
-  if(!u.bio) notes.push('Profil açıklaması (bio) boş. Ne yaptığını ve neye ilgi duyduğunu anlatan tek bir cümle, ilk izlenimi değiştirir.');
+  if(!u.bio) notes.push(`Profil açıklaması (bio) boş. Ne yaptığını ve neye ilgi duyduğunu anlatan tek bir cümle, ilk izlenimi değiştirir.`);
   if(owned.length&&noDesc/owned.length>=0.3) notes.push(`Depolarının yaklaşık %${Math.round(noDesc/owned.length*100)}'i açıklamasız. Her depoya kısa bir açıklama, ziyaretçiye ne olduğunu hemen anlatır.`);
   if(langs.length&&langs[0][1]/langSum>0.8) notes.push(`Dil dağılımı tek tarafa yatık (${langs[0][0]} baskın). Öne çıkan depolarda farklı dillerdeki projeleri göstermek çeşitliliği görünür kılar.`);
   if(longest>current*3&&longest>=5) notes.push(`Katkı serisi kopuk: en uzun seri ${longest} gün, güncel seri ${current} gün. Haftada birkaç küçük commit, arada büyük bir patlamadan daha sürdürülebilir.`);
   if(stars<10) notes.push('Yıldız sayısı düşük. README içine ekran görüntüsü, kurulum adımı ve kısa bir demo eklemek yıldız almayı kolaylaştırır.');
-  if(u.followers<10) notes.push('Takipçi sayısı az. Bir profil README'si ve düzenli güncellemeler görünürlüğü artırır.');
+  if(u.followers<10) notes.push(`Takipçi sayısı az. Bir profil README'si ve düzenli güncellemeler görünürlüğü artırır.`);
   if(active30===0) notes.push('Son 30 günde hiç push yok. Küçük bir iyileştirme bile profili canlı tutar.');
   notes.push(`Güçlü yan: ${ageYears} yıllık hesap, ${u.public_repos} public depo ve düzenli geliştirme sinyali.`);
   notes.forEach(n=>$('critique').append(el('li',n)));
@@ -393,7 +393,7 @@ async function loadGithub(){
     let contrib={contributions:[]};
     try{const r=await fetch('https://github-contributions-api.jogruber.de/v4/'+CONFIG.user+'?y=last');if(r.ok)contrib=await r.json();}catch(e){}
     render(u,repos,contrib);
-    st.textContent='Veriler GitHub'dan az önce çekildi.';
+    st.textContent=`Veriler GitHub'dan az önce çekildi.`;
   }catch(e){
     st.classList.add('err');
     st.textContent=`Veri çekilemedi: ${e.message}`;
