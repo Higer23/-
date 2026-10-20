@@ -1,4 +1,4 @@
-/* Relay-style dark / lime design — Higer23 */
+/* Higer23 · Relay tarzı koyu / limon tasarım (PC + mobil tek dosya) */
 :root{--bg:#050605;--ink:#f1f2ec;--muted:#868b80;--line:rgba(255,255,255,.09);--lime:#c3ff3a;--lime-ink:#0b1000;--r:22px;
 --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--serif:'Instrument Serif',Georgia,'Times New Roman',serif;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 *{box-sizing:border-box}
@@ -139,8 +139,10 @@ footer .legal{grid-column:1/-1;font-family:var(--mono);font-size:.72rem;padding-
 
 /* responsive */
 @media (max-width:980px){
-  .top{grid-template-columns:1fr auto}.top nav{display:none}
-  .hero{grid-template-columns:1fr;padding-top:120px;min-height:0;gap:50px}
+  .top{display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:10px 16px}
+  .top nav{display:none}
+  .top-r{margin:0;justify-self:auto}
+  .hero{grid-template-columns:1fr;padding-top:96px;min-height:0;gap:34px}
   .hero-card{transform:none;-webkit-mask-image:none;mask-image:none}
   .sec{padding-top:90px}
   .sec-head,.bento,.story,.two,.cta,.projs{grid-template-columns:1fr}
@@ -150,6 +152,7 @@ footer .legal{grid-column:1/-1;font-family:var(--mono);font-size:.72rem;padding-
 @media (max-width:560px){
   .pill.status-pill{display:none}
   .hero{padding-inline:18px}.sec{padding-inline:18px}
+  .ctas{gap:10px}.ctas .btn{flex:1 1 auto}
   .grade{width:74px;height:74px;font-size:2.2rem;border-radius:20px}
   .cta-r{padding:26px}.card,.proj{padding:22px}
   .stat b{font-size:1.5rem}

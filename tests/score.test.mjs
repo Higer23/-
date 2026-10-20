@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { computeScore, grade, streaks } from '../assets/js/score.js';
+import { computeScore, grade, streaks } from '../assets/score.js';
 
 const NOW = Date.UTC(2026, 9, 21);
 const baseProfile = { login: 'Higer23', public_repos: 10, followers: 5, bio: 'x', blog: '', location: '', company: '', created_at: '2025-04-19T00:00:00Z' };
