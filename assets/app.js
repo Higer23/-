@@ -98,7 +98,7 @@ function renderResults({ profile: u }, result) {
   $('grade').textContent = result.grade;
   $('grade').setAttribute('aria-label', `GitHub puan notu ${result.grade}, toplam ${result.score} üzerinden 100`);
   document.title = `Higer23 · GitHub Puanı ${result.score}/100`;
-  setAvatar(u.avatar_url ? `${u.avatar_url}${u.avatar_url.includes('?') ? '&' : '?'}s=224` : '', u.login);
+  setAvatar(u.avatar_url ? `${u.avatar_url}${u.avatar_url.includes('?') ? '&' : '?'}s=800` : '', u.login);
 
   const s = result.stats;
   const statList = [
@@ -246,119 +246,168 @@ function initGuestbook(workerUrl) {
   refresh();
 }
 
-/* ---- relay (aurora, hero kartı, menü) ---- */
-/* Aurora: fixed full-page light ribbons (lime -> teal -> blue), additive blending. */
-function aurora() {
-  const cv = $('aurora');
-  if (!cv || !cv.getContext) return;
-  const ctx = cv.getContext('2d');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const small = window.matchMedia('(max-width: 700px)').matches;
-  const dpr = Math.min(window.devicePixelRatio || 1, small ? 1 : 1.5);
-  const RIB = small ? 10 : 22;
-  const ribbons = Array.from({ length: RIB }, (_, i) => ({
-    y: 0.08 + (i / RIB) * 0.95,
-    amp: 40 + Math.random() * 110,
-    f: 0.0016 + Math.random() * 0.0022,
-    sp: 0.15 + Math.random() * 0.35,
-    ph: Math.random() * 6.28,
-    hue: 72 + (i / RIB) * 130,
-    spread: 2 + Math.random() * 7,
-  }));
-  let w = 0, h = 0, t = 0, sy = 0, raf = 0;
+/* ---- görsel katman: WebGL hero, paralaks kolaj, harf dönüşü, footer, barkod ---- */
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function heroGL() {
+  const cv = $('heroGl'), img = $('heroImg'), hero = $('top');
+  if (!cv || !img || REDUCED) return;
+  const gl = cv.getContext('webgl', { antialias: false });
+  if (!gl) return;
+  const vs = 'attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
+  const fs = `precision mediump float;varying vec2 v;uniform sampler2D t;uniform vec2 r,ir,m;uniform float vel,time;
+  void main(){
+    float sc=max(r.x/ir.x,r.y/ir.y);
+    vec2 uv=(v-.5)*r/(ir*sc)+.5;
+    vec2 d=v-m;d.x*=r.x/r.y;
+    float dist=length(d);
+    float f=exp(-dist*6.)*vel;
+    vec2 off=normalize(d+vec2(1e-4))*sin(dist*36.-time*7.)*f*.05;
+    vec3 c=vec3(texture2D(t,uv+off*1.4).r,texture2D(t,uv+off).g,texture2D(t,uv+off*.6).b);
+    float g=dot(c,vec3(.3,.59,.11));
+    gl_FragColor=vec4(mix(vec3(g),c,.18)*.88,1.);
+  }`;
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+  const pr = gl.createProgram();
+  gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+  gl.useProgram(pr);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = (n) => gl.getUniformLocation(pr, n);
+  const uR = U('r'), uIR = U('ir'), uM = U('m'), uV = U('vel'), uT = U('time');
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  let mx = 0.5, my = 0.5, tx = 0.5, ty = 0.5, vel = 0, visible = true, ready = false, t0 = performance.now();
 
   function size() {
-    w = window.innerWidth; h = window.innerHeight;
-    cv.width = Math.floor(w * dpr); cv.height = Math.floor(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cv.width = Math.floor(hero.clientWidth * dpr); cv.height = Math.floor(hero.clientHeight * dpr);
+    gl.viewport(0, 0, cv.width, cv.height);
+  }
+  hero.addEventListener('pointermove', (e) => {
+    const b = hero.getBoundingClientRect();
+    tx = (e.clientX - b.left) / b.width; ty = 1 - (e.clientY - b.top) / b.height;
+  }, { passive: true });
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(hero);
+  window.addEventListener('resize', size);
+
+  function frame() {
+    requestAnimationFrame(frame);
+    if (!ready || !visible) return;
+    const dx = tx - mx, dy = ty - my;
+    mx += dx * 0.12; my += dy * 0.12;
+    vel = Math.min(1, Math.max(vel * 0.94, Math.hypot(dx, dy) * 9));
+    gl.uniform2f(uR, cv.width, cv.height); gl.uniform2f(uM, mx, my);
+    gl.uniform1f(uV, vel); gl.uniform1f(uT, (performance.now() - t0) / 1000);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
-  function draw() {
-    ctx.clearRect(0, 0, w, h);
-    ctx.globalCompositeOperation = 'lighter';
-    const hero = Math.max(0, 1 - sy / (h * 0.9));
-    // hero glow where the fan converges
-    const px = w * 0.34, py = h * 0.6 - sy * 0.3;
-    const g = ctx.createRadialGradient(px, py, 0, px, py, Math.max(w, h) * 0.5);
-    g.addColorStop(0, `rgba(195,255,58,${0.2 * hero})`);
-    g.addColorStop(1, 'rgba(195,255,58,0)');
-    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-    // converging fan (hero swoosh)
-    if (hero > 0.02) {
-      for (let i = 0; i < (small ? 14 : 34); i++) {
-        const k = i / 34, a = (k - 0.5) * 2;
-        const ex = w * (1.05 + a * 0.05), ey = h * (0.5 + a * 0.55) - sy * 0.3;
-        const wob = Math.sin(t * 0.5 + i) * 30;
-        ctx.beginPath();
-        ctx.moveTo(px, py);
-        ctx.bezierCurveTo(px + w * 0.12, py - h * 0.22 + wob, w * 0.62, ey - h * 0.35 * (1 - Math.abs(a)) - wob, ex, ey);
-        ctx.strokeStyle = `hsla(${80 + k * 120},100%,60%,${0.1 * hero})`;
-        ctx.lineWidth = 1; ctx.stroke();
-      }
-    }
-    // flowing ribbons
-    for (const r of ribbons) {
-      const base = r.y * h * 1.15 - sy * 0.22 * (0.6 + r.y);
-      for (let k = 0; k < 4; k++) {
-        ctx.beginPath();
-        for (let x = -20; x <= w + 20; x += 26) {
-          const y = base + Math.sin(x * r.f + t * r.sp + r.ph) * r.amp + Math.sin(x * r.f * 2.1 - t * 0.5 + r.ph) * r.amp * 0.4 + k * r.spread * (1 + x / w);
-          if (x === -20) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = `hsla(${(r.hue + sy * 0.03) % 360},100%,58%,${0.075})`;
-        ctx.lineWidth = 1; ctx.stroke();
-      }
-    }
-  }
+  const im = new Image();
+  im.crossOrigin = 'anonymous';
+  im.onload = () => {
+    const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform2f(uIR, im.naturalWidth, im.naturalHeight);
+    size(); ready = true; cv.style.opacity = 1; requestAnimationFrame(frame);
+  };
+  im.src = img.currentSrc || img.src;
+}
 
-  function loop() { t += 0.016; draw(); raf = requestAnimationFrame(loop); }
-  size(); draw();
-  window.addEventListener('resize', () => { size(); draw(); });
-  window.addEventListener('scroll', () => { sy = window.scrollY; if (reduce) draw(); }, { passive: true });
-  if (!reduce) {
-    raf = requestAnimationFrame(loop);
-    document.addEventListener('visibilitychange', () => {
-      cancelAnimationFrame(raf);
-      if (!document.hidden) raf = requestAnimationFrame(loop);
+function parallax() {
+  const sec = $('gal');
+  if (!sec) return;
+  const cfg = [{ a: 3, rev: true }, { a: 1, rev: false, flip: true }, { a: 3, rev: true }];
+  const cols = [...sec.querySelectorAll('.col')];
+  const H = [];
+  cols.forEach((c, i) => {
+    const tr = c.querySelector('.track');
+    if (cfg[i].flip) [...tr.children].reverse().forEach((n) => tr.appendChild(n));
+    c._set = [...tr.children];
+  });
+  function build() {
+    cols.forEach((c, i) => {
+      const tr = c.querySelector('.track');
+      [...tr.children].slice(c._set.length).forEach((n) => n.remove());
+      H[i] = c.clientWidth * 0.8 * c._set.length;
+      const need = Math.ceil(sec.clientHeight / H[i]) + 2;
+      for (let k = 0; k < need; k++) c._set.forEach((n) => tr.appendChild(n.cloneNode(true)));
     });
   }
-}
-
-/* Hero card mirrors the live score + first stats; meter animates on update. */
-function bindHero() {
-  const score = $('score'), meter = $('meter'), stats = $('stats'), runs = $('runs');
-  if (score && meter) {
-    const sync = () => { const n = parseInt(score.textContent, 10); if (!Number.isNaN(n)) meter.style.width = `${Math.min(100, n)}%`; };
-    new MutationObserver(sync).observe(score, { childList: true, characterData: true, subtree: true });
+  function update() {
+    const y = window.scrollY - sec.offsetTop;
+    cols.forEach((c, i) => {
+      let off = (y * cfg[i].a * 0.35 * (cfg[i].rev ? -1 : 1)) % H[i];
+      if (off > 0) off -= H[i];
+      c.querySelector('.track').style.transform = `translate3d(0,${off - H[i]}px,0)`;
+    });
   }
-  if (stats && runs) {
-    new MutationObserver(() => {
-      runs.textContent = '';
-      [...stats.querySelectorAll('.stat')].slice(0, 3).forEach((s) => {
-        const row = el('div');
-        row.append(el('span', s.querySelector('span')?.textContent || ''), el('b', s.querySelector('b')?.textContent || ''));
-        runs.append(row);
-      });
-    }).observe(stats, { childList: true });
+  build(); update();
+  window.addEventListener('resize', () => { build(); update(); });
+  if (!REDUCED) onScrollFrame(update);
+}
+
+function roll() {
+  const n = $('roll');
+  if (!n) return;
+  const txt = n.dataset.t, ab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  n.textContent = '';
+  const cols = [];
+  [...txt].forEach((ch, i) => {
+    const c = el('span', null, 'c'), col = el('i');
+    const turns = ch === ' ' || ch === '/' ? 0 : 8;
+    for (let k = 0; k < turns; k++) col.append(el('b', ab[Math.floor(Math.random() * ab.length)]));
+    col.append(el('b', ch === ' ' ? '\u00a0' : ch));
+    col._n = turns; col.style.transitionDelay = `${i * 45}ms`;
+    c.append(col); n.append(c); cols.push(col);
+    col.style.transform = `translateY(0)`;
+  });
+  const go = () => cols.forEach((c) => { c.style.transform = `translateY(${-c._n * 1.1}em)`; });
+  if (REDUCED || !('IntersectionObserver' in window)) { cols.forEach((c) => { c.style.transition = 'none'; }); go(); return; }
+  const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { go(); io.disconnect(); } }, { threshold: 0.7 });
+  io.observe(n);
+}
+
+function footerReveal() {
+  const f = $('foot');
+  if (!f) return;
+  const inner = f.firstElementChild;
+  const upd = () => {
+    const r = f.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (window.innerHeight - r.top) / r.height));
+    inner.style.transform = `translate3d(0,${-50 * (1 - p)}%,0)`;
+  };
+  upd();
+  if (!REDUCED) onScrollFrame(upd);
+  window.addEventListener('resize', upd);
+}
+
+function barcode() {
+  const b = $('barcode');
+  if (!b) return;
+  let seed = 7, x = 0, bars = '';
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  while (x < 190) {
+    const w = 1 + Math.floor(rnd() * 4);
+    if (rnd() > 0.4) bars += `<rect x="${x}" y="0" width="${w}" height="60"/>`;
+    x += w + 1 + Math.floor(rnd() * 2);
   }
+  b.innerHTML = `<svg viewBox="0 0 190 60" preserveAspectRatio="none" aria-hidden="true">${bars}</svg>`;
 }
 
-/* Highlight the nav link of the section in view. */
-function navSpy() {
-  const links = [...document.querySelectorAll('.top nav a')];
-  const map = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
-  if (!('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      links.forEach((a) => a.classList.remove('on'));
-      map.get(e.target.id)?.classList.add('on');
-    }
-  }, { rootMargin: '-45% 0px -50% 0px' });
-  map.forEach((_, id) => { const s = document.getElementById(id); if (s) io.observe(s); });
+function clock() {
+  const c = $('clock');
+  if (!c) return;
+  const tick = () => { c.textContent = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }); };
+  tick(); setInterval(tick, 30000);
 }
 
-function initRelay() { aurora(); bindHero(); navSpy(); }
+function initVisuals() { heroGL(); parallax(); roll(); footerReveal(); barcode(); clock(); }
 
 /* ---- başlangıç ---- */
 document.documentElement.classList.add('js');
@@ -375,8 +424,8 @@ async function load() {
 }
 
 $('retry').addEventListener('click', load);
-initRelay();
 initScroll();
 initReveal();
 initGuestbook(CONFIG.workerUrl);
+initVisuals();
 load();

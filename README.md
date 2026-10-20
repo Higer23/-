@@ -1,13 +1,13 @@
 # -
 
-Kişisel GitHub profil puanlama sitesi. Statik, çerçevesiz, GitHub Pages üzerinde. PC ve mobil tek tasarım (responsive).
+Kişisel GitHub profil puanlama sitesi. Statik, çerçevesiz, GitHub Pages üzerinde. Atelier "Collage" tarzı tasarım; PC ve mobil tek tasarım (responsive). Görseller Picsum (sabit tohum) ve GitHub avatarından gelir.
 
 ## Yapı
 
 ```
 index.html              Ana sayfa
 assets/style.css        Tüm tasarım (PC + mobil)
-assets/app.js           Tüm site kodu (veri, çizim, aurora, kaydırma, defter)
+assets/app.js           Tüm site kodu (veri, WebGL hero, paralaks kolaj, harf dönüşü, defter)
 assets/score.js         Saf puan mantığı (testlenir)
 assets/img/avatar-fallback.svg  Avatar yüklenemezse yedek
 tests/score.test.mjs    Puan birim testleri

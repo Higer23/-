@@ -1,163 +1,139 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#050605">
-  <title>Higer23 · GitHub Puanı ve Hikâyem</title>
-  <meta name="description" content="Higer23'ün GitHub projeleri, gelişim hikâyesi ve açık verilerle hesaplanan puanı.">
-  <link rel="canonical" href="https://higer23.github.io/-/">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Higer23 · GitHub Puanı">
-  <meta property="og:description" content="Projeler, gelişim hikâyesi ve GitHub verileri.">
-  <meta property="og:url" content="https://higer23.github.io/-/">
-  <meta property="og:locale" content="tr_TR">
-  <meta name="twitter:card" content="summary">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfilePage","mainEntity":{"@type":"Person","name":"Higer23","sameAs":["https://github.com/Higer23"],"description":"Kod yazmayı öğrenen genç bir geliştirici."}}</script>
-  <link rel="preconnect" href="https://api.github.com" crossorigin>
-  <link rel="preconnect" href="https://avatars.githubusercontent.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="assets/style.css">
-  <script type="module" src="assets/app.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#000000">
+<title>Higer23 · GitHub Puanı ve Hikâyem</title>
+<meta name="description" content="Higer23'ün GitHub projeleri, gelişim hikâyesi ve açık verilerle hesaplanan puanı.">
+<link rel="canonical" href="https://higer23.github.io/-/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Higer23 · GitHub Puanı">
+<meta property="og:description" content="Projeler, gelişim hikâyesi ve GitHub verileri.">
+<meta property="og:url" content="https://higer23.github.io/-/">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfilePage","mainEntity":{"@type":"Person","name":"Higer23","sameAs":["https://github.com/Higer23"],"description":"Kod yazmayı öğrenen genç bir geliştirici."}}</script>
+<link rel="preconnect" href="https://api.github.com" crossorigin>
+<link rel="preconnect" href="https://avatars.githubusercontent.com" crossorigin>
+<link rel="preconnect" href="https://picsum.photos" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script type="module" src="assets/app.js"></script>
 </head>
 <body>
-  <canvas id="aurora" aria-hidden="true"></canvas>
-  <div class="vignette" aria-hidden="true"></div>
-  <a class="skip" href="#main">İçeriğe geç</a>
-  <div class="progress" id="progress" aria-hidden="true"></div>
+<a class="skip" href="#main">İçeriğe geç</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
 
-  <header class="top">
-    <a class="brand" href="#top"><span class="logo" aria-hidden="true">»</span>Higer23</a>
-    <nav aria-label="Ana gezinme">
-      <a href="#hakkimda">Hikâyem</a><a href="#projeler">Projeler</a><a href="#puan">Puan</a><a href="#elestiri">Gelişim</a><a href="#destek">Destek</a>
-    </nav>
-    <div class="top-r">
-      <span class="pill status-pill"><i class="dot"></i>canlı veri</span>
-      <a class="btn lime sm" href="https://github.com/Higer23" target="_blank" rel="noopener">GitHub</a>
+<header class="hud">
+  <div class="r"><a href="#top">higer23.github.io</a><nav class="dnav" aria-label="Ana gezinme"><a href="#hakkimda">Hikâye</a><a href="#projeler">Projeler</a><a href="#puan">Puan</a><a href="#elestiri">Gelişim</a><a href="#destek">Destek</a></nav><a href="https://github.com/Higer23" target="_blank" rel="noopener">github.com/Higer23</a></div>
+  <div class="r mid" aria-hidden="true"><span>+</span><span>+</span><span>+</span></div>
+  <div class="r"><span>@Higer23</span><nav class="mnav" aria-label="Kısa gezinme"><a href="#hakkimda">Hikâye</a><a href="#projeler">Projeler</a><a href="#destek">Destek</a></nav><span id="clock" class="dclock">—</span><span>2026</span></div>
+</header>
+
+<main id="main">
+<section class="hero" id="top" aria-labelledby="hero-t">
+  <img class="bg" id="heroImg" src="https://picsum.photos/seed/higer-night-hero/1920/1200" alt="" crossorigin="anonymous" fetchpriority="high">
+  <canvas class="bg gl" id="heroGl" aria-hidden="true"></canvas>
+  <div class="in">
+    <h1 class="mega" id="hero-t"><span>Higer23</span><span class="serif">(dev)</span></h1>
+    <p class="up"><span id="name">Yükleniyor…</span></p>
+    <p class="up sm" id="bio"></p>
+    <p id="status" class="status" role="status"></p>
+    <button id="retry" class="btn sm" type="button" hidden>Tekrar dene</button>
+  </div>
+</section>
+
+<section class="gal" id="gal" aria-label="Görsel kolaj">
+  <div class="rollwrap"><p class="roll" id="roll" data-t="HIGER23 / 2026" aria-label="Higer23 / 2026">HIGER23 / 2026</p></div>
+  <div class="col"><div class="track"><img src="https://picsum.photos/seed/higer-code-1/900/720" alt="" loading="lazy" crossorigin="anonymous"><img src="https://picsum.photos/seed/higer-code-2/900/720" alt="" loading="lazy" crossorigin="anonymous"><img src="https://picsum.photos/seed/higer-code-3/900/720" alt="" loading="lazy" crossorigin="anonymous"></div></div>
+  <div class="col"><div class="track"><img src="https://picsum.photos/seed/higer-code-1/900/720" alt="" loading="lazy" crossorigin="anonymous"><img src="https://picsum.photos/seed/higer-code-2/900/720" alt="" loading="lazy" crossorigin="anonymous"><img src="https://picsum.photos/seed/higer-code-3/900/720" alt="" loading="lazy" crossorigin="anonymous"></div></div>
+  <div class="col"><div class="track"><img src="https://picsum.photos/seed/higer-code-1/900/720" alt="" loading="lazy" crossorigin="anonymous"><img src="https://picsum.photos/seed/higer-code-2/900/720" alt="" loading="lazy" crossorigin="anonymous"><img src="https://picsum.photos/seed/higer-code-3/900/720" alt="" loading="lazy" crossorigin="anonymous"></div></div>
+</section>
+
+<div class="page">
+<section class="sec reveal" id="puan" aria-labelledby="puan-h">
+  <p class="lbl"><span>(01)</span><span>Açık veriler</span></p>
+  <h2 id="puan-h">Rakamların <em>arkasındaki</em> emek.</h2>
+  <div class="grid2">
+    <div>
+      <div class="bigscore"><span class="g" id="grade" role="img" aria-label="GitHub puan notu">–</span><span class="of"><span id="score">–</span>/100</span></div>
+      <p class="muted">100 üzerinden puan, yalnızca GitHub'daki açık verilerden hesaplanır.</p>
+      <div id="breakdown"></div>
     </div>
-  </header>
+    <div class="stats" id="stats"></div>
+  </div>
+  <noscript><p class="muted">JavaScript kapalıyken canlı veriler gösterilemez. Profil: github.com/Higer23</p></noscript>
+</section>
 
-  <main id="main">
-    <section class="hero" id="top" aria-labelledby="name">
-      <div class="hero-copy">
-        <p class="badge mono"><i class="dot"></i>canlı veri / github rest api</p>
-        <h1><span id="name">Yükleniyor…</span><br><em>öğren, üret, yinele.</em></h1>
-        <p id="bio" class="lead"></p>
-        <div class="ctas">
-          <a class="btn lime" href="#projeler">Çalışmalarımı keşfet</a>
-          <a class="btn" href="https://github.com/Higer23" target="_blank" rel="noopener">▸ GitHub profilim</a>
-        </div>
-        <p id="status" class="status" role="status"></p>
-        <button id="retry" class="btn sm" type="button" hidden>Tekrar dene</button>
-      </div>
+<section class="sec reveal" id="hakkimda" aria-labelledby="hakkimda-h">
+  <p class="lbl"><span>(02)</span><span>Yolculuk</span></p>
+  <h2 id="hakkimda-h">Henüz yolun başında. <em>Ve bu güzel bir şey.</em></h2>
+  <div class="grid2 about">
+    <img id="avatar" class="portrait" src="https://avatars.githubusercontent.com/u/208321685?v=4&s=800" alt="Higer23 profil fotoğrafı" width="640" height="640" loading="lazy">
+    <div class="story">
+      <p class="lead2">Ben 16 yaşındayım ve kod yazmayı öğreniyorum. Python ile başladım; şimdi Bash, web ve güvenlik araçlarına doğru ilerliyorum.</p>
+      <p>Kendimi bir script kiddie olarak görüyorum: hazır araçları ve scriptleri inceleyip değiştirerek öğreniyorum. Hedefim, bu alışkanlığı kendi kodumu yazmaya ve temelleri sağlamlaştırmaya çevirmek.</p>
+      <p>Elimdeki cihazlar bu iş için pek yeterli değil. Yavaş bir telefon ve sınırlı bir bilgisayarla büyük projeleri derlemek ve bazı araçları denemek zorlaşıyor. Yine de elimden geldiğince öğrenmeye devam ediyorum.</p>
+      <p>Bu sayfa GitHub izimin canlı bir özeti. Puanım burada hesaplanıyor, eleştirilerim yazılıyor, hikâyem zamanla genişleyecek.</p>
+    </div>
+  </div>
+</section>
 
-      <div class="hero-card glass" aria-label="Canlı GitHub puan özeti">
-        <div class="hc-head mono"><span>github.com/Higer23</span><span>7 metrik</span><span class="run">running</span></div>
-        <div class="hc-id">
-          <img id="avatar" class="avatar" src="assets/img/avatar-fallback.svg" width="64" height="64" alt="Higer23 profil fotoğrafı" fetchpriority="high">
-          <div><b>@Higer23</b><span class="muted mono">kişisel geliştirici arşivi</span></div>
-        </div>
-        <div class="hc-score">
-          <div class="grade" id="grade" role="img" aria-label="GitHub puan notu">–</div>
-          <div><span class="muted mono">toplam puan</span><br><b><span id="score">–</span><span class="muted" style="font-size:1rem">/100</span></b>
-            <div class="meter"><i id="meter"></i></div></div>
-        </div>
-        <div class="runs mono" id="runs" aria-hidden="true"></div>
-      </div>
-    </section>
+<section class="sec reveal" id="projeler" aria-labelledby="projeler-h">
+  <p class="lbl"><span>(03)</span><span>Seçilmiş işler</span></p>
+  <h2 id="projeler-h">Fikirden <em>çalışan</em> koda.</h2>
+  <div class="projs">
+    <a class="proj" href="https://github.com/Higer23/HigerZero" rel="noopener"><span class="n">01 · Security · Bash</span><h3>HigerZero</h3><p>Bash ile yazılmış kablosuz ağ güvenlik denetim çerçevesi. Yalnızca kendi ağlarında ve yazılı izin verilen ortamlarda kullanılmalıdır.</p><span class="go">Depoyu incele ↗</span></a>
+    <a class="proj" href="https://github.com/Higer23/kontakt-notizbuch" rel="noopener"><span class="n">02 · Web app · Cloudflare</span><h3>Kontakt-Notizbuch</h3><p>Kişisel kişi ve not uygulaması. Cloudflare Workers, D1 ve R2 üzerinde çalışıyor; admin girişi ve giriş kayıtları var.</p><span class="go">Depoyu incele ↗</span></a>
+    <a class="proj" href="https://github.com/Higer23?tab=repositories" rel="noopener"><span class="n">03 · Hepsi</span><h3>Tüm depolar</h3><p>Diğer denemeler ve küçük araçlar GitHub profilimde duruyor.</p><span class="go">GitHub'da aç ↗</span></a>
+  </div>
+</section>
 
-    <section class="sec reveal" id="puan" aria-labelledby="puan-h">
-      <div class="sec-head">
-        <div><p class="chip"><i class="dot"></i>01 / açık veriler</p><h2 id="puan-h">Rakamların <em>arkasındaki</em> emek.</h2></div>
-        <p class="muted">100 üzerinden puan, yalnızca GitHub'daki açık verilerden hesaplanır.</p>
-      </div>
-      <div class="bento">
-        <div class="card glass"><p class="card-t mono">puan dağılımı</p><div id="breakdown"></div></div>
-        <div class="card glass"><p class="card-t mono">profil sayıları</p><div class="stats" id="stats"></div></div>
-      </div>
-      <noscript><p class="muted">JavaScript kapalıyken canlı veriler gösterilemez. Profil: github.com/Higer23</p></noscript>
-    </section>
+<section class="sec reveal" id="elestiri" aria-labelledby="diller-h">
+  <p class="lbl"><span>(04)</span><span>Araç kutusu ve sonraki adım</span></p>
+  <h2 id="diller-h">Depolardaki <em>diller.</em></h2>
+  <div class="grid2">
+    <div id="langs"></div>
+    <div>
+      <h3>İyileştirme, bitmeyen bir süreç.</h3>
+      <p class="muted">Her madde GitHub'daki gerçek bir sinyale bağlı. Bunlar bir sonraki adımlar için.</p>
+      <ul class="crit" id="critique"></ul>
+    </div>
+  </div>
+</section>
 
-    <section class="sec reveal" id="hakkimda" aria-labelledby="hakkimda-h">
-      <div class="sec-head">
-        <div><p class="chip"><i class="dot"></i>02 / yolculuk</p><h2 id="hakkimda-h">Henüz yolun başında. <em>Ve bu güzel bir şey.</em></h2></div>
-      </div>
-      <div class="story">
-        <div class="card glass"><p class="lead2">Ben 16 yaşındayım ve kod yazmayı öğreniyorum. Python ile başladım; şimdi Bash, web ve güvenlik araçlarına doğru ilerliyorum.</p></div>
-        <div class="card glass">
-          <p>Kendimi bir script kiddie olarak görüyorum: hazır araçları ve scriptleri inceleyip değiştirerek öğreniyorum. Hedefim, bu alışkanlığı kendi kodumu yazmaya ve temelleri sağlamlaştırmaya çevirmek.</p>
-          <p>Elimdeki cihazlar bu iş için pek yeterli değil. Yavaş bir telefon ve sınırlı bir bilgisayarla büyük projeleri derlemek ve bazı araçları denemek zorlaşıyor. Yine de elimden geldiğince öğrenmeye devam ediyorum.</p>
-          <p>Bu sayfa GitHub izimin canlı bir özeti. Puanım burada hesaplanıyor, eleştirilerim yazılıyor, hikâyem zamanla genişleyecek.</p>
-        </div>
-      </div>
-    </section>
+<section class="sec reveal" id="destek" aria-labelledby="destek-h">
+  <div class="cta">
+    <p class="lbl"><span>(05)</span><span>Destek</span></p>
+    <h2 id="destek-h">Bir sonraki deneyi <em>birlikte</em> mümkün kılalım.</h2>
+    <p class="ctap">Projelerin ayakta kalmasına destek olabilirsin. Bağış tamamen gönüllüdür; sayfanın hiçbir özelliği bağışa bağlı değildir. Teşekkür ederim.</p>
+    <div class="ctas"><a class="btn inv" href="https://opencollective.com/kontakt-notizbuch" target="_blank" rel="noopener">Open Collective ↗</a><a class="btn inv ghost" href="https://github.com/sponsors/Higer23" target="_blank" rel="noopener">GitHub Sponsors ↗</a></div>
+  </div>
+</section>
 
-    <section class="sec reveal" id="projeler" aria-labelledby="projeler-h">
-      <div class="sec-head">
-        <div><p class="chip"><i class="dot"></i>03 / seçilmiş işler</p><h2 id="projeler-h">Fikirden <em>çalışan</em> koda.</h2></div>
-        <p class="muted">Öğrenirken ürettiğim, herkese açık projeler.</p>
-      </div>
-      <div class="projs">
-        <article class="proj glass hl"><p class="chip mono">security · bash</p><h3>HigerZero</h3><p class="muted">Bash ile yazılmış kablosuz ağ güvenlik denetim çerçevesi. Yalnızca kendi ağlarında ve yazılı izin verilen ortamlarda kullanılmalıdır.</p><a class="more" href="https://github.com/Higer23/HigerZero" rel="noopener">Depoyu incele ↗</a></article>
-        <article class="proj glass"><p class="chip mono">web app · cloudflare</p><h3>Kontakt-Notizbuch</h3><p class="muted">Kişisel kişi ve not uygulaması. Cloudflare Workers, D1 ve R2 üzerinde çalışıyor; admin girişi ve giriş kayıtları var.</p><a class="more" href="https://github.com/Higer23/kontakt-notizbuch" rel="noopener">Depoyu incele ↗</a></article>
-        <article class="proj glass"><p class="chip mono">hepsi</p><h3>Tüm depolar</h3><p class="muted">Diğer denemeler ve küçük araçlar GitHub profilimde duruyor.</p><a class="more" href="https://github.com/Higer23?tab=repositories" rel="noopener">GitHub'da aç ↗</a></article>
-      </div>
-    </section>
+<section class="sec reveal" id="defter" aria-labelledby="defter-h" hidden>
+  <p class="lbl"><span>(06)</span><span>Topluluk</span></p>
+  <h2 id="defter-h">Bir <em>not</em> bırak.</h2>
+  <form id="gbForm" novalidate><label for="gbName">Adın</label><input id="gbName" name="name" maxlength="40" autocomplete="name" required><label for="gbMsg">Mesajın</label><textarea id="gbMsg" name="message" rows="3" maxlength="500" required></textarea><button class="btn" type="submit">Gönder</button><p id="gbStatus" class="status" role="status"></p></form>
+  <div id="gbList"></div>
+</section>
+</div>
+</main>
 
-    <section class="sec reveal" aria-labelledby="diller-h">
-      <div class="sec-head">
-        <div><p class="chip"><i class="dot"></i>04 / araç kutusu</p><h2 id="diller-h">Depolardaki <em>diller.</em></h2></div>
-      </div>
-      <div class="two">
-        <div class="card glass"><div id="langs"></div></div>
-        <div class="card glass" id="elestiri" aria-labelledby="elestiri-h">
-          <p class="chip"><i class="dot"></i>05 / bir sonraki adım</p>
-          <h3 id="elestiri-h">İyileştirme, bitmeyen bir süreç.</h3>
-          <p class="muted" style="margin:0 0 16px;font-size:.93rem">Her madde GitHub'daki gerçek bir sinyale bağlı. Bunlar bir sonraki adımlar için.</p>
-          <ul class="crit" id="critique"></ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="sec reveal" id="destek" aria-labelledby="destek-h">
-      <div class="cta">
-        <div class="cta-l glass">
-          <div><span class="brand"><span class="logo" aria-hidden="true">»</span>Higer23</span><p class="muted" style="margin:14px 0 0">Bağımsız geliştirici · açık kaynak yolculuğu</p></div>
-          <div class="big" aria-hidden="true">»</div>
-        </div>
-        <div class="cta-r">
-          <p class="chip mono">06 / destek</p>
-          <h2 id="destek-h">Bir sonraki deneyi <em>birlikte</em> mümkün kılalım.</h2>
-          <p>Projelerin ayakta kalmasına destek olabilirsin. Bağış tamamen gönüllüdür; sayfanın hiçbir özelliği bağışa bağlı değildir. Teşekkür ederim.</p>
-          <div class="ctas" style="margin:0">
-            <a class="btn dark" href="https://opencollective.com/kontakt-notizbuch" target="_blank" rel="noopener">Open Collective ↗</a>
-            <a class="btn" href="https://github.com/sponsors/Higer23" target="_blank" rel="noopener">GitHub Sponsors ↗</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="sec reveal" id="defter" aria-labelledby="defter-h" hidden>
-      <div class="sec-head">
-        <div><p class="chip"><i class="dot"></i>07 / topluluk</p><h2 id="defter-h">Bir <em>not</em> bırak.</h2></div>
-        <p class="muted">Kayıtlar Cloudflare D1 veritabanında tutulur.</p>
-      </div>
-      <div class="card glass">
-        <form id="gbForm" novalidate><label for="gbName">adın</label><input id="gbName" name="name" maxlength="40" autocomplete="name" required><label for="gbMsg">mesajın</label><textarea id="gbMsg" name="message" rows="3" maxlength="500" required></textarea><button class="submit" type="submit">Gönder</button><p id="gbStatus" class="status" role="status"></p></form>
-        <div id="gbList"></div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div><span class="brand"><span class="logo" aria-hidden="true">»</span>Higer23</span><p>Öğren, üret, yinele. Veriler GitHub REST API üzerinden canlı çekilir; sayfa GitHub Pages üzerinde statik çalışır.</p></div>
-    <div><h4>Sayfa</h4><a href="#hakkimda">Hikâyem</a><a href="#puan">Puan</a><a href="#elestiri">Gelişim</a></div>
-    <div><h4>Projeler</h4><a href="https://github.com/Higer23/HigerZero" rel="noopener">HigerZero</a><a href="https://github.com/Higer23/kontakt-notizbuch" rel="noopener">Kontakt-Notizbuch</a></div>
-    <div><h4>Bağlantılar</h4><a href="https://github.com/Higer23" rel="noopener">GitHub</a><a href="https://github.com/sponsors/Higer23" rel="noopener">Sponsors</a><a href="https://opencollective.com/kontakt-notizbuch" rel="noopener">Open Collective</a></div>
-    <div class="legal"><span><i class="dot"></i> tüm sistemler normal</span><span>Higer23 · tasarım / 2026</span></div>
-  </footer>
+<footer id="foot">
+  <div class="fi">
+    <img class="bg" src="https://picsum.photos/seed/higer-footer/1920/1200" alt="" loading="lazy" crossorigin="anonymous">
+    <div class="fc">
+      <div id="barcode" class="barcode"></div>
+      <p class="up">Öğren, üret, yinele. Veriler GitHub REST API üzerinden canlı çekilir; sayfa GitHub Pages üzerinde statik çalışır.</p>
+      <div class="mega f"><span>Higer23</span><span class="serif">(dev)</span></div>
+      <p class="links"><a href="https://github.com/Higer23" rel="noopener">GitHub</a><a href="https://github.com/sponsors/Higer23" rel="noopener">Sponsors</a><a href="https://opencollective.com/kontakt-notizbuch" rel="noopener">Open Collective</a><span>tasarım / 2026</span></p>
+    </div>
+  </div>
+</footer>
 </body>
 </html>
