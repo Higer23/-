@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang='tr'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Higer23 - GitHub Puani</title>
+<style>
+:root{color-scheme:dark;--bg:#000;--card:#0a0a0a;--line:#1f1f1f;--text:#eee;--mute:#8a8a8a;--acc:#ff7a1a;--bad:#ff4d4d}
+*{box-sizing:border-box}
+body{margin:0;background:#000;color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+h1{letter-spacing:-.02em;margin:0}
+h2{font-size:22px;margin:0 0 14px;color:#fff}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin:20px 0}
+.hero{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.avatar{width:96px;height:96px;border-radius:50%;border:1px solid var(--line);background:#000}
+.muted{color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.stat{background:#000;border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat b{display:block;font-size:26px;color:#fff}
+.score{margin-left:auto;text-align:center}
+.grade{width:130px;height:130px;border-radius:50%;border:6px solid var(--acc);display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:800;color:#fff;margin:0 auto 8px}
+.bar{height:8px;background:#1a1a1a;border-radius:8px;overflow:hidden;margin:6px 0 14px}
+.bar i{display:block;height:100%;background:var(--acc)}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:15px}
+ul{padding-left:20px}
+li{margin:10px 0}
+a{color:var(--acc)}
+.btn{display:inline-block;padding:10px 16px;border:1px solid var(--acc);border-radius:10px;text-decoration:none;color:#fff;margin:6px 6px 0 0}
+input,textarea{width:100%;background:#000;color:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;margin:6px 0}
+button{background:var(--acc);color:#000;border:0;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer}
+.err{color:var(--bad)}
+.entry{border-top:1px solid var(--line);padding:12px 0}
+</style>
+</head>
+<body>
+<div class='wrap'>
+<header class='hero'>
+<img class='avatar' id='avatar' alt=''>
+<div>
+<h1 id='name'>Yukleniyor...</h1>
+<div class='muted' id='login'></div>
+<p id='bio' style='max-width:520px'></p>
+</div>
+<div class='score'>
+<div class='grade' id='grade'>-</div>
+<div class='muted'>GitHub Puani <span id='score'></span>/100</div>
+</div>
+</header>
+<div id='status' class='muted'></div>
+
+<section><h2>Canli GitHub istatistikleri</h2><div class='grid' id='stats'></div></section>
+<section><h2>Puan dokumu</h2><div id='breakdown'></div></section>
+<section><h2>Diller (depolara gore)</h2><div id='langs'></div></section>
+<section><h2>Kisa hayat hikayem</h2><div id='story'></div></section>
+<section><h2>Elestiri</h2><p class='muted'>Veriye dayali, yapici notlar. Bunlar bir sonraki adimlar icin.</p><ul id='critique'></ul></section>
+<section><h2>Bagis</h2><p class='muted'>Projelerin ayakta kalmasina destek olabilirsin. Tesekkurler!</p><div id='donate'></div></section>
+<section id='guestbookSec' hidden><h2>Ziyaretci defteri</h2><p class='muted'>Kayitlar Cloudflare D1 veritabaninda tutulur.</p>
+<form id='gbForm'><input id='gbName' placeholder='Adin' maxlength='40' required><textarea id='gbMsg' rows='3' placeholder='Mesajin' maxlength='500' required></textarea><button type='submit'>Gonder</button></form>
+<div id='gbList'></div></section>
+<footer class='muted' style='margin-top:30px;font-size:14px'>Veriler GitHub REST API uzerinden canli cekilir. Sayfa GitHub Pages'te, ziyaretci defteri Cloudflare Worker + D1 ile calisir.</footer>
+</div>
+
+<script>
+const CONFIG={
+  user:'Higer23',
+  workerUrl:'',
+  sponsorsUrl:'https://github.com/sponsors/Higer23',
+  coffeeUrl:''
+};
+const STORY=[
+  'Kodla tanismam Python ile basladi ve bugun deneyimli bir gelistiriciyim. E-posta pazarlama projeleri uzerinde calisiyorum.',
+  'Kablosuz ag guvenligine ilgim sonucunda HigerZero adli, Bash tabanli bir denetim cercevesi gelistirdim. Amacim bu alani hem ogrenmek hem de anlasilir hale getirmek.',
+  'Bu sayfa GitHub izimin canli bir ozeti. Hikayenin geri kalanini zamanla buraya ekleyecegim.'
+];
+
+const $=id=>document.getElementById(id);
+const DAY=86400000;
+
+async function gh(path){
+  const r=await fetch('https://api.github.com'+path,{headers:{Accept:'application/vnd.github+json'}});
+  if(!r.ok) throw new Error('GitHub '+r.status);
+  return r.json();
+}
+
+function el(tag,text,cls){const e=document.createElement(tag);if(text!=null)e.textContent=text;if(cls)e.className=cls;return e;}
+
+function streaks(days){
+  let longest=0,run=0;
+  days.forEach(d=>{if(d.count>0){run++;if(run>longest)longest=run;}else run=0;});
+  let i=days.length-1,current=0;
+  if(i>=0&&days[i].count===0)i--;
+  while(i>=0&&days[i].count>0){current++;i--;}
+  return {current,longest};
+}
+
+function grade(s){return s>=90?'A+':s>=80?'A':s>=70?'B':s>=60?'C':s>=50?'D':'E';}
+
+function render(u,repos,contrib){
+  const now=Date.now();
+  const days=(contrib.contributions||[]);
+  const total=days.reduce((a,d)=>a+(d.count||0),0);
+  const {current,longest}=streaks(days);
+  const stars=repos.reduce((a,r)=>a+r.stargazers_count,0);
+  const owned=repos.filter(r=>!r.fork);
+  const langCount={};
+  owned.forEach(r=>{if(r.language)langCount[r.language]=(langCount[r.language]||0)+1;});
+  const langs=Object.entries(langCount).sort((a,b)=>b[1]-a[1]);
+  const langSum=langs.reduce((a,l)=>a+l[1],0)||1;
+  const active30=repos.filter(r=>now-new Date(r.pushed_at).getTime()<30*DAY).length;
+  const noDesc=owned.filter(r=>!r.description).length;
+
+  const parts=[
+    {label:'Katki (son 1 yil)',val:Math.min(total/500,1)*25,cap:25,txt:total+' katki'},
+    {label:'Guncel seri',val:Math.min(current/7,1)*5,cap:5,txt:current+' gun'},
+    {label:'En uzun seri',val:Math.min(longest/30,1)*10,cap:10,txt:longest+' gun'},
+    {label:'Public depo',val:Math.min(u.public_repos/20,1)*15,cap:15,txt:u.public_repos+' depo'},
+    {label:'Yildiz',val:Math.min(stars/100,1)*15,cap:15,txt:stars+' yildiz'},
+    {label:'Takipci',val:Math.min(u.followers/50,1)*10,cap:10,txt:u.followers+' takipci'},
+    {label:'Profil tamligi',val:(u.bio?4:0)+(u.blog?3:0)+((u.location||u.company)?3:0),cap:10,txt:(u.bio?'bio var':'bio yok')+', '+(u.blog?'site var':'site yok')},
+    {label:'Dil cesitliligi',val:Math.min(langs.length/4,1)*10,cap:10,txt:langs.length+' dil'}
+  ];
+  const score=Math.round(parts.reduce((a,p)=>a+p.val,0));
+
+  $('avatar').src=u.avatar_url;
+  $('name').textContent=u.name||u.login;
+  $('login').textContent='@'+u.login;
+  $('bio').textContent=u.bio||'';
+  $('score').textContent=score;
+  $('grade').textContent=grade(score);
+  document.title='Higer23 - GitHub Puani '+score+'/100';
+
+  const statsList=[
+    ['Takipci',u.followers],['Public depo',u.public_repos],['Toplam yildiz',stars],
+    ['Katki (1 yil)',total],['Guncel seri',current+' gun'],['En uzun seri',longest+' gun'],['Son 30 gun aktif depo',active30]
+  ];
+  const sg=$('stats');
+  statsList.forEach(([k,v])=>{const d=el('div',null,'stat');d.append(el('b',String(v)),el('span',k,'muted'));sg.append(d);});
+
+  const bd=$('breakdown');
+  parts.forEach(p=>{
+    const row=el('div',null,'row');
+    row.append(el('span',p.label),el('span',p.txt+'  ('+p.val.toFixed(1)+'/'+p.cap+')','muted'));
+    const bar=el('div',null,'bar');const fill=el('i');fill.style.width=Math.min(100,p.val/p.cap*100)+'%';bar.append(fill);
+    bd.append(row,bar);
+  });
+
+  const lg=$('langs');
+  if(!langs.length) lg.append(el('p','Dil verisi yok.','muted'));
+  langs.slice(0,8).forEach(([name,n])=>{
+    const row=el('div',null,'row');row.append(el('span',name),el('span',Math.round(n/langSum*100)+'%','muted'));
+    const bar=el('div',null,'bar');const fill=el('i');fill.style.width=(n/langSum*100)+'%';bar.append(fill);
+    lg.append(row,bar);
+  });
+
+  const st=$('story');
+  STORY.forEach(t=>st.append(el('p',t)));
+
+  const cr=$('critique');
+  const notes=[];
+  if(!u.bio) notes.push('Profil aciklamasi (bio) bos. Ne yaptigini ve neye ilgi duydugunu anlatan tek bir cumle eklemek ilk izlenimi cok degistirir.');
+  if(owned.length && noDesc/owned.length>=0.3) notes.push('Depolarinin yaklasik %'+Math.round(noDesc/owned.length*100)+'i aciklamasiz. Her depoya kisa bir aciklama, ziyaretcinin ne gorecegini hemen anlatir.');
+  if(langs.length && langs[0][1]/langSum>0.8) notes.push('Dil dagilimi tek tarafa yatik ('+langs[0][0]+' baskin). Pinned repolarda Python ve Shell projelerini one cikarmak yetenek cesitliligini gosterir.');
+  if(longest>current*3 && longest>=5) notes.push('Katki serisi kopuk: en uzun seri '+longest+' gun, guncel seri '+current+' gun. Haftada birkac kucuk commit, arada buyuk bir patlamadan daha surdurulebilir.');
+  if(stars<10) notes.push('Yildiz sayisi dusuk. README icine ekran goruntusu, kurulum adimi ve kisa bir demo eklemek yildiz almayi kolaylastirir.');
+  if(u.followers<10) notes.push('Takipci sayisi az. Bir profil README\'si ve duzenli guncellemeler gorunurlugu artirir.');
+  if(active30===0) notes.push('Son 30 gunde hic push yok. Kucuk bir iyilestirme bile profili canli tutar.');
+  notes.push('Guclu yan: '+Math.max(0,Math.round((now-new Date(u.created_at).getTime())/(365*DAY)*10)/10)+' yillik hesap, '+u.public_repos+' public depo ve duzenli gelistirme sinyali.');
+  notes.forEach(n=>cr.append(el('li',n)));
+
+  const dn=$('donate');
+  if(CONFIG.sponsorsUrl){const a=el('a', 'GitHub Sponsors','btn');a.href=CONFIG.sponsorsUrl;a.target='_blank';a.rel='noopener';dn.append(a);}
+  if(CONFIG.coffeeUrl){const a=el('a','Kahve ismarla','btn');a.href=CONFIG.coffeeUrl;a.target='_blank';a.rel='noopener';dn.append(a);}
+}
+
+async function loadGithub(){
+  try{
+    const [u,repos]=await Promise.all([gh('/users/'+CONFIG.user),gh('/users/'+CONFIG.user+'/repos?per_page=100&sort=pushed')]);
+    let contrib={contributions:[]};
+    try{const r=await fetch('https://github-contributions-api.jogruber.de/v4/'+CONFIG.user+'?y=last');if(r.ok)contrib=await r.json();}catch(e){}
+    $('status').textContent='';
+    render(u,repos,contrib);
+  }catch(e){
+    $('status').className='err';
+    $('status').textContent='Veri cekilemedi: '+e.message;
+  }
+}
+
+async function initGuestbook(){
+  if(!CONFIG.workerUrl) return;
+  $('guestbookSec').hidden=false;
+  const list=$('gbList');
+  async function refresh(){
+    list.textContent='';
+    try{
+      const r=await fetch(CONFIG.workerUrl+'/api/entries');
+      const items=await r.json();
+      items.forEach(it=>{const d=el('div',null,'entry');d.append(el('b',it.name),el('div',it.message),el('small',it.created_at,'muted'));list.append(d);});
+    }catch(e){list.append(el('p','Defter yuklenemedi.','err'));}
+  }
+  $('gbForm').addEventListener('submit',async ev=>{
+    ev.preventDefault();
+    const body={name:$('gbName').value,message:$('gbMsg').value};
+    const r=await fetch(CONFIG.workerUrl+'/api/entries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){$('gbForm').reset();refresh();}
+  });
+  refresh();
+}
+
+loadGithub();
+initGuestbook();
+</script>
+</body>
+</html>
