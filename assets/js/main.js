@@ -3,9 +3,9 @@ import { $ } from './utils.js';
 import { fetchGithub } from './github.js';
 import { computeScore } from './score.js';
 import { renderResults, setStatus } from './render.js';
-import { setupScene } from './scene.js';
 import { initScroll, initReveal } from './scroll.js';
 import { initGuestbook } from './guestbook.js';
+import { initRelay } from './relay.js';
 
 document.documentElement.classList.add('js');
 
@@ -21,8 +21,8 @@ async function load() {
 }
 
 $('retry').addEventListener('click', load);
+initRelay();
 initScroll();
 initReveal();
 initGuestbook(CONFIG.workerUrl);
-setupScene(CONFIG.threeUrl);
 load();

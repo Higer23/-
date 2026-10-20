@@ -6,17 +6,15 @@ Kişisel GitHub profil puanlama sitesi. Statik, çerçevesiz, GitHub Pages üzer
 
 ```
 index.html                 Ana sayfa
-assets/css/base.css        Tokenlar, tipografi, erişilebilirlik
-assets/css/layout.css      Üst çubuk, hero, bölüm düzeni
-assets/css/components.css  Düğme, kart, form, çubuk bileşenleri
+assets/css/relay.css       Relay tarzı koyu / limon tasarım sistemi
 assets/img/avatar-fallback.svg  Avatar yüklenemezse yedek
 assets/js/main.js          Giriş noktası
+assets/js/relay.js         Aurora arka planı, hero kartı, menü takibi
 assets/js/config.js        Kullanıcı adı, Worker URL, sürümler
 assets/js/github.js        GitHub ve katkı verisi (zaman aşımı, hata)
 assets/js/score.js         Saf puan mantığı (DOM ve ağ yok)
 assets/js/render.js        Sayfaya yazma (textContent)
 assets/js/scroll.js        Tek rAF döngüsü, bölüm girişleri
-assets/js/scene.js         Three.js 3D sahne (koşullu)
 assets/js/guestbook.js     Ziyaretçi defteri (Worker bağlıysa)
 assets/js/utils.js         Küçük yardımcılar
 tests/score.test.mjs       Puan birim testleri
