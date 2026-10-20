@@ -1,4 +1,4 @@
-/* Lightweight enhancement layer: device-specific CSS, scroll state and accessible reveals. */
+/* Lightweight enhancement layer: responsive mobile CSS, scroll progress and accessible reveals. */
 const mobileLayout = window.matchMedia('(max-width: 700px)');
 function syncDeviceLayout() {
   let link = document.getElementById('aether-mobile-css');
@@ -6,16 +6,17 @@ function syncDeviceLayout() {
     link = document.createElement('link');
     link.id = 'aether-mobile-css';
     link.rel = 'stylesheet';
-    link.href = 'assets/css/aether-mobile.css';
+    link.href = 'assets/css/aether-mobile.css?v=3';
     document.head.appendChild(link);
   } else if (!mobileLayout.matches && link) {
     link.remove();
+  } else if (mobileLayout.matches && link && !link.href.includes('v=3')) {
+    link.href = 'assets/css/aether-mobile.css?v=3';
   }
 }
 syncDeviceLayout();
 if (mobileLayout.addEventListener) mobileLayout.addEventListener('change', syncDeviceLayout);
 else mobileLayout.addListener(syncDeviceLayout);
-
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const progress = document.getElementById('progress');
 let scheduled = false;
@@ -30,7 +31,6 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 window.addEventListener('resize', updateProgress, { passive: true });
 updateProgress();
-
 const reveals = document.querySelectorAll('.reveal');
 if (!reducedMotion && 'IntersectionObserver' in window) {
   const observer = new IntersectionObserver((entries) => {
