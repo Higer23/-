@@ -15,6 +15,7 @@ type TurnstileApi = {
     },
   ) => string;
   remove: (id: string) => void;
+  reset: (id: string) => void;
 };
 
 declare global {
@@ -25,6 +26,7 @@ declare global {
 
 export default function EntranceGate({ children }: { children: ReactNode }) {
   const mountRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | undefined>(undefined);
   const [verified, setVerified] = useState(false);
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
@@ -36,13 +38,12 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       return;
     }
 
-    let widgetId: string | undefined;
     let cancelled = false;
 
     const mount = () => {
       if (cancelled || !mountRef.current || !window.turnstile) return;
 
-      widgetId = window.turnstile.render(mountRef.current, {
+      widgetIdRef.current = window.turnstile.render(mountRef.current, {
         sitekey: CONFIG.turnstileSiteKey,
         theme: "dark",
         appearance: "always",
@@ -94,7 +95,10 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
 
     return () => {
       cancelled = true;
-      if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current);
+        widgetIdRef.current = undefined;
+      }
     };
   }, []);
 
@@ -113,17 +117,15 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       const data = (await response.json()) as { success?: boolean };
 
       if (!response.ok || data.success !== true) {
-        throw new Error("Doğrulama başarısız oldu. Lütfen kontrolü yeniden deneyin.");
+        throw new Error("Verification failed");
       }
 
       setVerified(true);
     } catch {
       setToken("");
       setError("Robot kontrolü doğrulanamadı. İnternet bağlantısını kontrol edip yeniden deneyin.");
-      if (window.turnstile) {
-        // A fresh token is required after a failed verification.
-        const widget = document.querySelector<HTMLElement>("[data-turnstile-widget]");
-        if (widget) widget.replaceChildren();
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.reset(widgetIdRef.current);
       }
     } finally {
       setBusy(false);
@@ -171,7 +173,6 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
 
         <div
           ref={mountRef}
-          data-turnstile-widget
           style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}
         />
 
