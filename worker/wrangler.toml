@@ -1,8 +1,14 @@
 name = "higer-guestbook"
 main = "index.js"
-compatibility_date = "2026-01-01"
+compatibility_date = "2026-10-21"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "higer-guestbook"
 database_id = "REPLACE_WITH_D1_ID"
+
+[vars]
+ALLOWED_ORIGIN = "https://higer23.github.io"
+
+# Set ADMIN_PASSWORD as an encrypted Worker secret. Never put it in this file.
+# Example: wrangler secret put ADMIN_PASSWORD
