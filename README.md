@@ -1,37 +1,35 @@
 # -
 
-Kişisel GitHub profil puanlama sitesi. Statik, çerçevesiz, GitHub Pages üzerinde.
+Kişisel GitHub profil puanlama sitesi. React + TypeScript + Tailwind CSS, Vite ile derlenir ve GitHub Pages üzerinde statik çalışır.
 
 ## Yapı
 
 ```
-index.html                 Ana sayfa
-assets/css/silk.css        Tüm tasarım (tokenlar, arka plan, butonlar, arama, yükleniyor)
-assets/img/avatar-fallback.svg  Avatar yüklenemezse yedek
-assets/js/main.js          Giriş noktası
-assets/js/config.js        Kullanıcı adı, Worker URL, sürümler
-assets/js/silk.js          Silk Waves WebGL arka planı (mobilde düşük çözünürlük, 30 fps)
-assets/js/search.js        Proje / dil / istatistik arama
-assets/js/github.js        GitHub ve katkı verisi (zaman aşımı, hata)
-assets/js/score.js         Saf puan mantığı (DOM ve ağ yok)
-assets/js/render.js        Sayfaya yazma (textContent)
-assets/js/scroll.js        İlerleme çubuğu, bölüm girişleri
-assets/js/guestbook.js     Ziyaretçi defteri (Worker bağlıysa)
-assets/js/utils.js         Yardımcılar ve yükleniyor animasyonu
-tests/score.test.mjs       Puan birim testleri
-docs/TEST-RAPORU.md        Test ve düzeltme raporu
-worker/                    Cloudflare Worker + D1 şeması
-robots.txt, sitemap.xml    SEO
+app/index.html                 Kaynak sayfa (Vite girişi)
+app/src/main.tsx, App.tsx      Uygulama girişi ve sayfa
+app/src/components/            SilkWaves, ShaderCanvas (WebGL), butonlar, arama, yükleniyor, panel, defter
+app/src/lib/                   GitHub verisi, useGithub, useReveal
+app/src/config.ts              Kullanıcı adı, Worker URL
+app/src/index.css              Tailwind + tasarım stilleri
+assets/js/score.js             Saf puan mantığı (React ve testler ortak kullanır)
+assets/js/utils.js             score.js için yardımcılar
+assets/img/                    Avatar yedeği
+index.html, assets/index-*     Derlenmiş çıktı (GitHub Pages bunu sunar)
+tests/score.test.mjs           Puan birim testleri
+worker/                        Cloudflare Worker + D1 şeması
+robots.txt, sitemap.xml        SEO
 ```
 
 ## Çalıştırma
 
-- Yerelde: `python3 -m http.server 8000` ve `http://localhost:8000` (ES modülleri için sunucu gerekir).
-- Test: `npm test` (Node 18+).
+- Geliştirme: `npm install` ve `npm run dev`
+- Tip kontrolü: `npm run typecheck`
+- Test: `npm test` (Node 18+)
+- Yayın: `npm run build` kök dizindeki `index.html` ve `assets/index-*` dosyalarını yeniden üretir. Eski `assets/index-*` dosyalarını silip yenilerini commit et.
 
 ## Ayarlar
 
-`assets/js/config.js` içindeki `workerUrl` alanına Cloudflare Worker adresini yaz. Boşsa ziyaretçi defteri gizli kalır.
+`app/src/config.ts` içindeki `workerUrl` alanına Cloudflare Worker adresini yaz. Boşsa ziyaretçi defteri gizli kalır.
 
 ## Bağış
 
