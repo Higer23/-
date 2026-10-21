@@ -7,7 +7,6 @@ import Progress from "./components/Progress";
 import Panel from "./components/Panel";
 import Loader from "./components/Loader";
 import SearchBox from "./components/SearchBox";
-import Guestbook from "./components/Guestbook";
 import { DonateButton, LearnMore, StarButton } from "./components/Buttons";
 
 const OC = "https://opencollective.com/kontakt-notizbuch";
@@ -190,7 +189,6 @@ export default function App() {
           </div>
         </Panel>
 
-        <Guestbook />
       </main>
       <footer>Veriler GitHub REST API üzerinden canlı çekilir. Sayfa GitHub Pages üzerinde statik olarak çalışır. <span style={{ color: "var(--accent)" }}>Higer23</span> · tasarım / 2026</footer>
     </>
