@@ -49,8 +49,8 @@ function compile(gl: WebGLRenderingContext | WebGL2RenderingContext, type: numbe
 export function ShaderCanvas({
   fragmentShader,
   uniforms = {},
-  quality = 0.7,
-  mobileQuality = 0.45,
+  quality = 1,
+  mobileQuality = 0.5,
   mobileFps = 30,
   onFail,
   className = "block h-full w-full",
