@@ -14,9 +14,9 @@ The forum API is a Cloudflare Worker backed by D1. The static site is GitHub Pag
 
 ## Required deployment bindings
 
-1. Create a Cloudflare D1 database named `higer-guestbook`.
-2. Apply `schema.sql` to that database.
-3. Replace `REPLACE_WITH_D1_ID` in `wrangler.toml` with the real D1 database ID.
+1. For a new database, create a Cloudflare D1 database named `higer-guestbook` and apply `worker/schema.sql`.
+2. For the existing database, apply `worker/migrations/0002_add_ip_hash.sql` instead of reapplying `schema.sql`.
+3. Replace `REPLACE_WITH_D1_ID` in `worker/wrangler.toml` with the real D1 database ID.
 4. Set the Worker secret `ADMIN_PASSWORD` to a newly rotated, unique password. Do not reuse a password already shared in a chat.
 5. Deploy `worker/index.js` with Wrangler.
 6. Set `app/src/config.ts` `workerUrl` to the actual deployed Worker URL, rebuild the Vite app, and publish the generated site files.
