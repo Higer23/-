@@ -1,4 +1,4 @@
-import { $, el } from './utils.js';
+import { $, el, loaderNode } from './utils.js';
 
 // Yalnızca Worker URL'si tanımlıysa açılır. Kullanıcı metni textContent ile yazılır (XSS yok).
 export function initGuestbook(workerUrl) {
@@ -8,16 +8,19 @@ export function initGuestbook(workerUrl) {
 
   async function refresh() {
     list.textContent = '';
+    list.append(loaderNode());
     try {
       const res = await fetch(`${workerUrl}/api/entries`);
       if (!res.ok) throw new Error(String(res.status));
       const items = await res.json();
+      list.textContent = '';
       for (const it of items) {
         const row = el('div', null, 'entry');
         row.append(el('b', it.name), el('div', it.message), el('small', it.created_at));
         list.append(row);
       }
     } catch {
+      list.textContent = '';
       list.append(el('p', 'Defter yüklenemedi.', 'muted'));
     }
   }

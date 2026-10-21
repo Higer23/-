@@ -20,3 +20,17 @@ export function hasWebGL() {
     return false;
   }
 }
+
+// Yükleniyor animasyonu (Uiverse · dexter-st). Harfler ekran okuyuculardan gizlenir.
+export function loaderNode() {
+  const wrap = el('div', null, 'loader-wrapper sm');
+  wrap.setAttribute('role', 'status');
+  wrap.setAttribute('aria-label', 'Yükleniyor');
+  for (const ch of 'Yükleniyor') {
+    const s = el('span', ch, 'loader-letter');
+    s.setAttribute('aria-hidden', 'true');
+    wrap.append(s);
+  }
+  wrap.append(el('div', null, 'loader'));
+  return wrap;
+}
