@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CONFIG } from "../config";
+import "./entrance-gate.css";
 
 type TurnstileApi = {
   render: (
@@ -34,67 +35,70 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!CONFIG.turnstileSiteKey || !CONFIG.turnstileVerifyUrl || !mountRef.current) {
-      setError("Güvenlik kontrolü yapılandırılmamış. Site yöneticisinin ayarları düzeltmesi gerekiyor.");
+      setError("Güvenlik kontrolü yapılandırılmamış. Lütfen site yöneticisine haber ver.");
       return;
     }
 
     let cancelled = false;
+    let script: HTMLScriptElement | null = null;
 
     const mount = () => {
-      if (cancelled || !mountRef.current || !window.turnstile) return;
+      if (cancelled || !mountRef.current || !window.turnstile || widgetIdRef.current) return;
 
-      widgetIdRef.current = window.turnstile.render(mountRef.current, {
-        sitekey: CONFIG.turnstileSiteKey,
-        theme: "dark",
-        appearance: "always",
-        size: "normal",
-        callback: (nextToken) => {
-          setToken(nextToken);
-          setError("");
-        },
-        "error-callback": () => {
-          setToken("");
-          setError("Cloudflare kontrolü yüklenemedi. Sayfayı yenileyip tekrar deneyin.");
-        },
-        "expired-callback": () => {
-          setToken("");
-          setError("Doğrulama süresi doldu. Lütfen robot kontrolünü yeniden tamamlayın.");
-        },
-      });
+      try {
+        widgetIdRef.current = window.turnstile.render(mountRef.current, {
+          sitekey: CONFIG.turnstileSiteKey,
+          theme: "dark",
+          appearance: "always",
+          size: "normal",
+          callback: (nextToken) => {
+            setToken(nextToken);
+            setError("");
+          },
+          "error-callback": () => {
+            setToken("");
+            setError("Cloudflare kontrolü yüklenemedi. Bağlantını kontrol edip tekrar dene.");
+          },
+          "expired-callback": () => {
+            setToken("");
+            setError("Doğrulamanın süresi doldu. Lütfen robot kontrolünü yeniden tamamla.");
+          },
+        });
+      } catch {
+        setError("Güvenlik kontrolü başlatılamadı. Sayfayı yenileyip tekrar dene.");
+      }
+    };
+
+    const onScriptError = () => {
+      setError("Cloudflare kontrolü yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.");
     };
 
     if (window.turnstile) {
       mount();
     } else {
-      const existing = document.querySelector<HTMLScriptElement>(
-        'script[data-turnstile-api="true"]',
-      );
+      script = document.querySelector<HTMLScriptElement>('script[data-turnstile-api="true"]');
 
-      if (existing) {
-        existing.addEventListener("load", mount, { once: true });
-        existing.addEventListener(
-          "error",
-          () => setError("Cloudflare kontrolü yüklenemedi. İnternet bağlantınızı kontrol edin."),
-          { once: true },
-        );
+      if (script) {
+        script.addEventListener("load", mount, { once: true });
+        script.addEventListener("error", onScriptError, { once: true });
       } else {
-        const script = document.createElement("script");
+        script = document.createElement("script");
         script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
         script.async = true;
         script.defer = true;
         script.dataset.turnstileApi = "true";
         script.addEventListener("load", mount, { once: true });
-        script.addEventListener(
-          "error",
-          () => setError("Cloudflare kontrolü yüklenemedi. İnternet bağlantınızı kontrol edin."),
-          { once: true },
-        );
+        script.addEventListener("error", onScriptError, { once: true });
         document.head.appendChild(script);
       }
     }
 
     return () => {
       cancelled = true;
+      if (script) {
+        script.removeEventListener("load", mount);
+        script.removeEventListener("error", onScriptError);
+      }
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current);
         widgetIdRef.current = undefined;
@@ -112,10 +116,12 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       const response = await fetch(CONFIG.turnstileVerifyUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        cache: "no-store",
         body: JSON.stringify({ token }),
+        signal: AbortSignal.timeout(CONFIG.requestTimeoutMs),
       });
-      const data = (await response.json()) as { success?: boolean };
 
+      const data = (await response.json()) as { success?: boolean };
       if (!response.ok || data.success !== true) {
         throw new Error("Verification failed");
       }
@@ -123,7 +129,7 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       setVerified(true);
     } catch {
       setToken("");
-      setError("Robot kontrolü doğrulanamadı. İnternet bağlantısını kontrol edip yeniden deneyin.");
+      setError("Doğrulama tamamlanamadı. Bağlantını kontrol edip tekrar dene.");
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.reset(widgetIdRef.current);
       }
@@ -135,73 +141,50 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   if (verified) return <>{children}</>;
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "grid",
-        placeItems: "center",
-        background: "#030407",
-        color: "#f2eee5",
-        fontFamily: "Inter, system-ui, sans-serif",
-        padding: 24,
-      }}
-    >
-      <section
-        style={{
-          width: "min(100%, 420px)",
-          textAlign: "center",
-          padding: 28,
-          border: "1px solid #282a2e",
-          borderRadius: 20,
-          background: "#090a0d",
-        }}
-      >
-        <p
-          style={{
-            color: "#e7a15c",
-            letterSpacing: ".18em",
-            fontSize: 11,
-            textTransform: "uppercase",
-          }}
-        >
-          HIGER23 · GÜVENLİK KONTROLÜ
-        </p>
-        <h1 style={{ fontSize: 26, margin: "12px 0" }}>Robot olmadığını doğrula</h1>
-        <p style={{ color: "#a9a5bd", lineHeight: 1.6 }}>
-          Siteye devam etmeden önce Cloudflare güvenlik kontrolünü tamamla.
+    <main className="turnstile-gate">
+      <div className="turnstile-gate__glow turnstile-gate__glow--orange" aria-hidden="true" />
+      <div className="turnstile-gate__glow turnstile-gate__glow--cream" aria-hidden="true" />
+
+      <section className="turnstile-gate__card" aria-labelledby="turnstile-title">
+        <div className="turnstile-gate__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3.25 19 6v5.1c0 4.4-2.85 7.75-7 9.65-4.15-1.9-7-5.25-7-9.65V6l7-2.75Z" />
+            <path d="m8.8 12.1 2.1 2.1 4.45-4.6" />
+          </svg>
+        </div>
+
+        <p className="turnstile-gate__eyebrow">HIGER23 <span>·</span> GÜVENLİ ERİŞİM</p>
+        <h1 id="turnstile-title" className="turnstile-gate__title">
+          Bir saniyelik kontrol.
+        </h1>
+        <p className="turnstile-gate__description">
+          Devam etmeden önce robot olmadığını doğrula. Gizlilik kontrolü Cloudflare tarafından sağlanır.
         </p>
 
-        <div
-          ref={mountRef}
-          style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}
-        />
+        <div className="turnstile-gate__widget" ref={mountRef} aria-label="Cloudflare robot doğrulaması" />
 
-        {busy && <p role="status">Doğrulama sunucusu kontrol ediliyor…</p>}
-        {error && (
-          <p role="alert" style={{ color: "#ffb3a7", lineHeight: 1.5 }}>
-            {error}
-          </p>
-        )}
+        <p className="turnstile-gate__hint" aria-live="polite">
+          {busy ? "Güvenlik kontrolü doğrulanıyor…" : token ? "Kontrol tamamlandı. Devam etmek için aşağıya dokun." : "Kontrolü tamamladıktan sonra devam edebilirsin."}
+        </p>
+
+        {error && <p className="turnstile-gate__error" role="alert">{error}</p>}
 
         <button
           type="button"
+          className="turnstile-gate__button"
           onClick={continueToSite}
           disabled={!token || busy}
-          style={{
-            width: "100%",
-            minHeight: 46,
-            borderRadius: 12,
-            border: "1px solid #e7a15c",
-            background: token && !busy ? "#e7a15c" : "#29251f",
-            color: token && !busy ? "#08090b" : "#a9a5bd",
-            fontWeight: 700,
-            cursor: token && !busy ? "pointer" : "not-allowed",
-            marginTop: 8,
-          }}
         >
-          {busy ? "Kontrol ediliyor…" : "Doğrula ve siteye devam et"}
+          <span>{busy ? "Kontrol ediliyor…" : "Doğrula ve siteye devam et"}</span>
+          {!busy && <span className="turnstile-gate__arrow" aria-hidden="true">↗</span>}
         </button>
+
+        <p className="turnstile-gate__footer">
+          <span className="turnstile-gate__dot" />
+          Bağlantı korumalı <span className="turnstile-gate__separator">/</span> HIGER23
+        </p>
       </section>
+      <p className="turnstile-gate__bottom">GÜVENLİ ERİŞİM <span>•</span> CLOUDFLARE TURNSTILE</p>
     </main>
   );
 }

@@ -1,0 +1,172 @@
+/* Isolated styling for the Turnstile entrance gate. */
+.turnstile-gate {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: max(28px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  overflow: hidden;
+  background: #030407;
+  color: #f2eee5;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.turnstile-gate::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  content: "";
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
+}
+.turnstile-gate__glow {
+  position: absolute;
+  z-index: -1;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  opacity: .16;
+}
+.turnstile-gate__glow--orange { top: -230px; left: -170px; background: #e7a15c; }
+.turnstile-gate__glow--cream { right: -230px; bottom: -240px; background: #f2e7c9; opacity: .09; }
+.turnstile-gate__card {
+  width: min(100%, 440px);
+  padding: clamp(24px, 6vw, 38px);
+  border: 1px solid rgba(242,238,229,.14);
+  border-radius: 26px;
+  background: linear-gradient(145deg, rgba(18,17,16,.94), rgba(7,8,10,.96) 65%);
+  box-shadow: 0 30px 100px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.045);
+  text-align: center;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  animation: gate-enter .55s cubic-bezier(.2,.75,.25,1) both;
+}
+.turnstile-gate__mark {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 23px;
+  border: 1px solid rgba(231,161,92,.38);
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(231,161,92,.15), rgba(231,161,92,.035));
+  box-shadow: 0 0 35px rgba(231,161,92,.07);
+}
+.turnstile-gate__mark svg { width: 27px; height: 27px; stroke: #e7a15c; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.turnstile-gate__eyebrow {
+  margin: 0 0 14px;
+  color: #e7a15c;
+  font-size: .68rem;
+  font-weight: 750;
+  letter-spacing: .19em;
+}
+.turnstile-gate__eyebrow span { color: #817b6f; padding: 0 4px; }
+.turnstile-gate__title {
+  margin: 0;
+  color: #f2eee5;
+  font-size: clamp(1.75rem, 7vw, 2.35rem);
+  line-height: 1.12;
+  font-weight: 760;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+.turnstile-gate__description {
+  max-width: 34ch;
+  margin: 15px auto 25px;
+  color: #aaa69e;
+  font-size: .94rem;
+  line-height: 1.7;
+}
+.turnstile-gate__widget {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 66px;
+  margin: 0 auto 12px;
+  overflow: visible;
+}
+.turnstile-gate__hint {
+  min-height: 1.5em;
+  margin: 12px 0 16px;
+  color: #b7b1a5;
+  font-size: .78rem;
+  line-height: 1.55;
+}
+.turnstile-gate__error {
+  margin: 0 0 14px;
+  padding: 11px 13px;
+  border: 1px solid rgba(255,140,125,.25);
+  border-radius: 12px;
+  background: rgba(255,140,125,.07);
+  color: #ffb9aa;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.turnstile-gate__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 51px;
+  padding: 13px 17px;
+  border: 1px solid #e7a15c;
+  border-radius: 14px;
+  background: #e7a15c;
+  color: #17110b;
+  font: 750 .91rem/1.2 Inter, system-ui, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(231,161,92,.12);
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+.turnstile-gate__button:not(:disabled):hover { background: #f0b77f; box-shadow: 0 10px 34px rgba(231,161,92,.2); transform: translateY(-1px); }
+.turnstile-gate__button:not(:disabled):active { transform: translateY(0) scale(.99); }
+.turnstile-gate__button:disabled { opacity: .43; cursor: not-allowed; box-shadow: none; }
+.turnstile-gate__button:focus-visible { outline: 2px solid #f2eee5; outline-offset: 4px; }
+.turnstile-gate__arrow { font-size: 1.15rem; line-height: 1; }
+.turnstile-gate__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 24px 0 0;
+  color: #77756f;
+  font-size: .67rem;
+  letter-spacing: .045em;
+}
+.turnstile-gate__dot { width: 6px; height: 6px; border-radius: 50%; background: #a7b985; box-shadow: 0 0 9px rgba(167,185,133,.45); }
+.turnstile-gate__separator { color: #4d4a44; }
+.turnstile-gate__bottom {
+  position: absolute;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 16px;
+  right: 16px;
+  margin: 0;
+  color: #54514b;
+  font-size: .58rem;
+  font-weight: 650;
+  letter-spacing: .17em;
+  text-align: center;
+}
+.turnstile-gate__bottom span { color: #e7a15c; padding: 0 5px; }
+@keyframes gate-enter {
+  from { opacity: 0; transform: translateY(12px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (max-width: 480px) {
+  .turnstile-gate { padding-left: 16px; padding-right: 16px; }
+  .turnstile-gate__card { padding: 25px 19px; border-radius: 22px; }
+  .turnstile-gate__description { font-size: .9rem; }
+  .turnstile-gate__button { min-height: 49px; font-size: .86rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .turnstile-gate__card { animation: none; }
+  .turnstile-gate__button { transition: none; }
+}
