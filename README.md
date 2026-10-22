@@ -33,5 +33,5 @@ robots.txt, sitemap.xml        SEO
 
 ## Bağış
 
-Open Collective: https://opencollective.com/kontakt-notizbuch
-GitHub Sponsors: https://github.com/sponsors/Higer23 (hesapta etkin olmalı)
+Open Collective: https://opencollective.com/higer023
+GitHub Sponsors: https://github.com/sponsors/Higer023 (hesapta etkin olmalı)

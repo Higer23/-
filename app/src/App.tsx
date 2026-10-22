@@ -9,8 +9,8 @@ import Loader from "./components/Loader";
 import SearchBox from "./components/SearchBox";
 import { DonateButton, LearnMore, StarButton } from "./components/Buttons";
 
-const OC = "https://opencollective.com/kontakt-notizbuch";
-const SP = "https://github.com/sponsors/Higer23";
+const OC = "https://opencollective.com/higer023";
+const SP = "https://github.com/sponsors/Higer023";
 const FALLBACK_AVATAR = "assets/img/avatar-fallback.svg";
 
 const PROJECTS = [
