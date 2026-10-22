@@ -35,8 +35,12 @@ export default function App() {
   }, [result]);
 
   const stars = useMemo(() => {
-    const repo = ok?.data.repos.find((r: { name: string }) => r.name === "-");
-    return repo ? repo.stargazers_count : 0;
+    if (!ok) return 0;
+    return ok.data.repos.reduce(
+      (total: number, repo: { stargazers_count?: number }) =>
+        total + (repo.stargazers_count ?? 0),
+      0,
+    );
   }, [ok]);
 
   const q = norm(query.trim());
@@ -98,7 +102,7 @@ export default function App() {
           <p className="lead">{profile?.bio ?? ""}</p>
           <div className="ctas">
             <LearnMore href="#projeler">Çalışmalarımı keşfet</LearnMore>
-            <StarButton href="https://github.com/Higer23/-" count={stars}>GitHub'da yıldızla</StarButton>
+            <StarButton href="https://github.com/Higer23?tab=repositories" count={stars}>GitHub'daki tüm yıldızlar</StarButton>
           </div>
           <p className="muted" style={{ fontSize: ".78rem", marginTop: 22 }}>01 / Kişisel geliştirici arşivi</p>
         </section>

@@ -31,12 +31,20 @@ async function getContributions(user: string) {
 }
 
 export async function fetchGithub(user: string) {
-  const [profile, repos] = await Promise.all([
-    getJson(`${API}/users/${user}`),
-    getJson(`${API}/users/${user}/repos?per_page=100&sort=pushed`),
-  ]);
+  const profile = await getJson(`${API}/users/${user}`);
   if (!profile || !profile.login) throw new Error("Profil verisi geçersiz");
-  if (!Array.isArray(repos)) throw new Error("Depo verisi geçersiz");
+
+  // GitHub paginates repository lists at 100 items. Continue until the final
+  // page so the displayed star total covers every public repository.
+  const repos: any[] = [];
+  for (let page = 1; page <= 10; page += 1) {
+    const batch = await getJson(
+      `${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`,
+    );
+    if (!Array.isArray(batch)) throw new Error("Depo verisi geçersiz");
+    repos.push(...batch);
+    if (batch.length < 100) break;
+  }
   const contrib = await getContributions(user);
   return { profile, repos, contrib };
 }
