@@ -1,0 +1,32 @@
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+}
+
+.lang-switch__select {
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.lang-switch__select option {
+  background: #0b0d12;
+  color: #ffffff;
+}
+
+.lang-switch__select:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.gate-lang {
+  position: fixed;
+  top: 16px;
+  inset-inline-end: 16px;
+  z-index: 5;
+}

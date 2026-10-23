@@ -1,12 +1,14 @@
 import { useId } from "react";
+import { useI18n } from "../lib/i18n";
 
 // Arama alanı (Uiverse · Lakshay-art)
 export default function SearchBox({ value, onChange, info }: { value: string; onChange: (v: string) => void; info: string }) {
+  const { t } = useI18n();
   const id = useId().replace(/:/g, "");
   const g1 = `sxg1${id}`;
   const g2 = `sxg2${id}`;
   return (
-    <section className="search-wrap" aria-label="Sayfada ara">
+    <section className="search-wrap" aria-label={t("search.aria")}>
       <div id="sx">
         <div className="sx-glow" />
         <div className="sx-dark" />
@@ -19,9 +21,9 @@ export default function SearchBox({ value, onChange, info }: { value: string; on
             className="sx-input"
             type="search"
             name="q"
-            placeholder="Proje, dil ara…"
+            placeholder={t("search.placeholder")}
             autoComplete="off"
-            aria-label="Sayfada ara"
+            aria-label={t("search.aria")}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={(e) => e.key === "Escape" && onChange("")}
@@ -29,7 +31,7 @@ export default function SearchBox({ value, onChange, info }: { value: string; on
           <div className="sx-mask" />
           <div className="sx-pink" />
           <div className="sx-fborder" />
-          <button type="button" className="sx-clear" aria-label="Aramayı temizle" onClick={() => onChange("")}>
+          <button type="button" className="sx-clear" aria-label={t("search.clear")} onClick={() => onChange("")}>
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d6d6e6" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CONFIG } from "../config";
+import { useI18n, type Key } from "../lib/i18n";
+import LanguageSwitcher from "./LanguageSwitcher";
 import "./entrance-gate.css";
 
 type TurnstileApi = {
@@ -26,16 +28,17 @@ declare global {
 }
 
 export default function EntranceGate({ children }: { children: ReactNode }) {
+  const { t } = useI18n();
   const mountRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | undefined>(undefined);
   const [verified, setVerified] = useState(false);
   const [token, setToken] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<Key | "">("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!CONFIG.turnstileSiteKey || !CONFIG.turnstileVerifyUrl || !mountRef.current) {
-      setError("Güvenlik kontrolü yapılandırılmamış. Lütfen site yöneticisine haber ver.");
+      setError("gate.config");
       return;
     }
 
@@ -57,21 +60,19 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
           },
           "error-callback": () => {
             setToken("");
-            setError("Cloudflare kontrolü yüklenemedi. Bağlantını kontrol edip tekrar dene.");
+            setError("gate.loadFail");
           },
           "expired-callback": () => {
             setToken("");
-            setError("Doğrulamanın süresi doldu. Lütfen robot kontrolünü yeniden tamamla.");
+            setError("gate.expired");
           },
         });
       } catch {
-        setError("Güvenlik kontrolü başlatılamadı. Sayfayı yenileyip tekrar dene.");
+        setError("gate.initFail");
       }
     };
 
-    const onScriptError = () => {
-      setError("Cloudflare kontrolü yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.");
-    };
+    const onScriptError = () => setError("gate.loadFailNet");
 
     if (window.turnstile) {
       mount();
@@ -129,7 +130,7 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       setVerified(true);
     } catch {
       setToken("");
-      setError("Doğrulama tamamlanamadı. Bağlantını kontrol edip tekrar dene.");
+      setError("gate.verifyFail");
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.reset(widgetIdRef.current);
       }
@@ -142,6 +143,9 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
 
   return (
     <main className="turnstile-gate">
+      <div className="gate-lang">
+        <LanguageSwitcher />
+      </div>
       <div className="turnstile-gate__glow turnstile-gate__glow--orange" aria-hidden="true" />
       <div className="turnstile-gate__glow turnstile-gate__glow--cream" aria-hidden="true" />
 
@@ -153,38 +157,35 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
           </svg>
         </div>
 
-        <p className="turnstile-gate__eyebrow">HIGER23 <span>·</span> GÜVENLİ ERİŞİM</p>
+        <p className="turnstile-gate__eyebrow">{t("gate.eyebrow")}</p>
         <h1 id="turnstile-title" className="turnstile-gate__title">
-          Bir saniyelik kontrol.
+          {t("gate.title")}
         </h1>
-        <p className="turnstile-gate__description">
-          Devam etmeden önce robot olmadığını doğrula. Gizlilik kontrolü Cloudflare tarafından sağlanır.
-        </p>
+        <p className="turnstile-gate__description">{t("gate.desc")}</p>
 
-        <div className="turnstile-gate__widget" ref={mountRef} aria-label="Cloudflare robot doğrulaması" />
+        <div className="turnstile-gate__widget" ref={mountRef} aria-label={t("gate.widget")} />
 
         <p className="turnstile-gate__hint" aria-live="polite">
-          {busy ? "Güvenlik kontrolü doğrulanıyor…" : token ? "Kontrol tamamlandı. Devam etmek için aşağıya dokun." : "Kontrolü tamamladıktan sonra devam edebilirsin."}
+          {busy ? t("gate.hintBusy") : token ? t("gate.hintDone") : t("gate.hintTodo")}
         </p>
 
-        {error && <p className="turnstile-gate__error" role="alert">{error}</p>}
+        {error && (
+          <p className="turnstile-gate__error" role="alert">
+            {t(error)}
+          </p>
+        )}
 
-        <button
-          type="button"
-          className="turnstile-gate__button"
-          onClick={continueToSite}
-          disabled={!token || busy}
-        >
-          <span>{busy ? "Kontrol ediliyor…" : "Doğrula ve siteye devam et"}</span>
+        <button type="button" className="turnstile-gate__button" onClick={continueToSite} disabled={!token || busy}>
+          <span>{busy ? t("gate.submitBusy") : t("gate.submit")}</span>
           {!busy && <span className="turnstile-gate__arrow" aria-hidden="true">↗</span>}
         </button>
 
         <p className="turnstile-gate__footer">
           <span className="turnstile-gate__dot" />
-          Bağlantı korumalı <span className="turnstile-gate__separator">/</span> HIGER23
+          {t("gate.footer")} <span className="turnstile-gate__separator">/</span> HIGER23
         </p>
       </section>
-      <p className="turnstile-gate__bottom">GÜVENLİ ERİŞİM <span>•</span> CLOUDFLARE TURNSTILE</p>
+      <p className="turnstile-gate__bottom">{t("gate.bottom")}</p>
     </main>
   );
 }
