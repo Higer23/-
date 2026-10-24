@@ -26,6 +26,14 @@ import th from "./locales/th";
 import ro from "./locales/ro";
 import hu from "./locales/hu";
 import da from "./locales/da";
+import bn from "./locales/bn";
+import ur from "./locales/ur";
+import fa from "./locales/fa";
+import ms from "./locales/ms";
+import ta from "./locales/ta";
+import te from "./locales/te";
+import mr from "./locales/mr";
+import sw from "./locales/sw";
 
 // Dil listesi: her dil için görünen ad ve yazım yönü (rtl/ltr) burada tanımlanır.
 export const LANGS = [
@@ -55,6 +63,14 @@ export const LANGS = [
   { code: "ro", label: "Română", dir: "ltr" },
   { code: "hu", label: "Magyar", dir: "ltr" },
   { code: "da", label: "Dansk", dir: "ltr" },
+  { code: "bn", label: "বাংলা", dir: "ltr" },
+  { code: "ur", label: "اردو", dir: "rtl" },
+  { code: "fa", label: "فارسی", dir: "rtl" },
+  { code: "ms", label: "Bahasa Melayu", dir: "ltr" },
+  { code: "ta", label: "தமிழ்", dir: "ltr" },
+  { code: "te", label: "తెలుగు", dir: "ltr" },
+  { code: "mr", label: "मराठी", dir: "ltr" },
+  { code: "sw", label: "Kiswahili", dir: "ltr" },
 ] as const;
 
 export type Lang = (typeof LANGS)[number]["code"];
@@ -64,7 +80,7 @@ const STORAGE_KEY = "higer23-lang";
 const isLang = (v: string): v is Lang => LANGS.some((l) => l.code === v);
 
 const dicts: Record<Lang, Dict> = {
-  tr, en, de, ar, zh, fr, es, it, pt, ru, ja, nl, pl, uk, ko, hi, sv, id, vi, el, cs, he, th, ro, hu, da,
+  tr, en, de, ar, zh, fr, es, it, pt, ru, ja, nl, pl, uk, ko, hi, sv, id, vi, el, cs, he, th, ro, hu, da, bn, ur, fa, ms, ta, te, mr, sw,
 };
 
 // Sayı ve tarih biçimleri için yerel ayarlar
@@ -95,6 +111,14 @@ const LOCALE: Record<Lang, string> = {
   ro: "ro-RO",
   hu: "hu-HU",
   da: "da-DK",
+  bn: "bn-BD",
+  ur: "ur-PK",
+  fa: "fa-IR",
+  ms: "ms-MY",
+  ta: "ta-IN",
+  te: "te-IN",
+  mr: "mr-IN",
+  sw: "sw-KE",
 };
 
 function detectLang(): Lang {
