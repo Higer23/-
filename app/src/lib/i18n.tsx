@@ -21,29 +21,40 @@ import id from "./locales/id";
 import vi from "./locales/vi";
 import el from "./locales/el";
 import cs from "./locales/cs";
+import he from "./locales/he";
+import th from "./locales/th";
+import ro from "./locales/ro";
+import hu from "./locales/hu";
+import da from "./locales/da";
 
+// Dil listesi: her dil için görünen ad ve yazım yönü (rtl/ltr) burada tanımlanır.
 export const LANGS = [
-  { code: "tr", label: "Türkçe" },
-  { code: "en", label: "English" },
-  { code: "de", label: "Deutsch" },
-  { code: "ar", label: "العربية" },
-  { code: "zh", label: "中文" },
-  { code: "fr", label: "Français" },
-  { code: "es", label: "Español" },
-  { code: "it", label: "Italiano" },
-  { code: "pt", label: "Português" },
-  { code: "ru", label: "Русский" },
-  { code: "ja", label: "日本語" },
-  { code: "nl", label: "Nederlands" },
-  { code: "pl", label: "Polski" },
-  { code: "uk", label: "Українська" },
-  { code: "ko", label: "한국어" },
-  { code: "hi", label: "हिन्दी" },
-  { code: "sv", label: "Svenska" },
-  { code: "id", label: "Bahasa Indonesia" },
-  { code: "vi", label: "Tiếng Việt" },
-  { code: "el", label: "Ελληνικά" },
-  { code: "cs", label: "Čeština" },
+  { code: "tr", label: "Türkçe", dir: "ltr" },
+  { code: "en", label: "English", dir: "ltr" },
+  { code: "de", label: "Deutsch", dir: "ltr" },
+  { code: "ar", label: "العربية", dir: "rtl" },
+  { code: "zh", label: "中文", dir: "ltr" },
+  { code: "fr", label: "Français", dir: "ltr" },
+  { code: "es", label: "Español", dir: "ltr" },
+  { code: "it", label: "Italiano", dir: "ltr" },
+  { code: "pt", label: "Português", dir: "ltr" },
+  { code: "ru", label: "Русский", dir: "ltr" },
+  { code: "ja", label: "日本語", dir: "ltr" },
+  { code: "nl", label: "Nederlands", dir: "ltr" },
+  { code: "pl", label: "Polski", dir: "ltr" },
+  { code: "uk", label: "Українська", dir: "ltr" },
+  { code: "ko", label: "한국어", dir: "ltr" },
+  { code: "hi", label: "हिन्दी", dir: "ltr" },
+  { code: "sv", label: "Svenska", dir: "ltr" },
+  { code: "id", label: "Bahasa Indonesia", dir: "ltr" },
+  { code: "vi", label: "Tiếng Việt", dir: "ltr" },
+  { code: "el", label: "Ελληνικά", dir: "ltr" },
+  { code: "cs", label: "Čeština", dir: "ltr" },
+  { code: "he", label: "עברית", dir: "rtl" },
+  { code: "th", label: "ไทย", dir: "ltr" },
+  { code: "ro", label: "Română", dir: "ltr" },
+  { code: "hu", label: "Magyar", dir: "ltr" },
+  { code: "da", label: "Dansk", dir: "ltr" },
 ] as const;
 
 export type Lang = (typeof LANGS)[number]["code"];
@@ -53,15 +64,37 @@ const STORAGE_KEY = "higer23-lang";
 const isLang = (v: string): v is Lang => LANGS.some((l) => l.code === v);
 
 const dicts: Record<Lang, Dict> = {
-  tr, en, de, ar, zh, fr, es, it, pt, ru, ja, nl, pl, uk, ko, hi, sv, id, vi, el, cs,
+  tr, en, de, ar, zh, fr, es, it, pt, ru, ja, nl, pl, uk, ko, hi, sv, id, vi, el, cs, he, th, ro, hu, da,
 };
 
-// Bölgeye özel yerel biçimler (sayılar ve tarihler için)
+// Sayı ve tarih biçimleri için yerel ayarlar
 const LOCALE: Record<Lang, string> = {
-  tr: "tr-TR", en: "en-US", de: "de-DE", ar: "ar", zh: "zh-CN", fr: "fr-FR",
-  es: "es-ES", it: "it-IT", pt: "pt-BR", ru: "ru-RU", ja: "ja-JP",
-  nl: "nl-NL", pl: "pl-PL", uk: "uk-UA", ko: "ko-KR", hi: "hi-IN",
-  sv: "sv-SE", id: "id-ID", vi: "vi-VN", el: "el-GR", cs: "cs-CZ",
+  tr: "tr-TR",
+  en: "en-US",
+  de: "de-DE",
+  ar: "ar",
+  zh: "zh-CN",
+  fr: "fr-FR",
+  es: "es-ES",
+  it: "it-IT",
+  pt: "pt-BR",
+  ru: "ru-RU",
+  ja: "ja-JP",
+  nl: "nl-NL",
+  pl: "pl-PL",
+  uk: "uk-UA",
+  ko: "ko-KR",
+  hi: "hi-IN",
+  sv: "sv-SE",
+  id: "id-ID",
+  vi: "vi-VN",
+  el: "el-GR",
+  cs: "cs-CZ",
+  he: "he-IL",
+  th: "th-TH",
+  ro: "ro-RO",
+  hu: "hu-HU",
+  da: "da-DK",
 };
 
 function detectLang(): Lang {
@@ -93,8 +126,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(detectLang);
 
   useEffect(() => {
+    const meta = LANGS.find((l) => l.code === lang);
     document.documentElement.lang = lang;
-    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = meta?.dir ?? "ltr";
   }, [lang]);
 
   const setLang = useCallback((l: Lang) => {
