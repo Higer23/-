@@ -17,8 +17,8 @@ a:hover{text-decoration:underline}
 /* arka plan */
 /* Açık renkli ipek arka plan üzerinde çıplak yazılar okunur kalsın */
 .hero,.status,.search-info{text-shadow:0 1px 3px rgba(0,0,0,.85),0 2px 28px rgba(0,0,0,.7)}
-.skip{position:absolute;left:-999px;top:8px;z-index:100;background:var(--accent);color:#000;padding:8px 14px;border-radius:99px;font-weight:700}
-.skip:focus{left:8px;text-decoration:none}
+.skip{position:absolute;top:8px;inset-inline-start:8px;z-index:100;background:var(--accent);color:#000;padding:8px 14px;border-radius:99px;font-weight:700;transform:translateY(-200%);transition:transform .2s}
+.skip:focus{transform:none;text-decoration:none}
 .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--indigo),var(--pink),var(--accent))}
 
 /* bağış çubuğu + üst menü */
