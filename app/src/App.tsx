@@ -18,7 +18,7 @@ const FALLBACK_AVATAR = "assets/img/avatar-fallback.svg";
 const norm = (s: string) => s.toLocaleLowerCase();
 
 export default function App() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { state, retry } = useGithub(CONFIG.user);
   const [query, setQuery] = useState("");
   const [avatarFailed, setAvatarFailed] = useState(false);
@@ -140,7 +140,7 @@ export default function App() {
           </div>
           <div className="grid">
             {shownStats.map(([label, value]) => (
-              <div className="stat" key={label}><b>{String(value)}</b><span>{label}</span></div>
+              <div className="stat" key={label}><b>{typeof value === "number" ? value.toLocaleString(locale) : String(value)}</b><span>{label}</span></div>
             ))}
           </div>
         </Panel>
