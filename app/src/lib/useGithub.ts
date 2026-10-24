@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchGithub } from "./github";
 // Saf puan mantığı: testler de bu dosyayı kullanır (tests/score.test.mjs).
-import { computeScore } from "../../../assets/js/score.js";
+import { computeScore } from "./score.js";
 
 type Data = Awaited<ReturnType<typeof fetchGithub>>;
 type Result = ReturnType<typeof computeScore>;
