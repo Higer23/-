@@ -1,142 +1,53 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { CONFIG } from "../config";
-import { useI18n, type Key } from "../lib/i18n";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import "./entrance-gate.css";
 
-type TurnstileApi = {
-  render: (
-    container: HTMLElement,
-    options: {
-      sitekey: string;
-      theme: "dark";
-      appearance: "always";
-      size: "normal";
-      callback: (token: string) => void;
-      "error-callback": () => void;
-      "expired-callback": () => void;
-    },
-  ) => string;
-  remove: (id: string) => void;
-  reset: (id: string) => void;
-};
+// Botlar genelde formu çok hızlı doldurur; bu süreden kısa sürede gönderilen cevaplar reddedilir.
+const MIN_FILL_MS = 2500;
 
-declare global {
-  interface Window {
-    turnstile?: TurnstileApi;
-  }
+function makeChallenge() {
+  const a = Math.floor(Math.random() * 9) + 1;
+  const b = Math.floor(Math.random() * 9) + 1;
+  return { a, b, answer: a + b };
 }
 
 export default function EntranceGate({ children }: { children: ReactNode }) {
-  const { t } = useI18n();
-  const mountRef = useRef<HTMLDivElement>(null);
-  const widgetIdRef = useRef<string | undefined>(undefined);
   const [verified, setVerified] = useState(false);
-  const [token, setToken] = useState("");
-  const [error, setError] = useState<Key | "">("");
-  const [busy, setBusy] = useState(false);
+  const [challenge, setChallenge] = useState(makeChallenge);
+  const [answer, setAnswer] = useState("");
+  const [honey, setHoney] = useState("");
+  const [error, setError] = useState("");
+  const startedAt = useRef(Date.now());
 
-  useEffect(() => {
-    if (!CONFIG.turnstileSiteKey || !CONFIG.turnstileVerifyUrl || !mountRef.current) {
-      setError("gate.config");
+  const resetChallenge = () => {
+    setChallenge(makeChallenge());
+    setAnswer("");
+    startedAt.current = Date.now();
+  };
+
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Gizli alan doldurulduysa bot kabul edilir; sessizce reddedilir.
+    if (honey.trim() !== "") {
+      resetChallenge();
       return;
     }
 
-    let cancelled = false;
-    let script: HTMLScriptElement | null = null;
-
-    const mount = () => {
-      if (cancelled || !mountRef.current || !window.turnstile || widgetIdRef.current) return;
-
-      try {
-        widgetIdRef.current = window.turnstile.render(mountRef.current, {
-          sitekey: CONFIG.turnstileSiteKey,
-          theme: "dark",
-          appearance: "always",
-          size: "normal",
-          callback: (nextToken) => {
-            setToken(nextToken);
-            setError("");
-          },
-          "error-callback": () => {
-            setToken("");
-            setError("gate.loadFail");
-          },
-          "expired-callback": () => {
-            setToken("");
-            setError("gate.expired");
-          },
-        });
-      } catch {
-        setError("gate.initFail");
-      }
-    };
-
-    const onScriptError = () => setError("gate.loadFailNet");
-
-    if (window.turnstile) {
-      mount();
-    } else {
-      script = document.querySelector<HTMLScriptElement>('script[data-turnstile-api="true"]');
-
-      if (script) {
-        script.addEventListener("load", mount, { once: true });
-        script.addEventListener("error", onScriptError, { once: true });
-      } else {
-        script = document.createElement("script");
-        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-        script.async = true;
-        script.defer = true;
-        script.dataset.turnstileApi = "true";
-        script.addEventListener("load", mount, { once: true });
-        script.addEventListener("error", onScriptError, { once: true });
-        document.head.appendChild(script);
-      }
+    if (Date.now() - startedAt.current < MIN_FILL_MS) {
+      setError("Çok hızlı gönderdin, lütfen biraz bekle ve tekrar dene.");
+      resetChallenge();
+      return;
     }
 
-    return () => {
-      cancelled = true;
-      if (script) {
-        script.removeEventListener("load", mount);
-        script.removeEventListener("error", onScriptError);
-      }
-      if (widgetIdRef.current && window.turnstile) {
-        window.turnstile.remove(widgetIdRef.current);
-        widgetIdRef.current = undefined;
-      }
-    };
-  }, []);
+    if (Number(answer.trim()) !== challenge.answer) {
+      setError("Cevap yanlış, yeni bir soru geldi.");
+      resetChallenge();
+      return;
+    }
 
-  const continueToSite = async () => {
-    if (!token || busy) return;
-
-    setBusy(true);
     setError("");
-
-    try {
-      const response = await fetch(CONFIG.turnstileVerifyUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        cache: "no-store",
-        body: JSON.stringify({ token }),
-        signal: AbortSignal.timeout(CONFIG.requestTimeoutMs),
-      });
-
-      const data = (await response.json()) as { success?: boolean };
-      if (!response.ok || data.success !== true) {
-        throw new Error("Verification failed");
-      }
-
-      setVerified(true);
-    } catch {
-      setToken("");
-      setError("gate.verifyFail");
-      if (widgetIdRef.current && window.turnstile) {
-        window.turnstile.reset(widgetIdRef.current);
-      }
-    } finally {
-      setBusy(false);
-    }
+    setVerified(true);
   };
 
   if (verified) return <>{children}</>;
@@ -149,7 +60,7 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       <div className="turnstile-gate__glow turnstile-gate__glow--orange" aria-hidden="true" />
       <div className="turnstile-gate__glow turnstile-gate__glow--cream" aria-hidden="true" />
 
-      <section className="turnstile-gate__card" aria-labelledby="turnstile-title">
+      <section className="turnstile-gate__card" aria-labelledby="gate-title">
         <div className="turnstile-gate__mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M12 3.25 19 6v5.1c0 4.4-2.85 7.75-7 9.65-4.15-1.9-7-5.25-7-9.65V6l7-2.75Z" />
@@ -157,35 +68,56 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
           </svg>
         </div>
 
-        <p className="turnstile-gate__eyebrow">{t("gate.eyebrow")}</p>
-        <h1 id="turnstile-title" className="turnstile-gate__title">
-          {t("gate.title")}
-        </h1>
-        <p className="turnstile-gate__description">{t("gate.desc")}</p>
+        <p className="turnstile-gate__eyebrow">Giriş</p>
+        <h1 id="gate-title" className="turnstile-gate__title">Devam etmek için</h1>
+        <p className="turnstile-gate__description">Aşağıdaki basit soruyu cevapla.</p>
 
-        <div className="turnstile-gate__widget" ref={mountRef} aria-label={t("gate.widget")} />
+        <form onSubmit={submit}>
+          <label className="turnstile-gate__description" htmlFor="gate-answer">
+            {challenge.a} + {challenge.b} = ?
+          </label>
+          <input
+            id="gate-answer"
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            required
+            style={{ display: "block", width: "100%", padding: "10px", margin: "8px 0 16px" }}
+          />
 
-        <p className="turnstile-gate__hint" aria-live="polite">
-          {busy ? t("gate.hintBusy") : token ? t("gate.hintDone") : t("gate.hintTodo")}
-        </p>
+          {/* Gizli alan: insanlar görmez, botlar doldurur. */}
+          <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+            <label htmlFor="gate-website">Web sitesi</label>
+            <input
+              id="gate-website"
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honey}
+              onChange={(e) => setHoney(e.target.value)}
+            />
+          </div>
 
-        {error && (
-          <p className="turnstile-gate__error" role="alert">
-            {t(error)}
-          </p>
-        )}
+          {error && (
+            <p className="turnstile-gate__error" role="alert">
+              {error}
+            </p>
+          )}
 
-        <button type="button" className="turnstile-gate__button" onClick={continueToSite} disabled={!token || busy}>
-          <span>{busy ? t("gate.submitBusy") : t("gate.submit")}</span>
-          {!busy && <span className="turnstile-gate__arrow" aria-hidden="true">↗</span>}
-        </button>
+          <button type="submit" className="turnstile-gate__button">
+            <span>Devam et</span>
+            <span className="turnstile-gate__arrow" aria-hidden="true">↗</span>
+          </button>
+        </form>
 
         <p className="turnstile-gate__footer">
           <span className="turnstile-gate__dot" />
-          {t("gate.footer")} <span className="turnstile-gate__separator">/</span> HIGER23
+          Güvenlik kontrolü <span className="turnstile-gate__separator">/</span> HIGER23
         </p>
       </section>
-      <p className="turnstile-gate__bottom">{t("gate.bottom")}</p>
     </main>
   );
 }
