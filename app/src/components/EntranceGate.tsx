@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from "react";
 import { CONFIG } from "../config";
+import { useI18n } from "../lib/i18n";
+import { GATE_TEXT, fmt } from "../lib/gate-i18n";
 import {
   fillTimeOk,
-  grantPass,
-  hasValidPass,
   interactionsOk,
   isCorrectAnswer,
   lockDurationMs,
@@ -21,7 +21,7 @@ import "./entrance-gate.css";
 import "./gate-form.css";
 
 /*
- * Taraycı tarafı bot koruması (mobil uyumlu):
+ * Taraycı tarafı bot koruması (mobil uyumlu, 34 dil):
  *  1. Gizli honeypot alanları
  *  2. Minimum form süresi
  *  3. Kaydırıcı doğrulaması (süre ve tamamlanma)
@@ -29,14 +29,17 @@ import "./gate-form.css";
  *  5. Matematik sorusu
  *  6. Otomasyon işareti (navigator.webdriver)
  *  7. Başarısız denemelerde üssel kilit
- * Sabitler src/config.ts içinde (CONFIG.gate). Bu kontroller istemci tarafındadır;
- * sunucu doğrulaması için Worker gerekir.
+ * Doğrulama her sayfa yüklemesinde yeniden istenir (oturum geçişi yok).
+ * Sabitler src/config.ts, metinler src/lib/gate-i18n.ts içinde.
  */
 
 const G = CONFIG.gate;
 
 export default function EntranceGate({ children }: { children: ReactNode }) {
-  const [verified, setVerified] = useState<boolean>(() => hasValidPass());
+  const { lang } = useI18n();
+  const T = GATE_TEXT[lang];
+
+  const [verified, setVerified] = useState(false);
   const [challenge, setChallenge] = useState<Challenge>(() => makeChallenge());
   const [answer, setAnswer] = useState("");
   const [honey, setHoney] = useState<Record<string, string>>({});
@@ -86,8 +89,8 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   const fail = (msg: string) => {
     const s = readStored();
     const fails = s.fails + 1;
-    const lockUntil = Date.now() + lockDurationMs(fails);
-    writeStored({ fails, lockUntil: lockDurationMs(fails) > 0 ? lockUntil : 0 });
+    const dur = lockDurationMs(fails);
+    writeStored({ fails, lockUntil: dur > 0 ? Date.now() + dur : 0 });
     setError(msg);
     resetAll();
   };
@@ -127,35 +130,34 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (lockLeft > 0) {
-      setError(`Çok fazla deneme. ${lockLeft} saniye sonra tekrar dene.`);
+      setError(fmt(T.lock, { s: lockLeft }));
       return;
     }
     if (looksAutomated() || honeypotFilled(honey)) {
-      fail("Doğrulama başarısız.");
+      fail(T.errBot);
       return;
     }
     if (!fillTimeOk(Date.now() - startedAt.current)) {
-      fail("Çok hızlı. Bir an bekleyip tekrar dene.");
+      fail(T.errFast);
       return;
     }
     if (!sliderDone) {
-      fail("Kaydırıcıyı sona kadar sürükle.");
+      fail(T.errSlider);
       return;
     }
     if (!sliderOk(sliderDurationMs.current)) {
-      fail("Kaydırma çok hızlı ya da çok yavaş yapıldı.");
+      fail(T.errSpeed);
       return;
     }
     if (!interactionsOk(interactions.current)) {
-      fail("Etkileşim algılanamadı.");
+      fail(T.errInteraction);
       return;
     }
     if (!isCorrectAnswer(answer, challenge.answer)) {
-      fail("Cevap yanlış, yeni bir soru geldi.");
+      fail(T.errAnswer);
       return;
     }
     writeStored({ fails: 0, lockUntil: 0 });
-    grantPass();
     setVerified(true);
   };
 
@@ -177,9 +179,9 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
           </svg>
         </div>
 
-        <p className="turnstile-gate__eyebrow">Giriş</p>
-        <h1 id="gate-title" className="turnstile-gate__title">Devam etmek için</h1>
-        <p className="turnstile-gate__description">Kaydırıcıyı sürükle ve soruyu cevapla.</p>
+        <p className="turnstile-gate__eyebrow">{T.eyebrow}</p>
+        <h1 id="gate-title" className="turnstile-gate__title">{T.title}</h1>
+        <p className="turnstile-gate__description">{T.desc}</p>
 
         <form onSubmit={submit} autoComplete="off">
           <div
@@ -195,11 +197,11 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
           >
             <div className="gate-slider__fill" />
             <div className="gate-slider__handle" aria-hidden="true" />
-            <span className="gate-slider__label">{sliderDone ? "Doğrulandı ✓" : "Sona sürükle →"}</span>
+            <span className="gate-slider__label">{sliderDone ? T.sliderDone : T.slider}</span>
           </div>
 
           <label className="turnstile-gate__description" htmlFor="gate-answer" style={{ display: "block" }}>
-            {challenge.a} + {challenge.b} = ?
+            {fmt(T.question, { a: challenge.a, b: challenge.b })}
           </label>
           <input
             id="gate-answer"
@@ -221,14 +223,14 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
           )}
 
           <button type="submit" className="turnstile-gate__button gate-submit" disabled={lockLeft > 0}>
-            <span>{lockLeft > 0 ? `Bekle (${lockLeft} sn)` : "Devam et"}</span>
+            <span>{lockLeft > 0 ? fmt(T.wait, { s: lockLeft }) : T.submit}</span>
             {lockLeft === 0 && <span className="turnstile-gate__arrow" aria-hidden="true">↗</span>}
           </button>
         </form>
 
         <p className="turnstile-gate__footer">
           <span className="turnstile-gate__dot" />
-          Güvenlik kontrolü <span className="turnstile-gate__separator">/</span> HIGER23
+          {T.footer} <span className="turnstile-gate__separator">/</span> HIGER23
         </p>
       </section>
     </main>
