@@ -3,30 +3,31 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import "./entrance-gate.css";
 
 /*
- * Çok katmanlı bot koruması (tarayıcı tarafı):
+ * Tarayıcı tarafı bot koruması (mobil uyumlu, düşük sürtünmeli):
  *  1. Gizli honeypot alanları (insan görmez, bot doldurur)
- *  2. Minimum form süresi (çok hızlı cevap = bot)
- *  3. Kaydirma (slider) doğrulaması: süre ve hız kontrolü, ani/çok düzgün hareketler reddedilir
- *  4. Fare/klavye etkinliği sayımı (etkileşim yoksa reddedilir)
+ *  2. Minimum form süresi (1,5 sn)
+ *  3. Kaydırma (slider) doğrulaması: fare ve dokunmatik ile çalışır; çok hızlı veya çok yavaş değil
+ *  4. Etkileşim sayımı: fare, dokunma, tuş ve kaydırma hareketleri
  *  5. Matematik sorusu (her denemede yeni)
- *  6. Tarayici otomasyon işaretleri (navigator.webdriver)
- *  7. Başarısız denemelerde üssel artışlı kilit (localStorage)
- * Geçen ziyaretçi oturum boyunca (sessionStorage, 2 saat) tekrar sormaz.
+ *  6. Otomasyon işareti (navigator.webdriver)
+ *  7. Başarısız denemelerde üssel artışlı kilit
+ * Geçen ziyaretçi 2 saat boyunca (sessionStorage) tekrar sorulmaz.
  *
- * NOT: Bu kontroller tamamen istemci tarafındadır; kodu okuyan kararlı bir saldırgan
- * bunları atlatabilir. Sunucu taraflı imzalı doğrulama için Worker gerekir.
+ * NOT: Hepsi istemci tarafında; kararlı bir saldırgan atlatabilir. Sunucu doğrulaması için Worker gerekir.
  */
 
-const MIN_FILL_MS = 3000;
-const SLIDER_MIN_MS = 600;
-const SLIDER_MAX_MS = 15000;
-const MIN_INTERACTIONS = 15;
+const MIN_FILL_MS = 1500;
+const SLIDER_MIN_MS = 250;
+const SLIDER_MAX_MS = 20000;
+const SLIDER_DONE_PCT = 90;
+const MIN_INTERACTIONS = 8;
 const MAX_FAILS_BEFORE_LOCK = 3;
-const LOCK_BASE_MS = 60_000;
-const LOCK_MAX_MS = 60 * 60_000;
+const LOCK_BASE_MS = 30_000;
+const LOCK_MAX_MS = 30 * 60_000;
 const STORE_KEY = "gate-v2-state";
 const PASS_KEY = "gate-v2-pass";
 const PASS_TTL_MS = 2 * 60 * 60 * 1000;
+const HANDLE = 44;
 
 type Stored = { fails: number; lockUntil: number };
 
@@ -34,8 +35,8 @@ function readStored(): Stored {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as Stored;
-      return { fails: Number(parsed.fails) || 0, lockUntil: Number(parsed.lockUntil) || 0 };
+      const p = JSON.parse(raw) as Stored;
+      return { fails: Number(p.fails) || 0, lockUntil: Number(p.lockUntil) || 0 };
     }
   } catch {
     /* depolama kapalıysa sıfır kabul et */
@@ -95,19 +96,14 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   const dragging = useRef(false);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  // Etkileşim sayımı
+  // Etkileşim sayımı (fare, dokunma, tuş)
   useEffect(() => {
     const bump = () => {
       interactions.current += 1;
     };
-    window.addEventListener("pointermove", bump);
-    window.addEventListener("keydown", bump);
-    window.addEventListener("touchmove", bump);
-    return () => {
-      window.removeEventListener("pointermove", bump);
-      window.removeEventListener("keydown", bump);
-      window.removeEventListener("touchmove", bump);
-    };
+    const events = ["pointermove", "pointerdown", "keydown", "touchstart", "touchmove"] as const;
+    events.forEach((ev) => window.addEventListener(ev, bump, { passive: true }));
+    return () => events.forEach((ev) => window.removeEventListener(ev, bump));
   }, []);
 
   // Kilit geri sayımı
@@ -137,14 +133,12 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
     const s = readStored();
     const fails = s.fails + 1;
     const over = fails - MAX_FAILS_BEFORE_LOCK;
-    const lockUntil =
-      over >= 0 ? Date.now() + Math.min(LOCK_MAX_MS, LOCK_BASE_MS * 2 ** over) : 0;
+    const lockUntil = over >= 0 ? Date.now() + Math.min(LOCK_MAX_MS, LOCK_BASE_MS * 2 ** over) : 0;
     writeStored({ fails, lockUntil });
     setError(msg);
     resetAll();
   };
 
-  // Kaydırma (slider)
   const pctFromEvent = (e: PointerEvent<HTMLDivElement>) => {
     const rect = trackRef.current?.getBoundingClientRect();
     if (!rect || rect.width === 0) return 0;
@@ -162,7 +156,7 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
     if (!dragging.current || sliderDone) return;
     const pct = pctFromEvent(e);
     setSliderPct(pct);
-    if (pct >= 95) {
+    if (pct >= SLIDER_DONE_PCT) {
       dragging.current = false;
       sliderDurationMs.current = Date.now() - (sliderStartAt.current ?? Date.now());
       setSliderPct(100);
@@ -187,17 +181,16 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       fail("Doğrulama başarısız.");
       return;
     }
-    // Honeypot: bot doldurur, insan görmez.
     if (honeyWeb.trim() !== "" || honeyPhone.trim() !== "") {
       fail("Doğrulama başarısız.");
       return;
     }
     if (Date.now() - startedAt.current < MIN_FILL_MS) {
-      fail("Çok hızlı. Biraz bekleyip tekrar dene.");
+      fail("Çok hızlı. Bir an bekleyip tekrar dene.");
       return;
     }
     if (!sliderDone) {
-      fail("Kaydırmayı sona kadar sürüklemen gerekiyor.");
+      fail("Kaydırıcıyı sona kadar sürükle.");
       return;
     }
     const d = sliderDurationMs.current;
@@ -221,14 +214,18 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   if (verified) return <>{children}</>;
 
   return (
-    <main className="turnstile-gate">
+    <main className="turnstile-gate" style={{ boxSizing: "border-box", padding: "16px", minHeight: "100dvh" }}>
       <div className="gate-lang">
         <LanguageSwitcher />
       </div>
       <div className="turnstile-gate__glow turnstile-gate__glow--orange" aria-hidden="true" />
       <div className="turnstile-gate__glow turnstile-gate__glow--cream" aria-hidden="true" />
 
-      <section className="turnstile-gate__card" aria-labelledby="gate-title">
+      <section
+        className="turnstile-gate__card"
+        aria-labelledby="gate-title"
+        style={{ width: "100%", maxWidth: 420, boxSizing: "border-box", padding: "20px" }}
+      >
         <div className="turnstile-gate__mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M12 3.25 19 6v5.1c0 4.4-2.85 7.75-7 9.65-4.15-1.9-7-5.25-7-9.65V6l7-2.75Z" />
@@ -238,7 +235,7 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
 
         <p className="turnstile-gate__eyebrow">Giriş</p>
         <h1 id="gate-title" className="turnstile-gate__title">Devam etmek için</h1>
-        <p className="turnstile-gate__description">Kaydırıcıyı sona sürükle ve soruyu cevapla.</p>
+        <p className="turnstile-gate__description">Kaydırıcıyı sürükle ve soruyu cevapla.</p>
 
         <form onSubmit={submit} autoComplete="off">
           <div
@@ -249,20 +246,23 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
             onPointerCancel={onSliderUp}
             style={{
               position: "relative",
-              height: 44,
-              borderRadius: 22,
+              height: 52,
+              borderRadius: 26,
               background: "rgba(255,255,255,0.08)",
               touchAction: "none",
               userSelect: "none",
-              margin: "8px 0 16px",
+              WebkitUserSelect: "none",
+              margin: "8px 0 18px",
               overflow: "hidden",
+              cursor: sliderDone ? "default" : "grab",
             }}
-            role="presentation"
           >
             <div
               style={{
                 position: "absolute",
-                inset: 0,
+                top: 0,
+                bottom: 0,
+                left: 0,
                 width: `${sliderPct}%`,
                 background: "rgba(255,160,60,0.35)",
               }}
@@ -272,11 +272,12 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
               style={{
                 position: "absolute",
                 top: 4,
-                left: `calc(${sliderPct}% - ${sliderPct > 0 ? 20 : 0}px)`,
-                width: 36,
-                height: 36,
-                borderRadius: 18,
+                left: `calc((100% - ${HANDLE + 8}px) * ${sliderPct / 100} + 4px)`,
+                width: HANDLE,
+                height: HANDLE,
+                borderRadius: HANDLE / 2,
                 background: sliderDone ? "#7fd18b" : "#ffa03c",
+                pointerEvents: "none",
               }}
             />
             <span
@@ -285,15 +286,15 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
                 inset: 0,
                 display: "grid",
                 placeItems: "center",
-                fontSize: 13,
+                fontSize: 14,
                 pointerEvents: "none",
               }}
             >
-              {sliderDone ? "Doğrulandı" : "Sona sürükle →"}
+              {sliderDone ? "Doğrulandı ✓" : "Sona sürükle →"}
             </span>
           </div>
 
-          <label className="turnstile-gate__description" htmlFor="gate-answer">
+          <label className="turnstile-gate__description" htmlFor="gate-answer" style={{ display: "block" }}>
             {challenge.a} + {challenge.b} = ?
           </label>
           <input
@@ -304,7 +305,16 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             required
-            style={{ display: "block", width: "100%", padding: "10px", margin: "8px 0 16px" }}
+            style={{
+              display: "block",
+              width: "100%",
+              boxSizing: "border-box",
+              minHeight: 48,
+              padding: "12px",
+              margin: "8px 0 18px",
+              fontSize: 16, // iOS'ta otomatik yakınlaştırmayı engeller
+              borderRadius: 10,
+            }}
           />
 
           {/* Gizli honeypot alanları: insan görmez ve doldurmaz. */}
@@ -321,7 +331,12 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
             </p>
           )}
 
-          <button type="submit" className="turnstile-gate__button" disabled={lockLeft > 0}>
+          <button
+            type="submit"
+            className="turnstile-gate__button"
+            disabled={lockLeft > 0}
+            style={{ width: "100%", minHeight: 48, boxSizing: "border-box" }}
+          >
             <span>{lockLeft > 0 ? `Bekle (${lockLeft}s)` : "Devam et"}</span>
             {lockLeft === 0 && <span className="turnstile-gate__arrow" aria-hidden="true">↗</span>}
           </button>
