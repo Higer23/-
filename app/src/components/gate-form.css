@@ -1,0 +1,91 @@
+.gate-card {
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.gate-slider {
+  position: relative;
+  height: 52px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.08);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  margin: 8px 0 18px;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.gate-slider[data-done="true"] {
+  cursor: default;
+}
+
+.gate-slider__fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(var(--pct, 0) * 1%);
+  background: rgba(255, 160, 60, 0.35);
+}
+
+.gate-slider__handle {
+  position: absolute;
+  top: 4px;
+  left: calc((100% - 52px) * var(--pct, 0) / 100 + 4px);
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background: #ffa03c;
+  pointer-events: none;
+}
+
+.gate-slider[data-done="true"] .gate-slider__handle {
+  background: #7fd18b;
+}
+
+.gate-slider__label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.gate-answer {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 12px;
+  margin: 8px 0 18px;
+  font-size: 16px; /* iOS'ta otomatik yakınlaştırmayı engeller */
+  border-radius: 10px;
+}
+
+.gate-submit {
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+.gate-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.gate-root {
+  box-sizing: border-box;
+  padding: 16px;
+  min-height: 100dvh;
+}
+
+.gate-error {
+  margin: 0 0 12px;
+}
