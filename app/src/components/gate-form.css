@@ -1,3 +1,4 @@
+/* Giriş kapısı formu: site tokenları (index.css :root) ile uyumlu. */
 .gate-card {
   width: 100%;
   max-width: 420px;
@@ -9,7 +10,8 @@
   position: relative;
   height: 52px;
   border-radius: 26px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--glass);
+  border: 1px solid var(--line);
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -28,7 +30,7 @@
   bottom: 0;
   left: 0;
   width: calc(var(--pct, 0) * 1%);
-  background: rgba(255, 160, 60, 0.35);
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
 .gate-slider__handle {
@@ -38,12 +40,12 @@
   width: 44px;
   height: 44px;
   border-radius: 22px;
-  background: #ffa03c;
+  background: var(--accent);
   pointer-events: none;
 }
 
 .gate-slider[data-done="true"] .gate-slider__handle {
-  background: #7fd18b;
+  background: var(--pink);
 }
 
 .gate-slider__label {
@@ -52,6 +54,7 @@
   display: grid;
   place-items: center;
   font-size: 14px;
+  color: var(--text);
   pointer-events: none;
 }
 
@@ -63,7 +66,15 @@
   padding: 12px;
   margin: 8px 0 18px;
   font-size: 16px; /* iOS'ta otomatik yakınlaştırmayı engeller */
+  color: var(--text);
+  background: var(--glass);
+  border: 1px solid var(--line);
   border-radius: 10px;
+}
+
+.gate-answer:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .gate-submit {
