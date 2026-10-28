@@ -52,7 +52,7 @@ function isGithubData(value: any): value is GithubData {
 // Reading it first avoids browser calls to the GitHub API and its rate limits.
 async function fetchSnapshot(user: string): Promise<GithubData | null> {
   try {
-    const res = await fetch(`${import.meta.env.BASE_URL}${SNAPSHOT_PATH}`, { cache: "no-cache" });
+    const res = await fetch(new URL(SNAPSHOT_PATH, document.baseURI).toString(), { cache: "no-cache" });
     if (!res.ok) return null;
     const json = await res.json();
     const data = json?.data;

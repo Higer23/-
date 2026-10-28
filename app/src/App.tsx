@@ -68,7 +68,7 @@ export default function App() {
   const langs: [string, number][] = (result?.langs ?? []).slice(0, 8);
   const shownLangs = langs.filter(([n]) => hit(n));
   const noteTexts: string[] = (result?.noteCodes ?? []).map(
-    (c: { code: string; vars?: Record<string, number | string> }) => t(c.code as Key, c.vars),
+    (c) => t(c.code as Key, c.vars as unknown as Record<string, string | number> | undefined),
   );
   const shownNotes = noteTexts.filter((n) => hit(n));
   const shownProjects = PROJECTS.filter((p) => hit(`${p.title} ${p.kicker} ${p.text}`));
