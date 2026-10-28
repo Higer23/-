@@ -81,6 +81,16 @@ const sw: Dict = {
   "footer.text": "Data huonyeshwa kutoka kwenye snapshot inayosasishwa kila saa 6 na GitHub Actions, na mbadala wa GitHub REST API ya moja kwa moja. Tovuti hufanya kazi kwa njia tuli kwenye GitHub Pages.",
   "footer.design": "muundo / 2026",
   "doc.title": "Higer23 · Alama ya GitHub {score}/100",
+  "note.noContrib": "Data ya michango haikuweza kupakiwa, kwa hivyo sehemu hii inahesabiwa kama 0. Pakia upya ukurasa baadaye.",
+  "note.noBio": "Wasifu (bio) wa profaili ni tupu. Sentensi moja kuhusu unachojenga na unachopenda inabadilisha hisia ya kwanza.",
+  "note.noDesc": "Takriban {pct}% ya hazina zako hazina maelezo. Maelezo mafupi kwa kila hazina yanamweleza mgeni papo hapo kile kilichomo.",
+  "note.langSkew": "Mgawanyo wa lugha si sawa ({lang} inatawala). Kuonyesha miradi ya lugha nyingine kati ya hazina zako kuu kunaonyesha upana wa ujuzi wako.",
+  "note.streak": "Mfululizo wako wa michango umevunjika: mrefu zaidi siku {longest}, wa sasa siku {current}. Commit ndogo chache kwa wiki ni endelevu zaidi kuliko mlipuko mmoja mkubwa.",
+  "note.stars": "Idadi ya nyota ni ndogo. Picha ya skrini, hatua za usakinishaji na onyesho fupi kwenye README vinarahisisha kupata nyota.",
+  "note.followers": "Wafuasi ni wachache. README ya profaili na masasisho ya mara kwa mara yanaongeza mwonekano.",
+  "note.inactive": "Hakuna push katika siku 30 zilizopita. Hata uboreshaji mdogo unaweka profaili hai.",
+  "note.strength": "Nguvu: akaunti ya miaka {years}, hazina {repos} za umma na ishara wazi ya maendeleo endelevu.",
+  "snapshot.updated": "Sasisho la mwisho la data: {time}",
 };
 
 export default sw;

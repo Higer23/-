@@ -81,6 +81,16 @@ const ms: Dict = {
   "footer.text": "Data dipaparkan daripada snapshot yang dikemas kini setiap 6 jam oleh GitHub Actions, dengan sandaran kepada GitHub REST API secara langsung. Laman ini berjalan secara statik di GitHub Pages.",
   "footer.design": "reka bentuk / 2026",
   "doc.title": "Higer23 · Skor GitHub {score}/100",
+  "note.noContrib": "Data sumbangan tidak dapat dimuatkan, jadi bahagian ini dikira sebagai 0. Muat semula halaman kemudian.",
+  "note.noBio": "Bio profil masih kosong. Satu ayat tentang apa yang anda bina dan minat anda akan mengubah tanggapan pertama.",
+  "note.noDesc": "Kira-kira {pct}% repositori anda tiada penerangan. Penerangan ringkas untuk setiap repo memberitahu pelawat dengan segera tentang kandungannya.",
+  "note.langSkew": "Taburan bahasa berat sebelah ({lang} mendominasi). Memaparkan projek dalam bahasa lain di antara repo utama anda menonjolkan kepelbagaian anda.",
+  "note.streak": "Rangkaian sumbangan anda terputus: rangkaian terpanjang {longest} hari, rangkaian semasa {current} hari. Beberapa commit kecil seminggu lebih mampan daripada satu lonjakan besar.",
+  "note.stars": "Bilangan bintang rendah. Tangkapan skrin, langkah pemasangan dan demo ringkas dalam README memudahkan anda mendapat bintang.",
+  "note.followers": "Pengikut sedikit. README profil dan kemas kini berkala meningkatkan keterlihatan.",
+  "note.inactive": "Tiada push dalam 30 hari lepas. Walaupun penambahbaikan kecil memastikan profil kekal aktif.",
+  "note.strength": "Kekuatan: akaun berusia {years} tahun, {repos} repositori awam dan isyarat jelas pembangunan berterusan.",
+  "snapshot.updated": "Kemas kini data terakhir: {time}",
 };
 
 export default ms;
