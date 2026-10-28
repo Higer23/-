@@ -1,0 +1,10 @@
+name = "higer-agent-readiness"
+main = "markdown-negotiation.js"
+compatibility_date = "2026-10-21"
+workers_dev = false
+
+# Zone: higer.tech (55fb72a59afced7b01f4bd432add5f0f)
+routes = [
+  { pattern = "higer.tech/", zone_id = "55fb72a59afced7b01f4bd432add5f0f" },
+  { pattern = "www.higer.tech/", zone_id = "55fb72a59afced7b01f4bd432add5f0f" },
+]
