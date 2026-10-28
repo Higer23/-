@@ -93,6 +93,7 @@ const hu: Dict = {
   "snapshot.updated": "Az adatok utolsó frissítése: {time}",
   "part.profile": "Profil teljessége",
   "part.langs": "Nyelvi sokszínűség",
+  "ui.loading": "Betöltés",
 };
 
 export default hu;

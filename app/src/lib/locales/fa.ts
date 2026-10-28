@@ -93,6 +93,7 @@ const fa: Dict = {
   "snapshot.updated": "آخرین به‌روزرسانی داده‌ها: {time}",
   "part.profile": "کامل بودن پروفایل",
   "part.langs": "تنوع زبان‌ها",
+  "ui.loading": "در حال بارگذاری",
 };
 
 export default fa;

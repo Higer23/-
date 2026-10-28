@@ -25,8 +25,8 @@ export function hasWebGL() {
 export function loaderNode() {
   const wrap = el('div', null, 'loader-wrapper sm');
   wrap.setAttribute('role', 'status');
-  wrap.setAttribute('aria-label', 'Yükleniyor');
-  for (const ch of 'Yükleniyor') {
+  wrap.setAttribute('aria-label', 'Loading');
+  for (const ch of 'Loading') {
     const s = el('span', ch, 'loader-letter');
     s.setAttribute('aria-hidden', 'true');
     wrap.append(s);

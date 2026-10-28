@@ -93,6 +93,7 @@ const ms: Dict = {
   "snapshot.updated": "Kemas kini data terakhir: {time}",
   "part.profile": "Kelengkapan profil",
   "part.langs": "Kepelbagaian bahasa",
+  "ui.loading": "Memuatkan",
 };
 
 export default ms;

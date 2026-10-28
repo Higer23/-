@@ -93,6 +93,7 @@ const ar: Dict = {
   "snapshot.updated": "آخر تحديث للبيانات: {time}",
   "part.profile": "اكتمال الملف الشخصي",
   "part.langs": "تنوّع اللغات",
+  "ui.loading": "جارٍ التحميل",
 };
 
 export default ar;

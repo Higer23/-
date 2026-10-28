@@ -93,6 +93,7 @@ const mr: Dict = {
   "snapshot.updated": "डेटाचे शेवटचे अपडेट: {time}",
   "part.profile": "प्रोफाइल पूर्णता",
   "part.langs": "भाषा विविधता",
+  "ui.loading": "लोड होत आहे",
 };
 
 export default mr;

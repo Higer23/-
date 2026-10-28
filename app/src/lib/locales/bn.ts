@@ -93,6 +93,7 @@ const bn: Dict = {
   "snapshot.updated": "ডেটার সর্বশেষ আপডেট: {time}",
   "part.profile": "প্রোফাইলের পূর্ণতা",
   "part.langs": "ভাষার বৈচিত্র্য",
+  "ui.loading": "লোড হচ্ছে",
 };
 
 export default bn;

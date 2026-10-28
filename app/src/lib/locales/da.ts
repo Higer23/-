@@ -93,6 +93,7 @@ const da: Dict = {
   "snapshot.updated": "Seneste dataopdatering: {time}",
   "part.profile": "Profilens fuldstændighed",
   "part.langs": "Sprogmangfoldighed",
+  "ui.loading": "Indlæser",
 };
 
 export default da;

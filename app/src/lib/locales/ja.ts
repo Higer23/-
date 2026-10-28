@@ -93,6 +93,7 @@ const ja: Dict = {
   "snapshot.updated": "データの最終更新：{time}",
   "part.profile": "プロフィールの充実度",
   "part.langs": "言語の多様性",
+  "ui.loading": "読み込み中",
 };
 
 export default ja;

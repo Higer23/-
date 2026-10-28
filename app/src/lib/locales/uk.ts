@@ -93,6 +93,7 @@ const uk: Dict = {
   "snapshot.updated": "Останнє оновлення даних: {time}",
   "part.profile": "Повнота профілю",
   "part.langs": "Різноманітність мов",
+  "ui.loading": "Завантаження",
 };
 
 export default uk;

@@ -93,6 +93,7 @@ const cs: Dict = {
   "snapshot.updated": "Poslední aktualizace dat: {time}",
   "part.profile": "Úplnost profilu",
   "part.langs": "Rozmanitost jazyků",
+  "ui.loading": "Načítání",
 };
 
 export default cs;

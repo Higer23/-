@@ -93,6 +93,7 @@ const ta: Dict = {
   "snapshot.updated": "தரவின் கடைசிப் புதுப்பிப்பு: {time}",
   "part.profile": "சுயவிவர முழுமை",
   "part.langs": "மொழி வகைமை",
+  "ui.loading": "ஏற்றப்படுகிறது",
 };
 
 export default ta;

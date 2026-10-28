@@ -93,6 +93,7 @@ const th: Dict = {
   "snapshot.updated": "อัปเดตข้อมูลล่าสุด: {time}",
   "part.profile": "ความสมบูรณ์ของโปรไฟล์",
   "part.langs": "ความหลากหลายของภาษา",
+  "ui.loading": "กำลังโหลด",
 };
 
 export default th;

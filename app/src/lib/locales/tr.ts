@@ -91,6 +91,7 @@ const tr = {
   "snapshot.updated": "Son veri güncellemesi: {time}",
   "part.profile": "Profil tamlığı",
   "part.langs": "Dil çeşitliliği",
+  "ui.loading": "Yükleniyor",
 };
 
 export default tr;

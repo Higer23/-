@@ -93,6 +93,7 @@ const sv: Dict = {
   "snapshot.updated": "Senaste datauppdatering: {time}",
   "part.profile": "Profilens fullständighet",
   "part.langs": "Språkvariation",
+  "ui.loading": "Laddar",
 };
 
 export default sv;

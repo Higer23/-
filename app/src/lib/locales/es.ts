@@ -93,6 +93,7 @@ const es: Dict = {
   "snapshot.updated": "Última actualización de datos: {time}",
   "part.profile": "Completitud del perfil",
   "part.langs": "Diversidad de lenguajes",
+  "ui.loading": "Cargando",
 };
 
 export default es;

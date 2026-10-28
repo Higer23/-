@@ -93,6 +93,7 @@ const vi: Dict = {
   "snapshot.updated": "Cập nhật dữ liệu lần cuối: {time}",
   "part.profile": "Mức độ hoàn thiện hồ sơ",
   "part.langs": "Đa dạng ngôn ngữ",
+  "ui.loading": "Đang tải",
 };
 
 export default vi;

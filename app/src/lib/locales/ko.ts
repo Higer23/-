@@ -93,6 +93,7 @@ const ko: Dict = {
   "snapshot.updated": "데이터 마지막 갱신: {time}",
   "part.profile": "프로필 완성도",
   "part.langs": "언어 다양성",
+  "ui.loading": "로딩 중",
 };
 
 export default ko;

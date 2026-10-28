@@ -93,6 +93,7 @@ const hi: Dict = {
   "snapshot.updated": "डेटा का अंतिम अपडेट: {time}",
   "part.profile": "प्रोफ़ाइल की पूर्णता",
   "part.langs": "भाषा विविधता",
+  "ui.loading": "लोड हो रहा है",
 };
 
 export default hi;

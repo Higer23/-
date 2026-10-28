@@ -93,6 +93,7 @@ const ru: Dict = {
   "snapshot.updated": "Последнее обновление данных: {time}",
   "part.profile": "Полнота профиля",
   "part.langs": "Разнообразие языков",
+  "ui.loading": "Загрузка",
 };
 
 export default ru;

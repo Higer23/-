@@ -93,6 +93,7 @@ const nl: Dict = {
   "snapshot.updated": "Laatste gegevensupdate: {time}",
   "part.profile": "Profielvolledigheid",
   "part.langs": "Taaldiversiteit",
+  "ui.loading": "Laden",
 };
 
 export default nl;

@@ -93,6 +93,7 @@ const ro: Dict = {
   "snapshot.updated": "Ultima actualizare a datelor: {time}",
   "part.profile": "Completitudinea profilului",
   "part.langs": "Diversitatea limbajelor",
+  "ui.loading": "Se încarcă",
 };
 
 export default ro;

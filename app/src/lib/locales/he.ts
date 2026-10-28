@@ -93,6 +93,7 @@ const he: Dict = {
   "snapshot.updated": "עדכון הנתונים האחרון: {time}",
   "part.profile": "שלמות הפרופיל",
   "part.langs": "מגוון שפות",
+  "ui.loading": "טוען",
 };
 
 export default he;

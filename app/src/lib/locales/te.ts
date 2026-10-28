@@ -93,6 +93,7 @@ const te: Dict = {
   "snapshot.updated": "డేటా చివరి అప్‌డేట్: {time}",
   "part.profile": "ప్రొఫైల్ పూర్తి స్థాయి",
   "part.langs": "భాషా వైవిధ్యం",
+  "ui.loading": "లోడ్ అవుతోంది",
 };
 
 export default te;

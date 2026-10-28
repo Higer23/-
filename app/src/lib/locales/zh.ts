@@ -93,6 +93,7 @@ const zh: Dict = {
   "snapshot.updated": "数据最后更新：{time}",
   "part.profile": "资料完整度",
   "part.langs": "语言多样性",
+  "ui.loading": "加载中",
 };
 
 export default zh;

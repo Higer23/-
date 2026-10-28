@@ -93,6 +93,7 @@ const ur: Dict = {
   "snapshot.updated": "ڈیٹا کی آخری اپ ڈیٹ: {time}",
   "part.profile": "پروفائل کی تکمیل",
   "part.langs": "زبانوں کی تنوع",
+  "ui.loading": "لوڈ ہو رہا ہے",
 };
 
 export default ur;

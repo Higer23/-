@@ -93,6 +93,7 @@ const sw: Dict = {
   "snapshot.updated": "Sasisho la mwisho la data: {time}",
   "part.profile": "Ukamilifu wa profaili",
   "part.langs": "Utofauti wa lugha",
+  "ui.loading": "Inapakia",
 };
 
 export default sw;

@@ -93,6 +93,7 @@ const el: Dict = {
   "snapshot.updated": "Τελευταία ενημέρωση δεδομένων: {time}",
   "part.profile": "Πληρότητα προφίλ",
   "part.langs": "Ποικιλία γλωσσών",
+  "ui.loading": "Φόρτωση",
 };
 
 export default el;

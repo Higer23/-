@@ -93,6 +93,7 @@ const id: Dict = {
   "snapshot.updated": "Pembaruan data terakhir: {time}",
   "part.profile": "Kelengkapan profil",
   "part.langs": "Keragaman bahasa",
+  "ui.loading": "Memuat",
 };
 
 export default id;
