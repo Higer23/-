@@ -1,12 +1,13 @@
 # Higer23 · GitHub Puanı
 
-> Kişisel GitHub profil puanlama sitesi. Canlı GitHub verileri üzerinden bir profil puanı hesaplar, kısa bir hayat hikayesi, bağış ve eleştiri bölümü içerir.
+> Kişisel GitHub profil puanlama sitesi: canlı GitHub verileri üzerinden bir profil puanı hesaplar, kısa bir hayat hikayesi, bağış ve eleştiri bölümü içerir.
 
-Site tek sayfalık bir uygulamadır (React + Vite) ve JavaScript gerektirir.
+Ana site React + Vite ile yazılmıştır ve JavaScript gerektirir. Sayfanın statik karşılığı aşağıdaki Markdown dosyasındadır.
 
 ## Sayfalar
 
-- [Ana sayfa](https://higer23.github.io/-/): Profil puanı, GitHub verileri ve kısa hayat hikayesi.
+- [Ana sayfa](https://higer23.github.io/-/): Profil puanı, GitHub verileri ve hayat hikayesi.
+- [Markdown özeti](https://higer23.github.io/-/index.md): Aynı içeriğin düz metin/Markdown hali.
 
 ## Kaynak
 
@@ -15,4 +16,4 @@ Site tek sayfalık bir uygulamadır (React + Vite) ve JavaScript gerektirir.
 
 ## Dil
 
-Site birden fazla dili destekler (Türkçe varsayılan).
+Site Türkçe varsayılan olmak üzere birden fazla dili destekler.
