@@ -90,6 +90,7 @@ const de: Dict = {
   "note.followers": "Wenig Follower. Ein Profil-README und regelmäßige Aktualisierungen erhöhen die Sichtbarkeit.",
   "note.inactive": "In den letzten 30 Tagen gab es keinen Push. Schon eine kleine Verbesserung hält das Profil lebendig.",
   "note.strength": "Stärke: {years} Jahre Account, {repos} öffentliche Repositories und ein klares Zeichen für laufende Entwicklung.",
+  "snapshot.updated": "Letzte Datenaktualisierung: {time}",
 };
 
 export default de;

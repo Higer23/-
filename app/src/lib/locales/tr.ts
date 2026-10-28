@@ -88,6 +88,7 @@ const tr = {
   "note.followers": "Takipçi sayısı az. Bir profil README'si ve düzenli güncellemeler görünürlüğü artırır.",
   "note.inactive": "Son 30 günde hiç push yok. Küçük bir iyileştirme bile profili canlı tutar.",
   "note.strength": "Güçlü yan: {years} yıllık hesap, {repos} public depo ve düzenli geliştirme sinyali.",
+  "snapshot.updated": "Son veri güncellemesi: {time}",
 };
 
 export default tr;

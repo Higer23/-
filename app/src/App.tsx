@@ -204,6 +204,11 @@ export default function App() {
         </Panel>
 
       </main>
+      {ok?.data.fetchedAt && (
+        <p className="muted" style={{ fontSize: ".78rem" }}>
+          {t("snapshot.updated", { time: new Date(ok.data.fetchedAt).toLocaleString(locale) })}
+        </p>
+      )}
       <footer>
         {t("footer.text")} <span style={{ color: "var(--accent)" }}>Higer23</span> · {t("footer.design")}
       </footer>

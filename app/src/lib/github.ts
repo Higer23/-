@@ -33,6 +33,7 @@ async function getContributions(user: string) {
 }
 
 export type GithubData = {
+  fetchedAt?: string;
   profile: any;
   repos: any[];
   contrib: { contributions: { date: string; count: number }[] } | null;
@@ -56,7 +57,7 @@ async function fetchSnapshot(user: string): Promise<GithubData | null> {
     const json = await res.json();
     const data = json?.data;
     if (!isGithubData(data) || data.profile.login.toLowerCase() !== user.toLowerCase()) return null;
-    return data;
+    return { ...data, fetchedAt: typeof json.fetchedAt === "string" ? json.fetchedAt : undefined };
   } catch {
     return null;
   }
