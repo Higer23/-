@@ -1,37 +1,37 @@
 # -
 
-Kişisel GitHub profil puanlama sitesi. React + TypeScript + Tailwind CSS, Vite ile derlenir ve GitHub Pages üzerinde statik çalışır.
+Personal GitHub profile rating site. Built with React + TypeScript + Tailwind CSS, compiled with Vite and served as a static site on GitHub Pages.
 
-## Yapı
+## Structure
 
 ```
-app/index.html                 Kaynak sayfa (Vite girişi)
-app/src/main.tsx, App.tsx      Uygulama girişi ve sayfa
-app/src/components/            SilkWaves, ShaderCanvas (WebGL), butonlar, arama, yükleniyor, panel, defter
-app/src/lib/                   GitHub verisi, useGithub, useReveal
-app/src/config.ts              Kullanıcı adı, Worker URL
-app/src/index.css              Tailwind + tasarım stilleri
-assets/js/score.js             Saf puan mantığı (React ve testler ortak kullanır)
-assets/js/utils.js             score.js için yardımcılar
-assets/img/                    Avatar yedeği
-index.html, assets/index-*     Derlenmiş çıktı (GitHub Pages bunu sunar)
-tests/score.test.mjs           Puan birim testleri
-worker/                        Cloudflare Worker + D1 şeması
+app/index.html                 Source page (Vite entry)
+app/src/main.tsx, App.tsx      App entry and page
+app/src/components/            SilkWaves, ShaderCanvas (WebGL), buttons, search, loading, panel, guestbook
+app/src/lib/                   GitHub data, useGithub, useReveal
+app/src/config.ts              Username, Worker URL
+app/src/index.css              Tailwind + design styles
+assets/js/score.js             Pure scoring logic (shared by React and tests)
+assets/js/utils.js             Helpers for score.js
+assets/img/                    Fallback avatar
+index.html, assets/index-*     Compiled output (served by GitHub Pages)
+tests/score.test.mjs           Unit tests for scoring
+worker/                        Cloudflare Worker + D1 schema
 robots.txt, sitemap.xml        SEO
 ```
 
-## Çalıştırma
+## Running
 
-- Geliştirme: `npm install` ve `npm run dev`
-- Tip kontrolü: `npm run typecheck`
-- Test: `npm test` (Node 18+)
-- Yayın: `npm run build` kök dizindeki `index.html` ve `assets/index-*` dosyalarını yeniden üretir. Eski `assets/index-*` dosyalarını silip yenilerini commit et.
+- Development: `npm install` then `npm run dev`
+- Type check: `npm run typecheck`
+- Tests: `npm test` (Node 18+)
+- Release: `npm run build` regenerates the root `index.html` and `assets/index-*`. Delete the old `assets/index-*` files and commit the new ones.
 
-## Ayarlar
+## Configuration
 
-`app/src/config.ts` içindeki `workerUrl` alanına Cloudflare Worker adresini yaz. Boşsa ziyaretçi defteri gizli kalır.
+Set the Cloudflare Worker URL in the `workerUrl` field in `app/src/config.ts`. If it is empty, the guestbook stays hidden.
 
-## Bağış
+## Donations
 
 Open Collective: https://opencollective.com/higer023
-GitHub Sponsors: https://github.com/sponsors/Higer023 (hesapta etkin olmalı)
+GitHub Sponsors: https://github.com/sponsors/Higer023 (must be enabled on the account)
