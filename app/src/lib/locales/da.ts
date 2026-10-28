@@ -91,6 +91,8 @@ const da: Dict = {
   "note.inactive": "Ingen pushes de seneste 30 dage. Selv en lille forbedring holder profilen levende.",
   "note.strength": "Styrke: {years} års konto, {repos} offentlige repositories og et tydeligt tegn på løbende udvikling.",
   "snapshot.updated": "Seneste dataopdatering: {time}",
+  "part.profile": "Profilens fuldstændighed",
+  "part.langs": "Sprogmangfoldighed",
 };
 
 export default da;

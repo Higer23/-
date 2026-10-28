@@ -91,6 +91,8 @@ const ja: Dict = {
   "note.inactive": "過去 30 日間に push がありません。小さな改善でもプロフィールは活発に保てます。",
   "note.strength": "強み：アカウント歴 {years} 年、公開リポジトリ {repos} 件、継続的な開発の明確なシグナルがあります。",
   "snapshot.updated": "データの最終更新：{time}",
+  "part.profile": "プロフィールの充実度",
+  "part.langs": "言語の多様性",
 };
 
 export default ja;

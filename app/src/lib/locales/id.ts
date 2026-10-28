@@ -91,6 +91,8 @@ const id: Dict = {
   "note.inactive": "Tidak ada push dalam 30 hari terakhir. Perbaikan kecil pun membuat profil tetap hidup.",
   "note.strength": "Kekuatan: akun berusia {years} tahun, {repos} repositori publik, dan sinyal jelas bahwa pengembangan terus berjalan.",
   "snapshot.updated": "Pembaruan data terakhir: {time}",
+  "part.profile": "Kelengkapan profil",
+  "part.langs": "Keragaman bahasa",
 };
 
 export default id;

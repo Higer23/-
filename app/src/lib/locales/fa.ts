@@ -91,6 +91,8 @@ const fa: Dict = {
   "note.inactive": "در ۳۰ روز گذشته هیچ push نداشته‌ایم. حتی یک بهبود کوچک، پروفایل را زنده نگه می‌دارد.",
   "note.strength": "نقطه قوت: حسابی {years} ساله، {repos} مخزن عمومی و نشانه روشنی از توسعه مداوم.",
   "snapshot.updated": "آخرین به‌روزرسانی داده‌ها: {time}",
+  "part.profile": "کامل بودن پروفایل",
+  "part.langs": "تنوع زبان‌ها",
 };
 
 export default fa;

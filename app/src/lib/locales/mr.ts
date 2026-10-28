@@ -91,6 +91,8 @@ const mr: Dict = {
   "note.inactive": "गेल्या 30 दिवसांत एकही push झाला नाही. छोटीशी सुधारणाही प्रोफाइल जिवंत ठेवते.",
   "note.strength": "सामर्थ्य: {years} वर्षांचे खाते, {repos} सार्वजनिक रिपॉझिटरी आणि सतत विकासाचा स्पष्ट संकेत.",
   "snapshot.updated": "डेटाचे शेवटचे अपडेट: {time}",
+  "part.profile": "प्रोफाइल पूर्णता",
+  "part.langs": "भाषा विविधता",
 };
 
 export default mr;

@@ -91,6 +91,8 @@ const vi: Dict = {
   "note.inactive": "Không có push nào trong 30 ngày qua. Chỉ một cải thiện nhỏ cũng giúp hồ sơ luôn hoạt động.",
   "note.strength": "Điểm mạnh: tài khoản {years} năm tuổi, {repos} kho lưu trữ công khai và tín hiệu rõ ràng về việc phát triển liên tục.",
   "snapshot.updated": "Cập nhật dữ liệu lần cuối: {time}",
+  "part.profile": "Mức độ hoàn thiện hồ sơ",
+  "part.langs": "Đa dạng ngôn ngữ",
 };
 
 export default vi;

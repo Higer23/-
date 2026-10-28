@@ -91,6 +91,8 @@ const zh: Dict = {
   "note.inactive": "最近 30 天没有任何推送。即使是小改进，也能让个人资料保持活跃。",
   "note.strength": "优势：账号已有 {years} 年，{repos} 个公开仓库，并且持续开发的信号清晰。",
   "snapshot.updated": "数据最后更新：{time}",
+  "part.profile": "资料完整度",
+  "part.langs": "语言多样性",
 };
 
 export default zh;

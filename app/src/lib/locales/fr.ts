@@ -91,6 +91,8 @@ const fr: Dict = {
   "note.inactive": "Aucun push au cours des 30 derniers jours. Même une petite amélioration garde le profil vivant.",
   "note.strength": "Point fort : {years} ans de compte, {repos} dépôts publics et un signal clair de développement continu.",
   "snapshot.updated": "Dernière mise à jour des données : {time}",
+  "part.profile": "Complétude du profil",
+  "part.langs": "Diversité des langages",
 };
 
 export default fr;

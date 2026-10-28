@@ -91,6 +91,8 @@ const hu: Dict = {
   "note.inactive": "Az elmúlt 30 napban nem volt push. Már egy kisebb javítás is életben tartja a profilt.",
   "note.strength": "Erősség: {years} éves fiók, {repos} nyilvános tároló és egyértelmű jel a folyamatos fejlesztésre.",
   "snapshot.updated": "Az adatok utolsó frissítése: {time}",
+  "part.profile": "Profil teljessége",
+  "part.langs": "Nyelvi sokszínűség",
 };
 
 export default hu;

@@ -91,6 +91,8 @@ const he: Dict = {
   "note.inactive": "אין push ב-30 הימים האחרונים. גם שיפור קטן מחזיק את הפרופיל חי.",
   "note.strength": "חוזקה: חשבון בן {years} שנים, {repos} מאגרים ציבוריים וסימן ברור לפיתוח מתמשך.",
   "snapshot.updated": "עדכון הנתונים האחרון: {time}",
+  "part.profile": "שלמות הפרופיל",
+  "part.langs": "מגוון שפות",
 };
 
 export default he;

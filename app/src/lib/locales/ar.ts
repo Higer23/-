@@ -91,6 +91,8 @@ const ar: Dict = {
   "note.inactive": "لا توجد عمليات push خلال آخر 30 يومًا. حتى تحسين صغير يُبقي الملف الشخصي نشطًا.",
   "note.strength": "نقطة قوة: حساب عمره {years} سنوات، و{repos} مستودعًا عامًا، وإشارة واضحة على تطوير مستمر.",
   "snapshot.updated": "آخر تحديث للبيانات: {time}",
+  "part.profile": "اكتمال الملف الشخصي",
+  "part.langs": "تنوّع اللغات",
 };
 
 export default ar;

@@ -91,6 +91,8 @@ const ur: Dict = {
   "note.inactive": "گزشتہ 30 دنوں میں کوئی push نہیں ہوا۔ چھوٹی سی بہتری بھی پروفائل کو زندہ رکھتی ہے۔",
   "note.strength": "مضبوط پہلو: {years} سال پرانا اکاؤنٹ، {repos} عوامی ریپوزیٹری اور مسلسل ترقی کا واضح اشارہ۔",
   "snapshot.updated": "ڈیٹا کی آخری اپ ڈیٹ: {time}",
+  "part.profile": "پروفائل کی تکمیل",
+  "part.langs": "زبانوں کی تنوع",
 };
 
 export default ur;

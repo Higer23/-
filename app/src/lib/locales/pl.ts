@@ -91,6 +91,8 @@ const pl: Dict = {
   "note.inactive": "Brak pushy w ciągu ostatnich 30 dni. Nawet niewielka poprawa utrzymuje profil przy życiu.",
   "note.strength": "Mocna strona: konto od {years} lat, {repos} publicznych repozytoriów i wyraźny sygnał ciągłego rozwoju.",
   "snapshot.updated": "Ostatnia aktualizacja danych: {time}",
+  "part.profile": "Kompletność profilu",
+  "part.langs": "Różnorodność języków",
 };
 
 export default pl;

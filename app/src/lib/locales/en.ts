@@ -91,6 +91,8 @@ const en: Dict = {
   "note.inactive": "No pushes in the last 30 days. Even a small improvement keeps the profile alive.",
   "note.strength": "Strength: {years} years on GitHub, {repos} public repositories and a clear signal of ongoing development.",
   "snapshot.updated": "Last data update: {time}",
+  "part.profile": "Profile completeness",
+  "part.langs": "Language variety",
 };
 
 export default en;

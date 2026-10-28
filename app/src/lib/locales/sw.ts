@@ -91,6 +91,8 @@ const sw: Dict = {
   "note.inactive": "Hakuna push katika siku 30 zilizopita. Hata uboreshaji mdogo unaweka profaili hai.",
   "note.strength": "Nguvu: akaunti ya miaka {years}, hazina {repos} za umma na ishara wazi ya maendeleo endelevu.",
   "snapshot.updated": "Sasisho la mwisho la data: {time}",
+  "part.profile": "Ukamilifu wa profaili",
+  "part.langs": "Utofauti wa lugha",
 };
 
 export default sw;

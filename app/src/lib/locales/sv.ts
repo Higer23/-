@@ -91,6 +91,8 @@ const sv: Dict = {
   "note.inactive": "Inga pushar under de senaste 30 dagarna. Även en liten förbättring håller profilen levande.",
   "note.strength": "Styrka: {years} års konto, {repos} publika repositories och en tydlig signal om pågående utveckling.",
   "snapshot.updated": "Senaste datauppdatering: {time}",
+  "part.profile": "Profilens fullständighet",
+  "part.langs": "Språkvariation",
 };
 
 export default sv;

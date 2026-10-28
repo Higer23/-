@@ -91,6 +91,8 @@ const ko: Dict = {
   "note.inactive": "최근 30일 동안 push가 없습니다. 작은 개선이라도 프로필을 살아 있게 유지합니다.",
   "note.strength": "강점: 계정 {years}년, 공개 저장소 {repos}개, 지속적인 개발의 분명한 신호가 있습니다.",
   "snapshot.updated": "데이터 마지막 갱신: {time}",
+  "part.profile": "프로필 완성도",
+  "part.langs": "언어 다양성",
 };
 
 export default ko;

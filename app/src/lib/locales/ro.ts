@@ -91,6 +91,8 @@ const ro: Dict = {
   "note.inactive": "Niciun push în ultimele 30 de zile. Chiar și o mică îmbunătățire ține profilul activ.",
   "note.strength": "Punct forte: cont de {years} ani, {repos} depozite publice și un semnal clar de dezvoltare continuă.",
   "snapshot.updated": "Ultima actualizare a datelor: {time}",
+  "part.profile": "Completitudinea profilului",
+  "part.langs": "Diversitatea limbajelor",
 };
 
 export default ro;

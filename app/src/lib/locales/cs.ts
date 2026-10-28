@@ -91,6 +91,8 @@ const cs: Dict = {
   "note.inactive": "Za posledních 30 dní žádný push. I malé vylepšení udrží profil naživu.",
   "note.strength": "Silná stránka: účet starý {years} let, {repos} veřejných repozitářů a jasný signál průběžného vývoje.",
   "snapshot.updated": "Poslední aktualizace dat: {time}",
+  "part.profile": "Úplnost profilu",
+  "part.langs": "Rozmanitost jazyků",
 };
 
 export default cs;

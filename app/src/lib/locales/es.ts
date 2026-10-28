@@ -91,6 +91,8 @@ const es: Dict = {
   "note.inactive": "No hay pushes en los últimos 30 días. Incluso una pequeña mejora mantiene vivo el perfil.",
   "note.strength": "Fortaleza: {years} años de cuenta, {repos} repositorios públicos y una señal clara de desarrollo continuo.",
   "snapshot.updated": "Última actualización de datos: {time}",
+  "part.profile": "Completitud del perfil",
+  "part.langs": "Diversidad de lenguajes",
 };
 
 export default es;

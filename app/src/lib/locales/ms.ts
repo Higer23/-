@@ -91,6 +91,8 @@ const ms: Dict = {
   "note.inactive": "Tiada push dalam 30 hari lepas. Walaupun penambahbaikan kecil memastikan profil kekal aktif.",
   "note.strength": "Kekuatan: akaun berusia {years} tahun, {repos} repositori awam dan isyarat jelas pembangunan berterusan.",
   "snapshot.updated": "Kemas kini data terakhir: {time}",
+  "part.profile": "Kelengkapan profil",
+  "part.langs": "Kepelbagaian bahasa",
 };
 
 export default ms;

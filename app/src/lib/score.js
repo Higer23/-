@@ -54,14 +54,14 @@ export function computeScore({ profile: u, repos, contrib, now = Date.now() }) {
   const ageYears = Math.max(0, Math.round(((now - new Date(u.created_at).getTime()) / (365 * DAY)) * 10) / 10);
 
   const parts = [
-    { label: 'Katkı (son 1 yıl)', val: hasContrib ? Math.min(total / 500, 1) * CAPS.contrib : 0, cap: CAPS.contrib, txt: hasContrib ? `${total} katkı` : 'veri alınamadı' },
-    { label: 'Güncel seri', val: Math.min(current / 7, 1) * CAPS.curStreak, cap: CAPS.curStreak, txt: `${current} gün` },
-    { label: 'En uzun seri', val: Math.min(longest / 30, 1) * CAPS.longStreak, cap: CAPS.longStreak, txt: `${longest} gün` },
-    { label: 'Public depo', val: Math.min((u.public_repos || 0) / 20, 1) * CAPS.repos, cap: CAPS.repos, txt: `${u.public_repos} depo` },
-    { label: 'Yıldız', val: Math.min(stars / 100, 1) * CAPS.stars, cap: CAPS.stars, txt: `${stars} yıldız` },
-    { label: 'Takipçi', val: Math.min((u.followers || 0) / 50, 1) * CAPS.followers, cap: CAPS.followers, txt: `${u.followers} takipçi` },
-    { label: 'Profil tamlığı', val: (u.bio ? 4 : 0) + (u.blog ? 3 : 0) + (u.location || u.company ? 3 : 0), cap: CAPS.profile, txt: `${u.bio ? 'bio var' : 'bio yok'}, ${u.blog ? 'site var' : 'site yok'}` },
-    { label: 'Dil çeşitliliği', val: Math.min(langs.length / 4, 1) * CAPS.langs, cap: CAPS.langs, txt: `${langs.length} dil` },
+    { label: 'Katkı (son 1 yıl)', key: 'stat.contrib', val: hasContrib ? Math.min(total / 500, 1) * CAPS.contrib : 0, cap: CAPS.contrib, txt: hasContrib ? `${total}` : '—' },
+    { label: 'Güncel seri', key: 'stat.streak', val: Math.min(current / 7, 1) * CAPS.curStreak, cap: CAPS.curStreak, txt: `${current}` },
+    { label: 'En uzun seri', key: 'stat.longest', val: Math.min(longest / 30, 1) * CAPS.longStreak, cap: CAPS.longStreak, txt: `${longest}` },
+    { label: 'Public depo', key: 'stat.repos', val: Math.min((u.public_repos || 0) / 20, 1) * CAPS.repos, cap: CAPS.repos, txt: `${u.public_repos}` },
+    { label: 'Yıldız', key: 'stat.stars', val: Math.min(stars / 100, 1) * CAPS.stars, cap: CAPS.stars, txt: `${stars}` },
+    { label: 'Takipçi', key: 'stat.followers', val: Math.min((u.followers || 0) / 50, 1) * CAPS.followers, cap: CAPS.followers, txt: `${u.followers}` },
+    { label: 'Profil tamlığı', key: 'part.profile', val: (u.bio ? 4 : 0) + (u.blog ? 3 : 0) + (u.location || u.company ? 3 : 0), cap: CAPS.profile, txt: `bio ${u.bio ? '✓' : '✗'} · site ${u.blog ? '✓' : '✗'}` },
+    { label: 'Dil çeşitliliği', key: 'part.langs', val: Math.min(langs.length / 4, 1) * CAPS.langs, cap: CAPS.langs, txt: `${langs.length}` },
   ];
   const score = Math.round(parts.reduce((a, p) => a + p.val, 0));
 

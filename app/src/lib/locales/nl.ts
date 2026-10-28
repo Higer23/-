@@ -91,6 +91,8 @@ const nl: Dict = {
   "note.inactive": "Geen pushes in de afgelopen 30 dagen. Zelfs een kleine verbetering houdt het profiel levend.",
   "note.strength": "Sterke kant: {years} jaar account, {repos} openbare repositories en een duidelijk signaal van voortdurende ontwikkeling.",
   "snapshot.updated": "Laatste gegevensupdate: {time}",
+  "part.profile": "Profielvolledigheid",
+  "part.langs": "Taaldiversiteit",
 };
 
 export default nl;

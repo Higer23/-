@@ -89,6 +89,8 @@ const tr = {
   "note.inactive": "Son 30 günde hiç push yok. Küçük bir iyileştirme bile profili canlı tutar.",
   "note.strength": "Güçlü yan: {years} yıllık hesap, {repos} public depo ve düzenli geliştirme sinyali.",
   "snapshot.updated": "Son veri güncellemesi: {time}",
+  "part.profile": "Profil tamlığı",
+  "part.langs": "Dil çeşitliliği",
 };
 
 export default tr;

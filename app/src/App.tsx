@@ -64,7 +64,9 @@ export default function App() {
       ]
     : [];
   const shownStats = stats.filter(([l, v]) => hit(`${l} ${v}`));
-  const shownParts = (result?.parts ?? []).filter((p: { label: string; txt: string }) => hit(`${p.label} ${p.txt}`));
+  const shownParts = (result?.parts ?? [])
+    .map((p: { key: string; label: string; txt: string; val: number; cap: number }) => ({ ...p, label: t(p.key as Key) }))
+    .filter((p: { label: string; txt: string }) => hit(`${p.label} ${p.txt}`));
   const langs: [string, number][] = (result?.langs ?? []).slice(0, 8);
   const shownLangs = langs.filter(([n]) => hit(n));
   const noteTexts: string[] = (result?.noteCodes ?? []).map(
