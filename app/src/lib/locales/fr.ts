@@ -81,6 +81,16 @@ const fr: Dict = {
   "footer.text": "Les données sont affichées à partir d'un instantané mis à jour toutes les 6 heures par GitHub Actions, avec un repli sur l'API REST GitHub en direct. Le site fonctionne en statique sur GitHub Pages.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · Score GitHub {score}/100",
+  "note.noContrib": "Les données de contribution n'ont pas pu être chargées, cette section compte donc pour 0. Actualisez la page plus tard.",
+  "note.noBio": "La bio du profil est vide. Une phrase sur ce que vous créez et ce qui vous passionne change la première impression.",
+  "note.noDesc": "Environ {pct}% de vos dépôts n'ont pas de description. Une courte description par dépôt indique aux visiteurs de quoi il s'agit d'un coup d'œil.",
+  "note.langSkew": "La répartition des langages est déséquilibrée ({lang} domine). Montrer des projets dans d'autres langages parmi vos dépôts principaux rend votre polyvalence visible.",
+  "note.streak": "Votre série de contributions est interrompue : série la plus longue {longest} jours, série actuelle {current} jours. Quelques petits commits par semaine sont plus durables qu'un gros effort ponctuel.",
+  "note.stars": "Le nombre d'étoiles est faible. Une capture d'écran, les étapes d'installation et une courte démo dans le README facilitent l'obtention d'étoiles.",
+  "note.followers": "Peu d'abonnés. Un README de profil et des mises à jour régulières augmentent la visibilité.",
+  "note.inactive": "Aucun push au cours des 30 derniers jours. Même une petite amélioration garde le profil vivant.",
+  "note.strength": "Point fort : {years} ans de compte, {repos} dépôts publics et un signal clair de développement continu.",
+  "snapshot.updated": "Dernière mise à jour des données : {time}",
 };
 
 export default fr;

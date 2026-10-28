@@ -81,6 +81,16 @@ const zh: Dict = {
   "footer.text": "数据来自由 GitHub Actions 每 6 小时更新的快照；若快照不可用，则回退到实时 GitHub REST API。站点以静态方式运行在 GitHub Pages 上。",
   "footer.design": "设计 / 2026",
   "doc.title": "Higer23 · GitHub 评分 {score}/100",
+  "note.noContrib": "无法加载贡献数据，因此此部分按 0 计算。请稍后刷新页面。",
+  "note.noBio": "个人简介（bio）为空。用一句话说明你在做什么、关注什么，会明显改善第一印象。",
+  "note.noDesc": "约 {pct}% 的仓库没有描述。为每个仓库写一句简短描述，访客一眼就能了解它是什么。",
+  "note.langSkew": "语言分布偏向一方（{lang} 占主导）。在主要仓库中展示其他语言的项目，可以体现你的广度。",
+  "note.streak": "贡献连续记录中断：最长连续 {longest} 天，当前连续 {current} 天。每周几次小提交比一次性大爆发更可持续。",
+  "note.stars": "星标数较低。在 README 中加入截图、安装步骤和简短演示，更容易获得星标。",
+  "note.followers": "关注者较少。个人资料 README 和定期更新可以提高曝光度。",
+  "note.inactive": "最近 30 天没有任何推送。即使是小改进，也能让个人资料保持活跃。",
+  "note.strength": "优势：账号已有 {years} 年，{repos} 个公开仓库，并且持续开发的信号清晰。",
+  "snapshot.updated": "数据最后更新：{time}",
 };
 
 export default zh;
