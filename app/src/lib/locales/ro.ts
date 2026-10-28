@@ -81,6 +81,16 @@ const ro: Dict = {
   "footer.text": "Datele sunt afișate dintr-un instantaneu actualizat la fiecare 6 ore de GitHub Actions, cu rezervă pe API-ul REST GitHub live. Site-ul rulează static pe GitHub Pages.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · Scor GitHub {score}/100",
+  "note.noContrib": "Datele despre contribuții nu au putut fi încărcate, așa că această secțiune se numără ca 0. Reîmprospătează pagina mai târziu.",
+  "note.noBio": "Biografia profilului este goală. O propoziție despre ce construiești și ce te pasionează schimbă prima impresie.",
+  "note.noDesc": "Aproximativ {pct}% dintre depozitele tale nu au descriere. O descriere scurtă pentru fiecare depozit arată vizitatorilor, dintr-o privire, despre ce este vorba.",
+  "note.langSkew": "Distribuția limbajelor este dezechilibrată ({lang} domină). Afișarea proiectelor în alte limbaje printre depozitele principale arată versatilitatea ta.",
+  "note.streak": "Seria ta de contribuții s-a întrerupt: cea mai lungă serie {longest} zile, seria curentă {current} zile. Câteva commit-uri mici pe săptămână sunt mai sustenabile decât un singur val mare.",
+  "note.stars": "Numărul de stele este scăzut. O captură de ecran, pașii de instalare și un demo scurt în README fac mai ușor să primești stele.",
+  "note.followers": "Puțini urmăritori. Un README de profil și actualizările regulate cresc vizibilitatea.",
+  "note.inactive": "Niciun push în ultimele 30 de zile. Chiar și o mică îmbunătățire ține profilul activ.",
+  "note.strength": "Punct forte: cont de {years} ani, {repos} depozite publice și un semnal clar de dezvoltare continuă.",
+  "snapshot.updated": "Ultima actualizare a datelor: {time}",
 };
 
 export default ro;

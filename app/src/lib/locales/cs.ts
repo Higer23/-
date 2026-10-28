@@ -81,6 +81,16 @@ const cs: Dict = {
   "footer.text": "Data se zobrazují z snímku, který GitHub Actions aktualizuje každých 6 hodin; bez snímku se použije živé GitHub REST API. Web běží staticky na GitHub Pages.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · Skóre GitHubu {score}/100",
+  "note.noContrib": "Data o příspěvcích se nepodařilo načíst, takže se tato sekce počítá jako 0. Stránku obnovte později.",
+  "note.noBio": "Bio profilu je prázdné. Jedna věta o tom, co vytváříš a co tě zajímá, změní první dojem.",
+  "note.noDesc": "Přibližně {pct} % tvých repozitářů nemá popis. Krátký popis u každého repozitáře návštěvníkům hned vysvětlí, o co jde.",
+  "note.langSkew": "Rozložení jazyků je jednostranné ({lang} dominuje). Projekty v jiných jazycích mezi hlavními repozitáři ukážou tvou šíři.",
+  "note.streak": "Tvá série příspěvků byla přerušena: nejdelší série {longest} dní, aktuální série {current} dní. Několik malých commitů týdně je udržitelnější než jeden velký výbuch.",
+  "note.stars": "Počet hvězdiček je nízký. Snímek obrazovky, kroky instalace a krátké demo v README usnadní získávání hvězdiček.",
+  "note.followers": "Málo sledujících. README profilu a pravidelné aktualizace zvyšují viditelnost.",
+  "note.inactive": "Za posledních 30 dní žádný push. I malé vylepšení udrží profil naživu.",
+  "note.strength": "Silná stránka: účet starý {years} let, {repos} veřejných repozitářů a jasný signál průběžného vývoje.",
+  "snapshot.updated": "Poslední aktualizace dat: {time}",
 };
 
 export default cs;

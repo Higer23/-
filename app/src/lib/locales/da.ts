@@ -81,6 +81,16 @@ const da: Dict = {
   "footer.text": "Data vises fra et snapshot, der opdateres hver 6. time af GitHub Actions, med reserve fra den live GitHub REST API. Siden kører statisk på GitHub Pages.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · GitHub-score {score}/100",
+  "note.noContrib": "Bidragsdata kunne ikke indlæses, så denne sektion tæller som 0. Opdater siden senere.",
+  "note.noBio": "Profilens bio er tom. En sætning om, hvad du bygger, og hvad du interesserer dig for, ændrer det første indtryk.",
+  "note.noDesc": "Cirka {pct}% af dine repositories har ingen beskrivelse. En kort beskrivelse for hvert repo forklarer straks besøgende, hvad det er.",
+  "note.langSkew": "Sprogfordelingen er skæv ({lang} dominerer). Hvis du viser projekter på andre sprog blandt dine vigtigste repos, bliver din bredde synlig.",
+  "note.streak": "Din bidragsrække er brudt: længste række {longest} dage, nuværende række {current} dage. Et par små commits om ugen er mere bæredygtigt end ét stort udbrud.",
+  "note.stars": "Antallet af stjerner er lavt. Et skærmbillede, installationstrin og en kort demo i README gør det lettere at få stjerner.",
+  "note.followers": "Få følgere. En profil-README og regelmæssige opdateringer øger synligheden.",
+  "note.inactive": "Ingen pushes de seneste 30 dage. Selv en lille forbedring holder profilen levende.",
+  "note.strength": "Styrke: {years} års konto, {repos} offentlige repositories og et tydeligt tegn på løbende udvikling.",
+  "snapshot.updated": "Seneste dataopdatering: {time}",
 };
 
 export default da;

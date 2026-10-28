@@ -81,6 +81,16 @@ const hu: Dict = {
   "footer.text": "Az adatok egy pillanatfelvételből jelennek meg, amelyet a GitHub Actions 6 óránként frissít; ennek hiányában az élő GitHub REST API-t használjuk. Az oldal statikusan fut a GitHub Pages-en.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · GitHub-pontszám {score}/100",
+  "note.noContrib": "A közreműködési adatokat nem sikerült betölteni, ezért ez a szakasz 0-nak számít. Frissítsd az oldalt később.",
+  "note.noBio": "A profil bemutatkozása (bio) üres. Egy mondat arról, mit építesz és mi érdekel, megváltoztatja az első benyomást.",
+  "note.noDesc": "A tárolóid körülbelül {pct}%-ának nincs leírása. Tárolónként egy rövid leírás azonnal elmondja a látogatóknak, miről van szó.",
+  "note.langSkew": "A nyelvi megoszlás egyoldalú ({lang} dominál). Ha a fő tárolók között más nyelvű projekteket is mutatsz, látható lesz a szélesebb tudásod.",
+  "note.streak": "A közreműködési sorozatod megszakadt: leghosszabb sorozat {longest} nap, jelenlegi sorozat {current} nap. Hetente néhány kis commit fenntarthatóbb, mint egy nagy kitörés.",
+  "note.stars": "A csillagok száma alacsony. Képernyőkép, telepítési lépések és egy rövid demó a README-ben megkönnyíti a csillagok gyűjtését.",
+  "note.followers": "Kevés követő. A profil README-je és a rendszeres frissítések növelik a láthatóságot.",
+  "note.inactive": "Az elmúlt 30 napban nem volt push. Már egy kisebb javítás is életben tartja a profilt.",
+  "note.strength": "Erősség: {years} éves fiók, {repos} nyilvános tároló és egyértelmű jel a folyamatos fejlesztésre.",
+  "snapshot.updated": "Az adatok utolsó frissítése: {time}",
 };
 
 export default hu;
