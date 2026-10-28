@@ -78,7 +78,7 @@ const ro: Dict = {
   "support.kicker": "06 / Sprijin",
   "support.title": "Să facem împreună posibil următorul experiment.",
   "support.desc": "Puteți ajuta la menținerea proiectelor în funcțiune. Donațiile sunt complet voluntare; nicio funcție a site-ului nu depinde de ele. Mulțumesc.",
-  "footer.text": "Datele sunt preluate live prin GitHub REST API. Site-ul rulează static pe GitHub Pages.",
+  "footer.text": "Datele sunt afișate dintr-un instantaneu actualizat la fiecare 6 ore de GitHub Actions, cu rezervă pe API-ul REST GitHub live. Site-ul rulează static pe GitHub Pages.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · Scor GitHub {score}/100",
 };

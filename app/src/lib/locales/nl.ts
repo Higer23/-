@@ -78,7 +78,7 @@ const nl: Dict = {
   "support.kicker": "06 / Steun",
   "support.title": "Laten we het volgende experiment samen mogelijk maken.",
   "support.desc": "Je kunt helpen de projecten draaiende te houden. Donaties zijn volledig vrijwillig; geen enkele functie van de site hangt ervan af. Dank je wel.",
-  "footer.text": "Gegevens worden live opgehaald via de GitHub REST API. De site draait statisch op GitHub Pages.",
+  "footer.text": "Gegevens worden getoond uit een snapshot die elke 6 uur door GitHub Actions wordt bijgewerkt, met terugval op de live GitHub REST API. De site draait statisch op GitHub Pages.",
   "footer.design": "ontwerp / 2026",
   "doc.title": "Higer23 · GitHub-score {score}/100",
 };

@@ -78,7 +78,7 @@ const ar: Dict = {
   "support.kicker": "06 / الدعم",
   "support.title": "لنجعل التجربة القادمة ممكنة معًا.",
   "support.desc": "يمكنك المساعدة في استمرار المشاريع. التبرعات اختيارية تمامًا، ولا تعتمد أي ميزة في هذا الموقع عليها. شكرًا لك.",
-  "footer.text": "تُجلب البيانات مباشرة عبر واجهة GitHub REST API. يعمل الموقع بشكل ثابت على GitHub Pages.",
+  "footer.text": "تُعرض البيانات من لقطة تُحدَّث كل 6 ساعات عبر GitHub Actions، ومع احتياطي للواجهة الحية لـ GitHub REST API. يعمل الموقع بشكل ثابت على GitHub Pages.",
   "footer.design": "تصميم / 2026",
   "doc.title": "Higer23 · نقاط GitHub {score}/100",
 };

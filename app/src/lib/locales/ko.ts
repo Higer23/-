@@ -78,7 +78,7 @@ const ko: Dict = {
   "support.kicker": "06 / 후원",
   "support.title": "다음 실험을 함께 가능하게 해주세요.",
   "support.desc": "프로젝트가 계속 운영되도록 도와주실 수 있습니다. 후원은 전적으로 자발적이며, 이 사이트의 어떤 기능도 후원에 의존하지 않습니다. 감사합니다.",
-  "footer.text": "데이터는 GitHub REST API로 실시간 가져옵니다. 이 사이트는 GitHub Pages에서 정적으로 동작합니다.",
+  "footer.text": "데이터는 GitHub Actions가 6시간마다 갱신하는 스냅샷에서 표시되며, 스냅샷이 없으면 실시간 GitHub REST API로 대체됩니다. 이 사이트는 GitHub Pages에서 정적으로 실행됩니다.",
   "footer.design": "디자인 / 2026",
   "doc.title": "Higer23 · GitHub 점수 {score}/100",
 };

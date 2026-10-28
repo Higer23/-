@@ -78,7 +78,7 @@ const zh: Dict = {
   "support.kicker": "06 / 支持",
   "support.title": "让我们一起让下一次尝试成为可能。",
   "support.desc": "你可以帮助这些项目持续运行。捐赠完全自愿；本站的任何功能都不依赖捐赠。谢谢。",
-  "footer.text": "数据通过 GitHub REST API 实时获取。本站在 GitHub Pages 上以静态方式运行。",
+  "footer.text": "数据来自由 GitHub Actions 每 6 小时更新的快照；若快照不可用，则回退到实时 GitHub REST API。站点以静态方式运行在 GitHub Pages 上。",
   "footer.design": "设计 / 2026",
   "doc.title": "Higer23 · GitHub 评分 {score}/100",
 };

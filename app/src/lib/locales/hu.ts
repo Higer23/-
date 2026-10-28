@@ -78,7 +78,7 @@ const hu: Dict = {
   "support.kicker": "06 / Támogatás",
   "support.title": "Tegyük együtt lehetővé a következő kísérletet.",
   "support.desc": "Segíthet abban, hogy a projektek működőképesek maradjanak. Az adományok teljesen önkéntesek; az oldal egyetlen funkciója sem függ tőlük. Köszönöm.",
-  "footer.text": "Az adatok élőben, a GitHub REST API-n keresztül töltődnek be. Az oldal statikusan fut a GitHub Pages-en.",
+  "footer.text": "Az adatok egy pillanatfelvételből jelennek meg, amelyet a GitHub Actions 6 óránként frissít; ennek hiányában az élő GitHub REST API-t használjuk. Az oldal statikusan fut a GitHub Pages-en.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · GitHub-pontszám {score}/100",
 };

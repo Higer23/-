@@ -78,7 +78,7 @@ const vi: Dict = {
   "support.kicker": "06 / Hỗ trợ",
   "support.title": "Hãy cùng biến thử nghiệm tiếp theo thành hiện thực.",
   "support.desc": "Bạn có thể giúp các dự án tiếp tục hoạt động. Quyên góp hoàn toàn tự nguyện; không tính năng nào của trang phụ thuộc vào điều này. Cảm ơn bạn.",
-  "footer.text": "Dữ liệu được lấy trực tiếp qua GitHub REST API. Trang chạy tĩnh trên GitHub Pages.",
+  "footer.text": "Dữ liệu được hiển thị từ một snapshot được GitHub Actions cập nhật mỗi 6 giờ, dự phòng bằng GitHub REST API trực tiếp. Trang web chạy tĩnh trên GitHub Pages.",
   "footer.design": "thiết kế / 2026",
   "doc.title": "Higer23 · Điểm GitHub {score}/100",
 };

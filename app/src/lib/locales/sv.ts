@@ -78,7 +78,7 @@ const sv: Dict = {
   "support.kicker": "06 / Stöd",
   "support.title": "Låt oss göra nästa experiment möjligt tillsammans.",
   "support.desc": "Du kan hjälpa till att hålla projekten igång. Donationer är helt frivilliga; ingen funktion på sidan beror på dem. Tack.",
-  "footer.text": "Data hämtas live via GitHub REST API. Sidan körs statiskt på GitHub Pages.",
+  "footer.text": "Data visas från en ögonblicksbild som uppdateras var 6:e timme av GitHub Actions, med reservläge mot det live GitHub REST API:et. Sidan körs statiskt på GitHub Pages.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · GitHub-poäng {score}/100",
 };

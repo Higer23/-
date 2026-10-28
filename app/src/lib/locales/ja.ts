@@ -78,7 +78,7 @@ const ja: Dict = {
   "support.kicker": "06 / 支援",
   "support.title": "次の実験を一緒に可能にしましょう。",
   "support.desc": "プロジェクトを続けるためにご協力いただけます。寄付は完全に任意で、このサイトの機能は寄付に依存していません。ありがとうございます。",
-  "footer.text": "データは GitHub REST API からリアルタイムで取得しています。サイトは GitHub Pages 上で静的に動作しています。",
+  "footer.text": "データは GitHub Actions が6時間ごとに更新するスナップショットから表示され、ない場合はライブの GitHub REST API に切り替わります。サイトは GitHub Pages 上で静的に動作します。",
   "footer.design": "デザイン / 2026",
   "doc.title": "Higer23 · GitHub スコア {score}/100",
 };

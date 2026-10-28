@@ -78,7 +78,7 @@ const sw: Dict = {
   "support.kicker": "06 / Msaada",
   "support.title": "Tufanye jaribio lijalo liwezekane pamoja.",
   "support.desc": "Unaweza kusaidia miradi iendelee. Michango ni ya hiari kabisa; hakuna kipengele cha tovuti kinachoitegemea. Asante.",
-  "footer.text": "Data inachukuliwa moja kwa moja kupitia GitHub REST API. Tovuti hii inaendeshwa kwa njia tuli kwenye GitHub Pages.",
+  "footer.text": "Data huonyeshwa kutoka kwenye snapshot inayosasishwa kila saa 6 na GitHub Actions, na mbadala wa GitHub REST API ya moja kwa moja. Tovuti hufanya kazi kwa njia tuli kwenye GitHub Pages.",
   "footer.design": "muundo / 2026",
   "doc.title": "Higer23 · Alama ya GitHub {score}/100",
 };

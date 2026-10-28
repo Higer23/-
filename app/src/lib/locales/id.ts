@@ -78,7 +78,7 @@ const id: Dict = {
   "support.kicker": "06 / Dukungan",
   "support.title": "Mari wujudkan eksperimen berikutnya bersama.",
   "support.desc": "Anda dapat membantu proyek tetap berjalan. Donasi sepenuhnya sukarela; tidak ada fitur situs ini yang bergantung padanya. Terima kasih.",
-  "footer.text": "Data diambil secara langsung melalui GitHub REST API. Situs ini berjalan statis di GitHub Pages.",
+  "footer.text": "Data ditampilkan dari snapshot yang diperbarui setiap 6 jam oleh GitHub Actions, dengan cadangan ke GitHub REST API langsung. Situs berjalan secara statis di GitHub Pages.",
   "footer.design": "desain / 2026",
   "doc.title": "Higer23 · Skor GitHub {score}/100",
 };

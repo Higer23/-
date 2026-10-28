@@ -78,7 +78,7 @@ const it: Dict = {
   "support.kicker": "06 / Supporto",
   "support.title": "Rendiamo possibile insieme il prossimo esperimento.",
   "support.desc": "Puoi aiutare a mantenere vivi i progetti. Le donazioni sono del tutto volontarie; nessuna funzione del sito dipende da esse. Grazie.",
-  "footer.text": "I dati vengono recuperati in tempo reale tramite la REST API di GitHub. Il sito funziona in modo statico su GitHub Pages.",
+  "footer.text": "I dati provengono da uno snapshot aggiornato ogni 6 ore tramite GitHub Actions, con ripiego sulla API REST di GitHub in tempo reale. Il sito funziona in modo statico su GitHub Pages.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · Punteggio GitHub {score}/100",
 };
