@@ -81,6 +81,16 @@ const pl: Dict = {
   "footer.text": "Dane są wyświetlane z migawki aktualizowanej co 6 godzin przez GitHub Actions; w razie braku migawki używane jest live GitHub REST API. Strona działa statycznie na GitHub Pages.",
   "footer.design": "projekt / 2026",
   "doc.title": "Higer23 · Wynik GitHub {score}/100",
+  "note.noContrib": "Nie udało się wczytać danych o aktywności, więc ta sekcja liczy się jako 0. Odśwież stronę później.",
+  "note.noBio": "Opis profilu (bio) jest pusty. Jedno zdanie o tym, co tworzysz i czym się interesujesz, zmienia pierwsze wrażenie.",
+  "note.noDesc": "Około {pct}% Twoich repozytoriów nie ma opisu. Krótki opis przy każdym repozytorium od razu wyjaśnia odwiedzającym, czym jest.",
+  "note.langSkew": "Rozkład języków jest jednostronny ({lang} dominuje). Pokazanie projektów w innych językach wśród najważniejszych repozytoriów pokaże Twoją wszechstronność.",
+  "note.streak": "Seria aktywności została przerwana: najdłuższa seria to {longest} dni, bieżąca {current} dni. Kilka małych commitów w tygodniu jest trwalsze niż jeden duży zryw.",
+  "note.stars": "Liczba gwiazdek jest niska. Zrzut ekranu, kroki instalacji i krótkie demo w README ułatwiają zdobywanie gwiazdek.",
+  "note.followers": "Mało obserwujących. README profilu i regularne aktualizacje zwiększają widoczność.",
+  "note.inactive": "Brak pushy w ciągu ostatnich 30 dni. Nawet niewielka poprawa utrzymuje profil przy życiu.",
+  "note.strength": "Mocna strona: konto od {years} lat, {repos} publicznych repozytoriów i wyraźny sygnał ciągłego rozwoju.",
+  "snapshot.updated": "Ostatnia aktualizacja danych: {time}",
 };
 
 export default pl;

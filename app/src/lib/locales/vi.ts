@@ -81,6 +81,16 @@ const vi: Dict = {
   "footer.text": "Dữ liệu được hiển thị từ một snapshot được GitHub Actions cập nhật mỗi 6 giờ, dự phòng bằng GitHub REST API trực tiếp. Trang web chạy tĩnh trên GitHub Pages.",
   "footer.design": "thiết kế / 2026",
   "doc.title": "Higer23 · Điểm GitHub {score}/100",
+  "note.noContrib": "Không thể tải dữ liệu đóng góp, nên phần này được tính là 0. Hãy tải lại trang sau.",
+  "note.noBio": "Phần giới thiệu (bio) của hồ sơ đang trống. Một câu về những gì bạn xây dựng và bạn quan tâm điều gì sẽ thay đổi ấn tượng đầu tiên.",
+  "note.noDesc": "Khoảng {pct}% kho lưu trữ của bạn chưa có mô tả. Một mô tả ngắn cho mỗi kho giúp người xem hiểu ngay đó là gì.",
+  "note.langSkew": "Phân bố ngôn ngữ đang lệch về một phía ({lang} chiếm ưu thế). Hiển thị các dự án bằng ngôn ngữ khác trong các kho chính sẽ làm nổi bật sự đa dạng của bạn.",
+  "note.streak": "Chuỗi đóng góp của bạn đã bị gián đoạn: chuỗi dài nhất {longest} ngày, chuỗi hiện tại {current} ngày. Vài commit nhỏ mỗi tuần bền vững hơn một đợt bùng nổ lớn.",
+  "note.stars": "Số sao còn thấp. Ảnh chụp màn hình, các bước cài đặt và một demo ngắn trong README sẽ giúp dễ nhận được sao hơn.",
+  "note.followers": "Ít người theo dõi. README hồ sơ và cập nhật đều đặn sẽ tăng khả năng hiển thị.",
+  "note.inactive": "Không có push nào trong 30 ngày qua. Chỉ một cải thiện nhỏ cũng giúp hồ sơ luôn hoạt động.",
+  "note.strength": "Điểm mạnh: tài khoản {years} năm tuổi, {repos} kho lưu trữ công khai và tín hiệu rõ ràng về việc phát triển liên tục.",
+  "snapshot.updated": "Cập nhật dữ liệu lần cuối: {time}",
 };
 
 export default vi;

@@ -81,6 +81,16 @@ const ko: Dict = {
   "footer.text": "데이터는 GitHub Actions가 6시간마다 갱신하는 스냅샷에서 표시되며, 스냅샷이 없으면 실시간 GitHub REST API로 대체됩니다. 이 사이트는 GitHub Pages에서 정적으로 실행됩니다.",
   "footer.design": "디자인 / 2026",
   "doc.title": "Higer23 · GitHub 점수 {score}/100",
+  "note.noContrib": "기여 데이터를 불러오지 못해 이 섹션은 0점으로 계산됩니다. 나중에 페이지를 새로고침하세요.",
+  "note.noBio": "프로필 소개(bio)가 비어 있습니다. 무엇을 만들고 어떤 것에 관심이 있는지 한 문장으로 적으면 첫인상이 크게 달라집니다.",
+  "note.noDesc": "저장소의 약 {pct}%에 설명이 없습니다. 저장소마다 짧은 설명을 붙이면 방문자가 한눈에 내용을 알 수 있습니다.",
+  "note.langSkew": "언어 분포가 한쪽으로 치우쳐 있습니다({lang}이 대부분). 주요 저장소에 다른 언어의 프로젝트를 보여주면 다양성이 드러납니다.",
+  "note.streak": "기여 연속 기록이 끊어졌습니다: 최장 {longest}일, 현재 {current}일. 일주일에 몇 번의 작은 커밋이 한 번의 큰 몰아치기보다 지속 가능합니다.",
+  "note.stars": "스타 수가 적습니다. README에 스크린샷, 설치 단계, 짧은 데모를 넣으면 스타를 받기 쉬워집니다.",
+  "note.followers": "팔로워가 적습니다. 프로필 README와 꾸준한 업데이트가 노출을 늘려 줍니다.",
+  "note.inactive": "최근 30일 동안 push가 없습니다. 작은 개선이라도 프로필을 살아 있게 유지합니다.",
+  "note.strength": "강점: 계정 {years}년, 공개 저장소 {repos}개, 지속적인 개발의 분명한 신호가 있습니다.",
+  "snapshot.updated": "데이터 마지막 갱신: {time}",
 };
 
 export default ko;

@@ -81,6 +81,16 @@ const id: Dict = {
   "footer.text": "Data ditampilkan dari snapshot yang diperbarui setiap 6 jam oleh GitHub Actions, dengan cadangan ke GitHub REST API langsung. Situs berjalan secara statis di GitHub Pages.",
   "footer.design": "desain / 2026",
   "doc.title": "Higer23 · Skor GitHub {score}/100",
+  "note.noContrib": "Data kontribusi tidak dapat dimuat, jadi bagian ini dihitung 0. Silakan muat ulang halaman nanti.",
+  "note.noBio": "Bio profil masih kosong. Satu kalimat tentang apa yang kamu buat dan minatmu akan mengubah kesan pertama.",
+  "note.noDesc": "Sekitar {pct}% repositori kamu belum punya deskripsi. Deskripsi singkat untuk setiap repo langsung menjelaskan isinya kepada pengunjung.",
+  "note.langSkew": "Komposisi bahasa pemrograman tidak seimbang ({lang} mendominasi). Menampilkan proyek dengan bahasa lain di repo utama membuat keragamanmu terlihat.",
+  "note.streak": "Rangkaian kontribusimu terputus: rangkaian terpanjang {longest} hari, rangkaian saat ini {current} hari. Beberapa commit kecil per minggu lebih berkelanjutan daripada satu lonjakan besar.",
+  "note.stars": "Jumlah bintang masih rendah. Tambahkan screenshot, langkah instalasi, dan demo singkat di README agar lebih mudah mendapat bintang.",
+  "note.followers": "Pengikut masih sedikit. README profil dan pembaruan rutin meningkatkan visibilitas.",
+  "note.inactive": "Tidak ada push dalam 30 hari terakhir. Perbaikan kecil pun membuat profil tetap hidup.",
+  "note.strength": "Kekuatan: akun berusia {years} tahun, {repos} repositori publik, dan sinyal jelas bahwa pengembangan terus berjalan.",
+  "snapshot.updated": "Pembaruan data terakhir: {time}",
 };
 
 export default id;

@@ -81,6 +81,16 @@ const nl: Dict = {
   "footer.text": "Gegevens worden getoond uit een snapshot die elke 6 uur door GitHub Actions wordt bijgewerkt, met terugval op de live GitHub REST API. De site draait statisch op GitHub Pages.",
   "footer.design": "ontwerp / 2026",
   "doc.title": "Higer23 · GitHub-score {score}/100",
+  "note.noContrib": "Bijdragegegevens konden niet worden geladen, daarom telt dit onderdeel als 0. Vernieuw de pagina later.",
+  "note.noBio": "De profielbio is leeg. Eén zin over wat je bouwt en waar je om geeft, maakt een groot verschil in de eerste indruk.",
+  "note.noDesc": "Ongeveer {pct}% van je repositories heeft geen beschrijving. Een korte beschrijving per repo laat bezoekers in één oogopslag zien waar het over gaat.",
+  "note.langSkew": "De taalverdeling is scheef ({lang} domineert). Door projecten in andere talen tussen je belangrijkste repo's te tonen, wordt je breedte zichtbaar.",
+  "note.streak": "Je bijdragereeks is onderbroken: langste reeks {longest} dagen, huidige reeks {current} dagen. Een paar kleine commits per week is duurzamer dan één grote uitbarsting.",
+  "note.stars": "Het aantal sterren is laag. Een screenshot, installatiestappen en een korte demo in de README maken het makkelijker om sterren te krijgen.",
+  "note.followers": "Weinig volgers. Een profiel-README en regelmatige updates vergroten de zichtbaarheid.",
+  "note.inactive": "Geen pushes in de afgelopen 30 dagen. Zelfs een kleine verbetering houdt het profiel levend.",
+  "note.strength": "Sterke kant: {years} jaar account, {repos} openbare repositories en een duidelijk signaal van voortdurende ontwikkeling.",
+  "snapshot.updated": "Laatste gegevensupdate: {time}",
 };
 
 export default nl;
