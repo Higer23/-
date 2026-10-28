@@ -1,6 +1,7 @@
 import { CONFIG } from "../config";
 
 const API = "https://api.github.com";
+const SNAPSHOT_PATH = "data/profile.json";
 
 // Timeout, rate-limit and invalid-response errors. Messages are technical (English);
 // the UI wraps them in the localized status text.
@@ -31,7 +32,41 @@ async function getContributions(user: string) {
   }
 }
 
-export async function fetchGithub(user: string) {
+export type GithubData = {
+  profile: any;
+  repos: any[];
+  contrib: { contributions: { date: string; count: number }[] } | null;
+};
+
+function isGithubData(value: any): value is GithubData {
+  return (
+    !!value &&
+    typeof value.profile?.login === "string" &&
+    Array.isArray(value.repos) &&
+    (value.contrib === null || Array.isArray(value.contrib?.contributions))
+  );
+}
+
+// Pre-built snapshot written by GitHub Actions (scripts/build-profile.mjs).
+// Reading it first avoids browser calls to the GitHub API and its rate limits.
+async function fetchSnapshot(user: string): Promise<GithubData | null> {
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL}${SNAPSHOT_PATH}`, { cache: "no-cache" });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const data = json?.data;
+    if (!isGithubData(data) || data.profile.login.toLowerCase() !== user.toLowerCase()) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchGithub(user: string): Promise<GithubData> {
+  const snapshot = await fetchSnapshot(user);
+  if (snapshot) return snapshot;
+
+  // Live fallback when the snapshot is missing or invalid.
   const profile = await getJson(`${API}/users/${user}`);
   if (!profile || !profile.login) throw new Error("Invalid profile data");
 
@@ -39,9 +74,7 @@ export async function fetchGithub(user: string) {
   // page so the displayed star total covers every public repository.
   const repos: any[] = [];
   for (let page = 1; page <= 10; page += 1) {
-    const batch = await getJson(
-      `${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`,
-    );
+    const batch = await getJson(`${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`);
     if (!Array.isArray(batch)) throw new Error("Invalid repository data");
     repos.push(...batch);
     if (batch.length < 100) break;
