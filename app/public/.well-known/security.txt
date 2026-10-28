@@ -1,0 +1,4 @@
+Contact: https://github.com/Higer23
+Expires: 2027-10-28T00:00:00.000Z
+Preferred-Languages: tr, de, en
+Canonical: https://me.higer.tech/.well-known/security.txt

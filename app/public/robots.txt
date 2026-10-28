@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://higer23.github.io/-/sitemap.xml
+Sitemap: https://me.higer.tech/sitemap.xml
