@@ -81,6 +81,15 @@ const en: Dict = {
   "footer.text": "Data is shown from a snapshot refreshed every 6 hours by GitHub Actions, with a live GitHub REST API fallback. The site runs statically on GitHub Pages.",
   "footer.design": "design / 2026",
   "doc.title": "Higer23 · GitHub Score {score}/100",
+  "note.noContrib": "Contribution data could not be loaded, so this section counts as 0. Please refresh the page later.",
+  "note.noBio": "The profile bio is empty. One sentence about what you build and what you care about changes the first impression.",
+  "note.noDesc": "About {pct}% of your repositories have no description. A short description per repo tells visitors what it is at a glance.",
+  "note.langSkew": "Your language mix is lopsided ({lang} dominates). Showing projects in other languages among your top repos makes your range visible.",
+  "note.streak": "Your contribution streak is broken: longest streak {longest} days, current streak {current} days. A few small commits a week is more sustainable than one big burst.",
+  "note.stars": "The star count is low. A screenshot, install steps and a short demo in the README make stars easier to earn.",
+  "note.followers": "Few followers. A profile README and regular updates increase visibility.",
+  "note.inactive": "No pushes in the last 30 days. Even a small improvement keeps the profile alive.",
+  "note.strength": "Strength: {years} years on GitHub, {repos} public repositories and a clear signal of ongoing development.",
 };
 
 export default en;

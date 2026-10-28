@@ -3,6 +3,7 @@ import { CONFIG } from "./config";
 import { useGithub } from "./lib/useGithub";
 import { useReveal } from "./lib/useReveal";
 import { useI18n } from "./lib/i18n";
+import type { Key } from "./lib/locales/types";
 import Background from "./components/Background";
 import Progress from "./components/Progress";
 import Panel from "./components/Panel";
@@ -66,7 +67,10 @@ export default function App() {
   const shownParts = (result?.parts ?? []).filter((p: { label: string; txt: string }) => hit(`${p.label} ${p.txt}`));
   const langs: [string, number][] = (result?.langs ?? []).slice(0, 8);
   const shownLangs = langs.filter(([n]) => hit(n));
-  const shownNotes = (result?.notes ?? []).filter((n: string) => hit(n));
+  const noteTexts: string[] = (result?.noteCodes ?? []).map(
+    (c: { code: string; vars?: Record<string, number | string> }) => t(c.code as Key, c.vars),
+  );
+  const shownNotes = noteTexts.filter((n) => hit(n));
   const shownProjects = PROJECTS.filter((p) => hit(`${p.title} ${p.kicker} ${p.text}`));
 
   const found = shownStats.length + shownParts.length + shownLangs.length + shownNotes.length + shownProjects.length;

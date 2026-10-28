@@ -66,27 +66,29 @@ export function computeScore({ profile: u, repos, contrib, now = Date.now() }) {
   const score = Math.round(parts.reduce((a, p) => a + p.val, 0));
 
   const notes = [];
-  if (!hasContrib) notes.push('Katkı verisi alınamadığı için bu bölüm 0 sayıldı. Sayfayı daha sonra yenile.');
-  if (!u.bio) notes.push('Profil açıklaması (bio) boş. Ne yaptığını ve neye ilgi duyduğunu anlatan tek bir cümle, ilk izlenimi değiştirir.');
+  const codes = [];
+  if (!hasContrib) { notes.push('Katkı verisi alınamadığı için bu bölüm 0 sayıldı. Sayfayı daha sonra yenile.'); codes.push({ code: 'note.noContrib' }); }
+  if (!u.bio) { notes.push('Profil açıklaması (bio) boş. Ne yaptığını ve neye ilgi duyduğunu anlatan tek bir cümle, ilk izlenimi değiştirir.'); codes.push({ code: 'note.noBio' }); }
   if (owned.length && noDesc / owned.length >= 0.3) {
-    notes.push(`Depolarının yaklaşık %${Math.round((noDesc / owned.length) * 100)}'i açıklamasız. Her depoya kısa bir açıklama, ziyaretçiye ne olduğunu hemen anlatır.`);
+    notes.push(`Depolarının yaklaşık %${Math.round((noDesc / owned.length) * 100)}'i açıklamasız. Her depoya kısa bir açıklama, ziyaretçiye ne olduğunu hemen anlatır.`); codes.push({ code: 'note.noDesc', vars: { pct: Math.round((noDesc / owned.length) * 100) } });
   }
   if (langs.length && langs[0][1] / langSum > 0.8) {
-    notes.push(`Dil dağılımı tek tarafa yatık (${langs[0][0]} baskın). Öne çıkan depolarda farklı dillerdeki projeleri göstermek çeşitliliği görünür kılar.`);
+    notes.push(`Dil dağılımı tek tarafa yatık (${langs[0][0]} baskın). Öne çıkan depolarda farklı dillerdeki projeleri göstermek çeşitliliği görünür kılar.`); codes.push({ code: 'note.langSkew', vars: { lang: langs[0][0] } });
   }
   if (hasContrib && longest > current * 3 && longest >= 5) {
-    notes.push(`Katkı serisi kopuk: en uzun seri ${longest} gün, güncel seri ${current} gün. Haftada birkaç küçük commit, arada büyük bir patlamadan daha sürdürülebilir.`);
+    notes.push(`Katkı serisi kopuk: en uzun seri ${longest} gün, güncel seri ${current} gün. Haftada birkaç küçük commit, arada büyük bir patlamadan daha sürdürülebilir.`); codes.push({ code: 'note.streak', vars: { longest, current } });
   }
-  if (stars < 10) notes.push('Yıldız sayısı düşük. README içine ekran görüntüsü, kurulum adımı ve kısa bir demo eklemek yıldız almayı kolaylaştırır.');
-  if ((u.followers || 0) < 10) notes.push("Takipçi sayısı az. Bir profil README'si ve düzenli güncellemeler görünürlüğü artırır.");
-  if (active30 === 0) notes.push('Son 30 günde hiç push yok. Küçük bir iyileştirme bile profili canlı tutar.');
-  notes.push(`Güçlü yan: ${ageYears} yıllık hesap, ${u.public_repos} public depo ve düzenli geliştirme sinyali.`);
+  if (stars < 10) { notes.push('Yıldız sayısı düşük. README içine ekran görüntüsü, kurulum adımı ve kısa bir demo eklemek yıldız almayı kolaylaştırır.'); codes.push({ code: 'note.stars' }); }
+  if ((u.followers || 0) < 10) { notes.push("Takipçi sayısı az. Bir profil README'si ve düzenli güncellemeler görünürlüğü artırır."); codes.push({ code: 'note.followers' }); }
+  if (active30 === 0) { notes.push('Son 30 günde hiç push yok. Küçük bir iyileştirme bile profili canlı tutar.'); codes.push({ code: 'note.inactive' }); }
+  notes.push(`Güçlü yan: ${ageYears} yıllık hesap, ${u.public_repos} public depo ve düzenli geliştirme sinyali.`); codes.push({ code: 'note.strength', vars: { years: ageYears, repos: u.public_repos } });
 
   return {
     score,
     grade: grade(score),
     parts,
     notes,
+    noteCodes: codes,
     langs,
     langSum,
     stats: { total, current, longest, stars, active30, hasContrib },

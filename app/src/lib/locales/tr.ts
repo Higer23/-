@@ -79,6 +79,15 @@ const tr = {
   "footer.text": "Veriler, GitHub Actions tarafından 6 saatte bir güncellenen bir snapshot üzerinden gösterilir. Snapshot yoksa canlı GitHub REST API'ye geçilir. Sayfa GitHub Pages üzerinde statik olarak çalışır.",
   "footer.design": "tasarım / 2026",
   "doc.title": "Higer23 · GitHub Puanı {score}/100",
+  "note.noContrib": "Katkı verisi alınamadığı için bu bölüm 0 sayıldı. Sayfayı daha sonra yenile.",
+  "note.noBio": "Profil açıklaması (bio) boş. Ne yaptığını ve neye ilgi duyduğunu anlatan tek bir cümle, ilk izlenimi değiştirir.",
+  "note.noDesc": "Depolarının yaklaşık %{pct}'i açıklamasız. Her depoya kısa bir açıklama, ziyaretçiye ne olduğunu hemen anlatır.",
+  "note.langSkew": "Dil dağılımı tek tarafa yatık ({lang} baskın). Öne çıkan depolarda farklı dillerdeki projeleri göstermek çeşitliliği görünür kılar.",
+  "note.streak": "Katkı serisi kopuk: en uzun seri {longest} gün, güncel seri {current} gün. Haftada birkaç küçük commit, arada büyük bir patlamadan daha sürdürülebilir.",
+  "note.stars": "Yıldız sayısı düşük. README içine ekran görüntüsü, kurulum adımı ve kısa bir demo eklemek yıldız almayı kolaylaştırır.",
+  "note.followers": "Takipçi sayısı az. Bir profil README'si ve düzenli güncellemeler görünürlüğü artırır.",
+  "note.inactive": "Son 30 günde hiç push yok. Küçük bir iyileştirme bile profili canlı tutar.",
+  "note.strength": "Güçlü yan: {years} yıllık hesap, {repos} public depo ve düzenli geliştirme sinyali.",
 };
 
 export default tr;

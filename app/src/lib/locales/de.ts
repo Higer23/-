@@ -81,6 +81,15 @@ const de: Dict = {
   "footer.text": "Daten werden aus einem Snapshot angezeigt, der alle 6 Stunden per GitHub Actions aktualisiert wird; ohne Snapshot wird die GitHub-REST-API live abgefragt. Die Seite läuft statisch auf GitHub Pages.",
   "footer.design": "Design / 2026",
   "doc.title": "Higer23 · GitHub-Punkte {score}/100",
+  "note.noContrib": "Die Beitragsdaten konnten nicht geladen werden, daher zählt dieser Bereich als 0. Bitte lade die Seite später neu.",
+  "note.noBio": "Die Profilbeschreibung (Bio) fehlt. Ein Satz darüber, was du baust und wofür du dich interessierst, verbessert den ersten Eindruck deutlich.",
+  "note.noDesc": "Rund {pct}% deiner Repositories haben keine Beschreibung. Eine kurze Beschreibung pro Repo erklärt Besuchern sofort, worum es geht.",
+  "note.langSkew": "Die Sprachverteilung ist einseitig ({lang} dominiert). Wenn du in den wichtigsten Repos auch Projekte in anderen Sprachen zeigst, wird deine Vielseitigkeit sichtbar.",
+  "note.streak": "Die Beitragsserie ist unterbrochen: längste Serie {longest} Tage, aktuelle Serie {current} Tage. Ein paar kleine Commits pro Woche sind nachhaltiger als ein großer Schub zwischendurch.",
+  "note.stars": "Die Sternanzahl ist niedrig. Ein Screenshot, Installationsschritte und eine kurze Demo im README erleichtern das Sammeln von Sternen.",
+  "note.followers": "Wenig Follower. Ein Profil-README und regelmäßige Aktualisierungen erhöhen die Sichtbarkeit.",
+  "note.inactive": "In den letzten 30 Tagen gab es keinen Push. Schon eine kleine Verbesserung hält das Profil lebendig.",
+  "note.strength": "Stärke: {years} Jahre Account, {repos} öffentliche Repositories und ein klares Zeichen für laufende Entwicklung.",
 };
 
 export default de;
