@@ -79,7 +79,7 @@ export type { Key };
 const STORAGE_KEY = "higer23-lang";
 const isLang = (v: string): v is Lang => LANGS.some((l) => l.code === v);
 
-const dicts: Record<Lang, Dict> = {
+const dicts: Record<Lang, Partial<Dict>> = {
   tr, en, de, ar, zh, fr, es, it, pt, ru, ja, nl, pl, uk, ko, hi, sv, id, vi, el, cs, he, th, ro, hu, da, bn, ur, fa, ms, ta, te, mr, sw,
 };
 
@@ -166,7 +166,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const t = useCallback(
     (k: Key, vars?: Vars) => {
-      let s: string = dicts[lang][k];
+      let s: string = dicts[lang][k] ?? dicts.en[k] ?? k;
       if (vars) for (const [name, v] of Object.entries(vars)) s = s.replace(`{${name}}`, String(v));
       return s;
     },

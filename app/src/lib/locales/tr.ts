@@ -76,7 +76,7 @@ const tr = {
   "support.kicker": "06 / Destek",
   "support.title": "Bir sonraki deneyi birlikte mümkün kılalım.",
   "support.desc": "Projelerin ayakta kalmasına destek olabilirsin. Bağış tamamen gönüllüdür; sayfanın hiçbir özelliği bağışa bağlı değildir. Teşekkür ederim.",
-  "footer.text": "Veriler GitHub REST API üzerinden canlı çekilir. Sayfa GitHub Pages üzerinde statik olarak çalışır.",
+  "footer.text": "Veriler, GitHub Actions tarafından 6 saatte bir güncellenen bir snapshot üzerinden gösterilir. Snapshot yoksa canlı GitHub REST API'ye geçilir. Sayfa GitHub Pages üzerinde statik olarak çalışır.",
   "footer.design": "tasarım / 2026",
   "doc.title": "Higer23 · GitHub Puanı {score}/100",
 };
