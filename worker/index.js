@@ -100,6 +100,21 @@ export default {
       return json({ error: "Content-Type must be application/json" }, 415, true);
     }
 
+    const clientIp = request.headers.get("CF-Connecting-IP");
+    if (!clientIp || !env.VERIFY_RATE_LIMITER) {
+      return json({ success: false, error: "Verifier is not configured" }, 503, true);
+    }
+
+    try {
+      const { success } = await env.VERIFY_RATE_LIMITER.limit({ key: clientIp });
+      if (!success) {
+        return json({ success: false, error: "Too many verification attempts" }, 429, true);
+      }
+    } catch {
+      // Fail closed: verification must not become an unmetered public endpoint.
+      return json({ success: false, error: "Verification temporarily unavailable" }, 503, true);
+    }
+
     const declaredLength = Number(request.headers.get("Content-Length") || 0);
     if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
       return json({ error: "Request too large" }, 413, true);
