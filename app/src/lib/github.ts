@@ -1,6 +1,7 @@
 import { CONFIG } from "../config";
 import { parseGitHubResponse } from "./github-response.mjs";
 import { isGithubProfile, isGithubRepoList } from "./github-payload.mjs";
+import { fetchAllGithubPages } from "./github-pagination.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -76,16 +77,10 @@ export async function fetchGithub(user: string): Promise<GithubData> {
   // while paginating GitHub repositories so its latency does not extend the
   // critical path. getContributions already degrades gracefully on failure.
   const contribPromise = getContributions(user);
-  const repos: any[] = [];
-  for (let page = 1; page <= 10; page += 1) {
-    const batch = await getJson(`${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`);
-    if (!isGithubRepoList(batch)) throw new Error("Invalid repository data");
-    repos.push(...batch);
-    if (batch.length < 100) break;
-    if (page === 10) {
-      throw new Error("Repository list exceeds the supported 1000-item limit");
-    }
-  }
+  const repos = await fetchAllGithubPages(
+    (page) => getJson(`${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`),
+    isGithubRepoList,
+  );
   const contrib = await contribPromise;
   return { profile, repos, contrib };
 }
