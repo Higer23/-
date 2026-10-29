@@ -93,6 +93,11 @@ export default function App() {
   );
   const shownNotes = noteTexts.filter((n) => hit(n));
   const shownProjects = PROJECTS.filter((p) => hit(`${p.title} ${p.kicker} ${p.text}`));
+  const shownRepos = (ok?.data.repos ?? [])
+    .filter((repo: { name?: string; full_name?: string; description?: string; language?: string }) =>
+      hit(`${repo.name ?? ""} ${repo.full_name ?? ""} ${repo.description ?? ""} ${repo.language ?? ""}`),
+    )
+    .sort((a: { stargazers_count?: number }, b: { stargazers_count?: number }) => (b.stargazers_count ?? 0) - (a.stargazers_count ?? 0));
 
   const scoreInsights = useMemo(() => {
     if (!result) return [] as Array<{ text: string; kind: "warning" | "good" }>;
@@ -118,7 +123,7 @@ export default function App() {
     return [...warnings.slice(0, 3), ...strengthInsights.slice(0, 1)];
   }, [result, t]);
 
-  const found = shownStats.length + shownParts.length + shownLangs.length + shownNotes.length + shownProjects.length;
+  const found = shownStats.length + shownParts.length + shownLangs.length + shownNotes.length + shownProjects.length + shownRepos.length;
   const info = q ? (found ? t("search.count", { n: found }) : t("search.none")) : "";
 
   const avatarSrc = !avatarFailed && profile?.avatar_url
@@ -230,6 +235,20 @@ export default function App() {
               <button type="button" className="btn" onClick={() => setOpenProj(p)}>{INSPECT[locale as string] ?? INSPECT.en}</button>
             </article>
           ))}
+        </Panel>
+
+        <Panel id="repositories" kicker={t("stat.repos")} title={t("stat.repos")}>
+          {!ok && state.status === "loading" && <Loader />}
+          {ok && shownRepos.length === 0 && <p className="muted">{q ? t("search.none") : t("langs.none")}</p>}
+          {shownRepos.slice(0, 30).map((repo: { id?: number; name?: string; full_name?: string; description?: string; language?: string; stargazers_count?: number; html_url?: string }) => (
+            <article className="proj" key={repo.id ?? repo.full_name ?? repo.name}>
+              <p className="kicker">{repo.language ?? "GitHub repository"} · ★ {repo.stargazers_count ?? 0}</p>
+              <h3>{repo.name ?? repo.full_name}</h3>
+              {repo.description && <p className="muted">{repo.description}</p>}
+              {repo.html_url && <a className="btn" href={repo.html_url} target="_blank" rel="noreferrer">{INSPECT[locale as string] ?? INSPECT.en}</a>}
+            </article>
+          ))}
+          {shownRepos.length > 30 && <p className="muted">+{shownRepos.length - 30}</p>}
         </Panel>
 
         <Panel id="diller" kicker={t("langs.kicker")} title={t("langs.title")}>
