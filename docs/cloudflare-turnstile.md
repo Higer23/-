@@ -9,21 +9,29 @@ The React app uses a Turnstile gate and a Cloudflare Worker verification endpoin
 
 ## Security behavior
 
-The Worker should accept only the verification path, require the expected Origin, accept only POST JSON (apart from a valid CORS preflight), cap the request body and token size, and fail closed if the secret is missing. A successful Siteverify response is accepted only when both `success === true` and `hostname === "higer23.github.io"`. The Origin check is an additional browser/CORS restriction, not authentication by itself; the Siteverify hostname check is essential.
+The Worker accepts only the verification path, requires the expected Origin, accepts only POST JSON (apart from a valid CORS preflight), caps the request body and token size, and fails closed if required configuration is missing. A successful Siteverify response is accepted only when both `success === true` and `hostname === "higer23.github.io"`. The Origin check is an additional browser/CORS restriction, not authentication by itself; the Siteverify hostname check is essential.
 
-The Worker never returns the secret or raw Cloudflare Siteverify diagnostics. Responses use `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, and `Vary: Origin`.
+The Worker also uses a Cloudflare Workers rate-limiting binding named `VERIFY_RATE_LIMITER`:
 
-## Deployment and testing
+- Limit: 10 requests per 60 seconds per client IP.
+- Key: Cloudflare-provided `CF-Connecting-IP`; client-controlled forwarding headers are not trusted.
+- Requests over the limit receive HTTP 429. If the binding is unavailable or errors, the Worker fails closed with HTTP 503.
+- CORS preflight requests are not counted.
+- Cloudflare's built-in Worker rate limiter is enforced per Cloudflare location and is not a globally exact counter; traffic served in different locations can have separate counters.
 
-1. Deploy `worker/index.js` to the Cloudflare Worker named `higer23-turnstile-verify`.
-2. Confirm that `TURNSTILE_SECRET` is configured as a **Secret** binding in that Worker. Do not reveal its value in logs, GitHub, or chat.
-3. Confirm the Turnstile widget allows the hostname `higer23.github.io`.
-4. Wait for the GitHub Pages workflow to finish after changes to the React gate.
-5. Test the live site on mobile and desktop:
+## Deployment and configuration
+
+1. Install/authenticate Wrangler for the Cloudflare account that owns the Worker.
+2. Deploy from the repository root using the checked-in configuration: `npx wrangler deploy --config worker/wrangler.toml`.
+3. Confirm `TURNSTILE_SECRET` exists as a **Secret** binding on the `higer23-turnstile-verify` Worker. Set it with `npx wrangler secret put TURNSTILE_SECRET --config worker/wrangler.toml` if it is missing; enter the value only in the interactive prompt.
+4. Confirm the `VERIFY_RATE_LIMITER` binding is present with a limit of 10 and period of 60 seconds. It is declared in `worker/wrangler.toml` using namespace ID `1001`; keep that namespace ID stable for this Worker.
+5. Confirm the Turnstile widget allows hostname `higer23.github.io`.
+6. Wait for the GitHub Pages workflow to finish after changes to the React gate.
+7. Test the live site on mobile and desktop:
    - The gate appears before the app interface.
    - The Continue button stays disabled until the widget provides a token.
    - A successful verification opens the app.
-   - An expired token, failed request, wrong hostname, missing secret, or malformed request does not open the app.
+   - An expired token, failed request, wrong hostname, missing secret, rate-limited request, or malformed request does not open the app.
    - The Worker root URL returning 404 is expected; the verification endpoint is the path above.
 
 ## Limitation
