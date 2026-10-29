@@ -280,6 +280,14 @@ export default function App() {
           <ul className="crit">
             {shownNotes.map((n: string) => <li key={n}>{n}</li>)}
           </ul>
+          <div className="ctas" style={{ marginTop: 18 }}>
+            <a className="btn" href="https://github.com/Higer23/-/discussions" target="_blank" rel="noopener noreferrer">
+              {locale === "tr" ? "Görüşünü paylaş" : locale === "de" ? "Feedback teilen" : "Share feedback"}
+            </a>
+            <p className="muted" style={{ fontSize: ".78rem", alignSelf: "center", margin: 0 }}>
+              {locale === "tr" ? "GitHub tartışmalarında herkese açık olarak paylaşılır." : locale === "de" ? "Wird öffentlich in GitHub Discussions geteilt." : "Shared publicly in GitHub Discussions."}
+            </p>
+          </div>
         </Panel>
 
         <Panel id="destek" kicker={t("support.kicker")} title={t("support.title")}>
