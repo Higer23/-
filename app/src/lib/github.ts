@@ -73,6 +73,10 @@ export async function fetchGithub(user: string): Promise<GithubData> {
 
   // GitHub paginates repository lists at 100 items. Continue until the final
   // page so the displayed star total covers every public repository.
+  // Contribution data is optional and comes from a separate service. Start it
+  // while paginating GitHub repositories so its latency does not extend the
+  // critical path. getContributions already degrades gracefully on failure.
+  const contribPromise = getContributions(user);
   const repos: any[] = [];
   for (let page = 1; page <= 10; page += 1) {
     const batch = await getJson(`${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`);
@@ -80,6 +84,6 @@ export async function fetchGithub(user: string): Promise<GithubData> {
     repos.push(...batch);
     if (batch.length < 100) break;
   }
-  const contrib = await getContributions(user);
+  const contrib = await contribPromise;
   return { profile, repos, contrib };
 }
