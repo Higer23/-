@@ -37,7 +37,11 @@ async function readBodyWithinLimit(request) {
       if (done) break;
       totalBytes += value.byteLength;
       if (totalBytes > MAX_BODY_BYTES) {
-        await reader.cancel();
+        try {
+          await reader.cancel();
+        } catch {
+          // Preserve the intended 413 response even if cancellation fails.
+        }
         return null;
       }
       chunks.push(value);
@@ -101,7 +105,12 @@ export default {
       return json({ error: "Request too large" }, 413, true);
     }
 
-    const raw = await readBodyWithinLimit(request);
+    let raw;
+    try {
+      raw = await readBodyWithinLimit(request);
+    } catch {
+      return json({ error: "Invalid JSON body" }, 400, true);
+    }
     if (raw === null) {
       return json({ error: "Request too large" }, 413, true);
     }
