@@ -171,3 +171,11 @@
   .turnstile-gate__card { animation: none; }
   .turnstile-gate__button { transition: none; }
 }
+
+.turnstile-widget {
+  display: flex;
+  justify-content: center;
+  min-height: 65px;
+  margin: 16px 0;
+  overflow: visible;
+}
