@@ -35,6 +35,23 @@ import "./gate-form.css";
 
 const G = CONFIG.gate;
 
+type TurnstileRenderOptions = {
+  sitekey: string;
+  callback: (token: string) => void;
+  "expired-callback"?: () => void;
+  "error-callback"?: () => void;
+};
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (container: HTMLElement, options: TurnstileRenderOptions) => string;
+      reset: (widgetId?: string) => void;
+      remove: (widgetId: string) => void;
+    };
+  }
+}
+
 export default function EntranceGate({ children }: { children: ReactNode }) {
   const { lang } = useI18n();
   const T = GATE_TEXT[lang];
@@ -47,6 +64,9 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   const [sliderDone, setSliderDone] = useState(false);
   const [error, setError] = useState("");
   const [lockLeft, setLockLeft] = useState(0);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReady, setTurnstileReady] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   const startedAt = useRef(Date.now());
   const interactions = useRef(0);
@@ -54,6 +74,75 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   const sliderDurationMs = useRef(0);
   const dragging = useRef(false);
   const trackRef = useRef<HTMLDivElement>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const turnstileWidgetId = useRef<string | null>(null);
+
+  const turnstileMessages = lang === "tr"
+    ? { loadError: "Güvenlik doğrulaması yüklenemedi. Sayfayı yenileyip tekrar dene.", expired: "Doğrulama süresi doldu. Lütfen tekrar doğrula.", rateLimited: "Çok fazla doğrulama isteği. Lütfen bir dakika bekleyip tekrar dene.", unavailable: "Doğrulama servisi geçici olarak kullanılamıyor. Lütfen tekrar dene.", failed: "Güvenlik doğrulaması başarısız. Lütfen tekrar dene.", network: "Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.", verifying: "Doğrulanıyor…", widget: "Cloudflare güvenlik doğrulaması" }
+    : lang === "de"
+      ? { loadError: "Sicherheitsprüfung konnte nicht geladen werden. Bitte lade die Seite neu.", expired: "Die Prüfung ist abgelaufen. Bitte erneut bestätigen.", rateLimited: "Zu viele Prüfungen. Bitte warte eine Minute und versuche es erneut.", unavailable: "Der Prüfdienst ist vorübergehend nicht verfügbar. Bitte erneut versuchen.", failed: "Sicherheitsprüfung fehlgeschlagen. Bitte erneut versuchen.", network: "Verbindung fehlgeschlagen. Prüfe deine Internetverbindung.", verifying: "Wird überprüft…", widget: "Cloudflare-Sicherheitsprüfung" }
+      : { loadError: "Security verification could not load. Refresh the page and try again.", expired: "The verification expired. Please complete it again.", rateLimited: "Too many verification attempts. Wait one minute and try again.", unavailable: "The verification service is temporarily unavailable. Please try again.", failed: "Security verification failed. Please try again.", network: "Could not connect. Check your connection and try again.", verifying: "Verifying…", widget: "Cloudflare security verification" };
+
+  useEffect(() => {
+    let disposed = false;
+    let widgetId: string | null = null;
+    let script = document.querySelector<HTMLScriptElement>('script[data-cloudflare-turnstile="true"]');
+
+    const renderWidget = () => {
+      if (disposed || !window.turnstile || !turnstileRef.current || widgetId) return;
+      try {
+        widgetId = window.turnstile.render(turnstileRef.current, {
+          sitekey: CONFIG.turnstile.siteKey,
+          callback: (token) => {
+            if (!disposed) {
+              setTurnstileToken(token);
+              setError("");
+            }
+          },
+          "expired-callback": () => {
+            if (!disposed) {
+              setTurnstileToken("");
+              setError(turnstileMessages.expired);
+            }
+          },
+          "error-callback": () => {
+            if (!disposed) {
+              setTurnstileToken("");
+              setError(turnstileMessages.failed);
+            }
+          },
+        });
+        turnstileWidgetId.current = widgetId;
+        setTurnstileReady(true);
+      } catch {
+        if (!disposed) setError(turnstileMessages.loadError);
+      }
+    };
+
+    const onScriptError = () => {
+      if (!disposed) setError(turnstileMessages.loadError);
+    };
+
+    if (!script) {
+      script = document.createElement("script");
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.defer = true;
+      script.dataset.cloudflareTurnstile = "true";
+    }
+    script.addEventListener("load", renderWidget);
+    script.addEventListener("error", onScriptError);
+    if (window.turnstile) renderWidget();
+    else if (!script.isConnected) document.head.appendChild(script);
+
+    return () => {
+      disposed = true;
+      script?.removeEventListener("load", renderWidget);
+      script?.removeEventListener("error", onScriptError);
+      if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
+      turnstileWidgetId.current = null;
+    };
+  }, [turnstileMessages.expired, turnstileMessages.failed, turnstileMessages.loadError]);
 
   useEffect(() => {
     const bump = () => {
@@ -127,7 +216,7 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
     setSliderPct(0);
   };
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (lockLeft > 0) {
       setError(fmt(T.lock, { s: lockLeft }));
@@ -157,8 +246,43 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       fail(T.errAnswer);
       return;
     }
-    writeStored({ fails: 0, lockUntil: 0 });
-    setVerified(true);
+    if (!turnstileToken || !turnstileReady) {
+      setError(turnstileMessages.failed);
+      return;
+    }
+
+    setVerifying(true);
+    setError("");
+    try {
+      const response = await fetch(CONFIG.turnstile.verifyUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: turnstileToken }),
+        credentials: "omit",
+        cache: "no-store",
+      });
+      const payload = await response.json().catch(() => null) as { success?: boolean } | null;
+
+      if (response.status === 429) {
+        setError(turnstileMessages.rateLimited);
+      } else if (response.status === 503 || response.status === 502) {
+        setError(turnstileMessages.unavailable);
+      } else if (!response.ok || payload?.success !== true) {
+        setError(turnstileMessages.failed);
+      } else {
+        writeStored({ fails: 0, lockUntil: 0 });
+        setVerified(true);
+        return;
+      }
+    } catch {
+      setError(turnstileMessages.network);
+    } finally {
+      setVerifying(false);
+      setTurnstileToken("");
+      if (turnstileWidgetId.current && window.turnstile) {
+        window.turnstile.reset(turnstileWidgetId.current);
+      }
+    }
   };
 
   if (verified) return <>{children}</>;
@@ -216,14 +340,16 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
 
           <HoneypotFields values={honey} onChange={(name, v) => setHoney((prev) => ({ ...prev, [name]: v }))} />
 
+          <div className="turnstile-widget" ref={turnstileRef} aria-label={turnstileMessages.widget} />
+
           {error && (
             <p className="turnstile-gate__error gate-error" role="alert">
               {error}
             </p>
           )}
 
-          <button type="submit" className="turnstile-gate__button gate-submit" disabled={lockLeft > 0}>
-            <span>{lockLeft > 0 ? fmt(T.wait, { s: lockLeft }) : T.submit}</span>
+          <button type="submit" className="turnstile-gate__button gate-submit" disabled={lockLeft > 0 || verifying || !turnstileReady || !turnstileToken}>
+            <span>{verifying ? turnstileMessages.verifying : lockLeft > 0 ? fmt(T.wait, { s: lockLeft }) : T.submit}</span>
             {lockLeft === 0 && <span className="turnstile-gate__arrow" aria-hidden="true">↗</span>}
           </button>
         </form>
