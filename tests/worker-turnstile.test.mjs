@@ -57,6 +57,45 @@ test("rejects malformed, oversized, and missing-token payloads", async () => {
   assert.equal(missing.status, 400);
 });
 
+test("rejects chunked oversized bodies without relying on Content-Length", async () => {
+  let cancelled = false;
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode('{"token":"'));
+      controller.enqueue(new Uint8Array(4096));
+    },
+    cancel() {
+      cancelled = true;
+    },
+  });
+  const streamedRequest = new Request(BASE_URL, {
+    method: "POST",
+    headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    body: stream,
+    duplex: "half",
+  });
+  const response = await worker.fetch(streamedRequest, ENV);
+  assert.equal(response.status, 413);
+  assert.equal(cancelled, true);
+});
+
+test("rejects invalid UTF-8 as a malformed body", async () => {
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new Uint8Array([0xc3, 0x28]));
+      controller.close();
+    },
+  });
+  const invalidRequest = new Request(BASE_URL, {
+    method: "POST",
+    headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    body: stream,
+    duplex: "half",
+  });
+  const response = await worker.fetch(invalidRequest, ENV);
+  assert.equal(response.status, 400);
+});
+
 test("reports missing server-side secret without making an outbound request", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => assert.fail("missing configuration must not call fetch");
