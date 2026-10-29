@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CONFIG } from "./config";
 import { useGithub } from "./lib/useGithub";
 import { useReveal } from "./lib/useReveal";
+import GithubDiagnostics from "./components/GithubDiagnostics";
 import { useI18n } from "./lib/i18n";
 import { formatFetchedAt } from "./lib/format-date.mjs";
 import type { Key } from "./lib/locales/types";
@@ -156,6 +157,7 @@ export default function App() {
   return (
     <>
       <Background />
+      {import.meta.env.DEV && typeof window !== "undefined" && new URLSearchParams(window.location.search).get("debug") === "github" && <GithubDiagnostics />}
       <a className="skip" href="#main">{t("ui.skip")}</a>
       <aside className="donate-bar" aria-label={t("ui.donateAria")}>
         <p className="donate-label">{t("ui.donateLabel")}</p>
