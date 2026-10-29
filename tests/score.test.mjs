@@ -63,3 +63,22 @@ test('empty activity and repository lists are handled safely', () => {
   assert.equal(result.stats.longest, 0);
   assert.equal(result.parts.reduce((sum, part) => sum + part.val, 0), result.score);
 });
+
+test('empty and inactive streak histories return zeroes', () => {
+  assert.deepEqual(streaks([]), { current: 0, longest: 0 });
+  assert.deepEqual(streaks([{ count: 0 }, { count: 0 }]), { current: 0, longest: 0 });
+});
+
+test('current streak ignores trailing zero days but longest streak spans history', () => {
+  assert.deepEqual(streaks([
+    { count: 1 }, { count: 1 }, { count: 0 },
+    { count: 2 }, { count: 1 }, { count: 0 },
+  ]), { current: 2, longest: 2 });
+});
+
+test('a zero-activity day breaks the longest streak', () => {
+  assert.deepEqual(streaks([
+    { count: 1 }, { count: 1 }, { count: 0 },
+    { count: 1 }, { count: 1 }, { count: 1 },
+  ]), { current: 3, longest: 3 });
+});
