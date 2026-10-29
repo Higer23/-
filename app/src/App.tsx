@@ -6,6 +6,7 @@ import { useI18n } from "./lib/i18n";
 import type { Key } from "./lib/locales/types";
 import Background from "./components/Background";
 import ProjectModal from "./components/ProjectModal";
+import UserLookup from "./components/UserLookup";
 import Progress from "./components/Progress";
 import Panel from "./components/Panel";
 import Loader from "./components/Loader";
@@ -32,7 +33,8 @@ const INSPECT: Record<string, string> = { tr: "İncele", en: "Inspect", de: "Ans
 
 export default function App() {
   const { t, locale } = useI18n();
-  const { state, retry } = useGithub(CONFIG.user);
+  const [lookup, setLookup] = useState<string>(CONFIG.user);
+  const { state, retry } = useGithub(lookup);
   const [query, setQuery] = useState("");
   const [avatarFailed, setAvatarFailed] = useState(false);
   const [openProj, setOpenProj] = useState<{ title: string; kicker: string; text: string; href: string } | null>(null);
@@ -44,12 +46,12 @@ export default function App() {
 
   const PROJECTS = useMemo(
     () => [
+      { kicker: "WEB APP · CLOUDFLARE", title: "Kontakt-Notizbuch", href: "https://github.com/Higer023/kontakt-notizbuch", text: PROJ_TEXT["kontakt"][locale as string] ?? PROJ_TEXT["kontakt"].en },
       { kicker: "WEB APP · VERCEL", title: "Higum", href: "https://github.com/Higer23/higum", text: PROJ_TEXT["higum"][locale as string] ?? PROJ_TEXT["higum"].en },
       { kicker: "WEB APP", title: "Forum", href: "https://github.com/Higer23/forum", text: PROJ_TEXT["forum"][locale as string] ?? PROJ_TEXT["forum"].en },
       { kicker: "WEB APP · TYPESCRIPT", title: "Nachricht-Portal", href: "https://github.com/Higer23/nachricht-portal", text: PROJ_TEXT["nachricht-portal"][locale as string] ?? PROJ_TEXT["nachricht-portal"].en },
       { kicker: "WEB APP · VERCEL", title: "Anonim-Mesaj", href: "https://github.com/Higer23/anonim-mesaj", text: PROJ_TEXT["anonim-mesaj"][locale as string] ?? PROJ_TEXT["anonim-mesaj"].en },
       { kicker: "PYTHON · DISCORD", title: "GTA6 Discord RPC", href: "https://github.com/Higer23/gta6-discord-rpc", text: PROJ_TEXT["gta6-discord-rpc"][locale as string] ?? PROJ_TEXT["gta6-discord-rpc"].en },
-      { kicker: "WEB APP · CLOUDFLARE", title: "Kontakt-Notizbuch", href: "https://github.com/Higer023/kontakt-notizbuch", text: PROJ_TEXT["kontakt"][locale as string] ?? PROJ_TEXT["kontakt"].en },
     ],
     [t, locale],
   );
@@ -144,6 +146,8 @@ export default function App() {
         {state.status === "error" && (
           <button className="btn" type="button" id="retry" onClick={retry}>{t("status.retry")}</button>
         )}
+
+        <UserLookup locale={locale as string} active={lookup} defaultUser={CONFIG.user} onLookup={setLookup} />
 
         <SearchBox value={query} onChange={setQuery} info={info} />
 
