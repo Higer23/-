@@ -49,7 +49,7 @@ export default function UserLookup({ locale, active, defaultUser, onLookup }: Pr
         <button type="submit" className="btn">{s.btn}</button>
       </form>
       {error ? <p role="alert" style={{ color: "#ff7b7b", margin: 0 }}>{error}</p> : null}
-      {active !== defaultUser ? (
+      {active.toLowerCase() !== defaultUser.toLowerCase() ? (
         <button type="button" onClick={() => onLookup(defaultUser)} style={{ alignSelf: "flex-start" }}>{s.reset}</button>
       ) : null}
     </section>
