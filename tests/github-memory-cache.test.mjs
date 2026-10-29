@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getOrFetchCached, GITHUB_MEMORY_CACHE_TTL_MS, subscribeToCacheChannel, publishCacheEntry } from "../app/src/lib/github-memory-cache.mjs";
+import { getOrFetchCached, GITHUB_MEMORY_CACHE_TTL_MS, GITHUB_MEMORY_CACHE_MAX_ENTRIES, setCacheEntry, subscribeToCacheChannel, publishCacheEntry } from "../app/src/lib/github-memory-cache.mjs";
 
 test("reuses a completed value during the short TTL", async () => {
   const cache = new Map(); let calls = 0;
@@ -72,4 +72,31 @@ test("does not let an older in-flight tab overwrite a newer refresh", () => {
   subscribeToCacheChannel(cache, channel, (key, value) => key === "alice" && typeof value === "string");
   for (const fn of listeners) fn({ data: { type: "github-profile-cache", key: "alice", value: "old", expiresAt: 4000 } });
   assert.equal(cache.get("alice").value, "new");
+});
+
+
+test("bounds cache size and evicts the least recently used profile", async () => {
+  const cache = new Map();
+  for (let i = 0; i < GITHUB_MEMORY_CACHE_MAX_ENTRIES; i += 1) {
+    setCacheEntry(cache, `user-${i}`, i, 10_000);
+  }
+  await getOrFetchCached(cache, "user-0", async () => -1, { now: 1 });
+  setCacheEntry(cache, "new-user", "new", 10_000);
+  assert.equal(cache.size, GITHUB_MEMORY_CACHE_MAX_ENTRIES);
+  assert.equal(cache.has("user-0"), true);
+  assert.equal(cache.has("user-1"), false);
+  assert.equal(cache.has("new-user"), true);
+});
+
+test("applies the same cache bound to entries received from another tab", () => {
+  const listeners = new Set();
+  const channel = { addEventListener: (_, fn) => listeners.add(fn), removeEventListener: (_, fn) => listeners.delete(fn) };
+  const cache = new Map();
+  subscribeToCacheChannel(cache, channel, () => true);
+  for (let i = 0; i <= GITHUB_MEMORY_CACHE_MAX_ENTRIES; i += 1) {
+    for (const fn of listeners) fn({ data: { type: "github-profile-cache", key: `remote-${i}`, value: i, expiresAt: Date.now() + 10_000 } });
+  }
+  assert.equal(cache.size, GITHUB_MEMORY_CACHE_MAX_ENTRIES);
+  assert.equal(cache.has("remote-0"), false);
+  assert.equal(cache.has(`remote-${GITHUB_MEMORY_CACHE_MAX_ENTRIES}`), true);
 });
