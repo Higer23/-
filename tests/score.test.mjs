@@ -82,3 +82,18 @@ test('a zero-activity day breaks the longest streak', () => {
     { count: 1 }, { count: 1 }, { count: 1 },
   ]), { current: 3, longest: 3 });
 });
+
+test('malformed contribution entries cannot corrupt totals or streaks', () => {
+  const contributions = [null, {}, { count: '7' }, { count: Number.NaN }, { count: -1 }, { count: 2 }];
+  assert.deepEqual(streaks(contributions), { current: 1, longest: 1 });
+  const result = computeScore({
+    profile: baseProfile,
+    repos: [repo()],
+    contrib: { contributions },
+    now: NOW,
+  });
+  assert.equal(result.stats.total, 2);
+  assert.equal(result.stats.current, 1);
+  assert.equal(result.stats.longest, 1);
+  assert.ok(Number.isFinite(result.score));
+});

@@ -12,12 +12,18 @@ export function grade(score) {
   return 'E';
 }
 
+// Treat malformed third-party activity entries as zero rather than letting them
+// throw or contaminate totals and streak calculations.
+function activityCount(day) {
+  return Number.isFinite(day?.count) && day.count > 0 ? day.count : 0;
+}
+
 // days: [{date, count}] tarih sırasına göre. Bugün 0 ise güncel seri dünden sayılır.
 export function streaks(days) {
   let longest = 0;
   let run = 0;
   for (const d of days) {
-    if (d.count > 0) {
+    if (activityCount(d) > 0) {
       run += 1;
       if (run > longest) longest = run;
     } else {
@@ -26,8 +32,8 @@ export function streaks(days) {
   }
   let i = days.length - 1;
   let current = 0;
-  if (i >= 0 && days[i].count === 0) i -= 1;
-  while (i >= 0 && days[i].count > 0) {
+  if (i >= 0 && activityCount(days[i]) === 0) i -= 1;
+  while (i >= 0 && activityCount(days[i]) > 0) {
     current += 1;
     i -= 1;
   }
@@ -38,7 +44,7 @@ export function streaks(days) {
 export function computeScore({ profile: u, repos, contrib, now = Date.now() }) {
   const days = contrib && Array.isArray(contrib.contributions) ? contrib.contributions : [];
   const hasContrib = !!contrib;
-  const total = days.reduce((a, d) => a + (d.count || 0), 0);
+  const total = days.reduce((sum, day) => sum + activityCount(day), 0);
   const { current, longest } = streaks(days);
 
   const owned = repos.filter((r) => !r.fork);
