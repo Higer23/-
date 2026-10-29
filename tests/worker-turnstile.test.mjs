@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import worker from "../worker/index.js";
 
 const ORIGIN = "https://higer23.github.io";
+const CUSTOM_DOMAIN_ORIGIN = "https://me.higer.tech";
 const BASE_URL = "https://verify.example/api/turnstile/verify";
 const CLIENT_IP = "192.0.2.10";
 function createLimiter(result = { success: true }) {
@@ -228,4 +229,26 @@ test("does not expose upstream response parsing errors", async () => {
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+
+test("accepts the custom production domain and returns origin-specific CORS headers", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => Response.json({ success: true, hostname: "me.higer.tech" });
+  try {
+    const response = await worker.fetch(request({ origin: CUSTOM_DOMAIN_ORIGIN }), ENV);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("Access-Control-Allow-Origin"), CUSTOM_DOMAIN_ORIGIN);
+    assert.deepEqual(await responseBody(response), { success: true });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("answers custom-domain CORS preflight without consuming rate limit", async () => {
+  const limiter = createLimiter();
+  const response = await worker.fetch(request({ method: "OPTIONS", origin: CUSTOM_DOMAIN_ORIGIN, body: null }), { VERIFY_RATE_LIMITER: limiter });
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get("Access-Control-Allow-Origin"), CUSTOM_DOMAIN_ORIGIN);
+  assert.equal(limiter.calls.length, 0);
 });

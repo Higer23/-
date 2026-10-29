@@ -1,11 +1,11 @@
-const ALLOWED_ORIGIN = "https://higer23.github.io";
-const ALLOWED_HOSTNAME = "higer23.github.io";
+const ALLOWED_ORIGINS = new Set(["https://higer23.github.io", "https://me.higer.tech"]);
+const ALLOWED_HOSTNAMES = new Set(["higer23.github.io", "me.higer.tech"]);
 const VERIFY_PATH = "/api/turnstile/verify";
 const MAX_BODY_BYTES = 4096;
 const MAX_TOKEN_LENGTH = 2048;
 const SITEVERIFY_TIMEOUT_MS = 10_000;
 
-function json(data, status = 200, allowOrigin = false) {
+function json(data, status = 200, origin = null) {
   const headers = {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
@@ -15,8 +15,8 @@ function json(data, status = 200, allowOrigin = false) {
     "Vary": "Origin",
   };
 
-  if (allowOrigin) {
-    headers["Access-Control-Allow-Origin"] = ALLOWED_ORIGIN;
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
     headers["Access-Control-Allow-Methods"] = "POST, OPTIONS";
     headers["Access-Control-Allow-Headers"] = "Content-Type";
     headers["Access-Control-Max-Age"] = "86400";
@@ -73,7 +73,7 @@ export default {
     }
 
     const origin = request.headers.get("Origin");
-    if (origin !== ALLOWED_ORIGIN) {
+    if (!ALLOWED_ORIGINS.has(origin)) {
       return json({ error: "Origin not allowed" }, 403);
     }
 
@@ -81,7 +81,7 @@ export default {
       return new Response(null, {
         status: 204,
         headers: {
-          "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+          "Access-Control-Allow-Origin": origin,
           "Access-Control-Allow-Methods": "POST, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type",
           "Access-Control-Max-Age": "86400",
@@ -92,61 +92,61 @@ export default {
     }
 
     if (request.method !== "POST") {
-      return json({ error: "Method not allowed" }, 405, true);
+      return json({ error: "Method not allowed" }, 405, origin);
     }
 
     const contentType = request.headers.get("Content-Type") || "";
     if (!contentType.toLowerCase().startsWith("application/json")) {
-      return json({ error: "Content-Type must be application/json" }, 415, true);
+      return json({ error: "Content-Type must be application/json" }, 415, origin);
     }
 
     const clientIp = request.headers.get("CF-Connecting-IP");
     if (!clientIp || !env.VERIFY_RATE_LIMITER) {
-      return json({ success: false, error: "Verifier is not configured" }, 503, true);
+      return json({ success: false, error: "Verifier is not configured" }, 503, origin);
     }
 
     try {
       const { success } = await env.VERIFY_RATE_LIMITER.limit({ key: clientIp });
       if (!success) {
-        return json({ success: false, error: "Too many verification attempts" }, 429, true);
+        return json({ success: false, error: "Too many verification attempts" }, 429, origin);
       }
     } catch {
       // Fail closed: verification must not become an unmetered public endpoint.
-      return json({ success: false, error: "Verification temporarily unavailable" }, 503, true);
+      return json({ success: false, error: "Verification temporarily unavailable" }, 503, origin);
     }
 
     const declaredLength = Number(request.headers.get("Content-Length") || 0);
     if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
-      return json({ error: "Request too large" }, 413, true);
+      return json({ error: "Request too large" }, 413, origin);
     }
 
     let raw;
     try {
       raw = await readBodyWithinLimit(request);
     } catch {
-      return json({ error: "Invalid JSON body" }, 400, true);
+      return json({ error: "Invalid JSON body" }, 400, origin);
     }
     if (raw === null) {
-      return json({ error: "Request too large" }, 413, true);
+      return json({ error: "Request too large" }, 413, origin);
     }
     if (raw === undefined) {
-      return json({ error: "Invalid JSON body" }, 400, true);
+      return json({ error: "Invalid JSON body" }, 400, origin);
     }
 
     let body;
     try {
       body = JSON.parse(raw);
     } catch {
-      return json({ error: "Invalid JSON body" }, 400, true);
+      return json({ error: "Invalid JSON body" }, 400, origin);
     }
 
     const token = typeof body?.token === "string" ? body.token.trim() : "";
     if (!token || token.length > MAX_TOKEN_LENGTH) {
-      return json({ success: false, error: "Invalid token" }, 400, true);
+      return json({ success: false, error: "Invalid token" }, 400, origin);
     }
 
     if (!env.TURNSTILE_SECRET) {
-      return json({ success: false, error: "Verifier is not configured" }, 503, true);
+      return json({ success: false, error: "Verifier is not configured" }, 503, origin);
     }
 
     try {
@@ -165,11 +165,11 @@ export default {
       );
 
       if (!siteverify.ok) {
-        return json({ success: false, error: "Verification service unavailable" }, 502, true);
+        return json({ success: false, error: "Verification service unavailable" }, 502, origin);
       }
 
       const result = await siteverify.json();
-      const success = result?.success === true && result?.hostname === ALLOWED_HOSTNAME;
+      const success = result?.success === true && ALLOWED_HOSTNAMES.has(result?.hostname);
 
       return json(
         { success },
@@ -177,7 +177,7 @@ export default {
         true,
       );
     } catch {
-      return json({ success: false, error: "Verification failed" }, 502, true);
+      return json({ success: false, error: "Verification failed" }, 502, origin);
     }
   },
 };
