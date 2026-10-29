@@ -167,7 +167,7 @@ export default function App() {
           {state.status === "error" && t("status.error", { msg: state.error })}
           {state.status === "ok" && t("status.ok")}
         </p>
-        {state.status === "error" && (
+        {state.status !== "loading" && (
           <button className="btn" type="button" id="retry" onClick={retry}>{t("status.retry")}</button>
         )}
 
