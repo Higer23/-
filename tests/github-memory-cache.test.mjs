@@ -1,75 +1,146 @@
-import test from "node:test";
-import assert from "node:assert/strict";
-import { getOrFetchCached, GITHUB_MEMORY_CACHE_TTL_MS, subscribeToCacheChannel, publishCacheEntry } from "../app/src/lib/github-memory-cache.mjs";
+import { CONFIG } from "../config";
+import { parseGitHubResponse } from "./github-response.mjs";
+import { isGithubProfile, isGithubRepoList } from "./github-payload.mjs";
+import { fetchAllGithubPages } from "./github-pagination.mjs";
+import { getOptionalContributions } from "./github-contributions.mjs";
+import { getSnapshotOrFetchLive, isSnapshotFresh, shouldUseSnapshot } from "./github-cache.mjs";
+import { coalesceRequest } from "./request-coalescer.mjs";
+import { getOrFetchCached, publishCacheEntry, subscribeToCacheChannel } from "./github-memory-cache.mjs";
+import { formatRateLimitWait, getRateLimitWaitMs, updateRateLimitState } from "./github-rate-limit.mjs";
+import { recordGithubRequest, getGithubRequestMetrics } from "./github-request-metrics.mjs";
 
-test("reuses a completed value during the short TTL", async () => {
-  const cache = new Map(); let calls = 0;
-  const fetcher = async () => ({ version: ++calls });
-  const first = await getOrFetchCached(cache, "higer23", fetcher, { now: 1000 });
-  const second = await getOrFetchCached(cache, "higer23", fetcher, { now: 1000 + GITHUB_MEMORY_CACHE_TTL_MS - 1 });
-  assert.equal(first, second); assert.equal(calls, 1);
-});
+const API = "https://api.github.com";
+const SNAPSHOT_PATH = "data/profile.json";
 
-test("expires cached values and fetches fresh data", async () => {
-  const cache = new Map(); let calls = 0;
-  const fetcher = async () => ({ version: ++calls });
-  await getOrFetchCached(cache, "user", fetcher, { now: 1000, ttlMs: 50 });
-  const fresh = await getOrFetchCached(cache, "user", fetcher, { now: 1050, ttlMs: 50 });
-  assert.deepEqual(fresh, { version: 2 }); assert.equal(calls, 2);
-});
+// Timeout, rate-limit and invalid-response errors. Messages are technical (English);
+// the UI wraps them in the localized status text.
+const githubRateLimit = { remaining: null as number | null, resetAt: null as number | null };
 
-test("force refresh bypasses a cached value but replaces it on success", async () => {
-  const cache = new Map(); let calls = 0;
-  const fetcher = async () => ({ version: ++calls });
-  await getOrFetchCached(cache, "user", fetcher, { now: 1000 });
-  const forced = await getOrFetchCached(cache, "user", fetcher, { now: 1001, skipCache: true });
-  const next = await getOrFetchCached(cache, "user", fetcher, { now: 1002 });
-  assert.deepEqual(forced, { version: 2 }); assert.equal(next, forced); assert.equal(calls, 2);
-});
+async function getJson(url: string): Promise<any> {
+  const waitMs = getRateLimitWaitMs(githubRateLimit);
+  if (waitMs > 0) throw new Error(formatRateLimitWait(waitMs));
+  const controller = new AbortController();
+  const startedAt = Date.now();
+  const timer = setTimeout(() => controller.abort(), CONFIG.requestTimeoutMs);
+  let status: number | null = null;
+  let remaining: number | null = null;
+  let outcome: "success" | "http_error" | "network_error" = "network_error";
+  try {
+    const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" }, signal: controller.signal });
+    status = res.status;
+    updateRateLimitState(githubRateLimit, res.headers);
+    const rawRemaining = res.headers.get("x-ratelimit-remaining");
+    remaining = rawRemaining !== null && /^\d+$/.test(rawRemaining) ? Number(rawRemaining) : null;
+    const data = await parseGitHubResponse(res);
+    outcome = "success";
+    return data;
+  } catch (err) {
+    if (status !== null) outcome = "http_error";
+    if (err instanceof Error && err.name === "AbortError") throw new Error("GitHub did not respond (timeout)");
+    throw err;
+  } finally {
+    recordGithubRequest(url, { status, remaining, outcome, durationMs: Date.now() - startedAt });
+    clearTimeout(timer);
+  }
+}
 
-test("does not cache failed fetches", async () => {
-  const cache = new Map(); let calls = 0;
-  await assert.rejects(getOrFetchCached(cache, "user", async () => { calls += 1; throw new Error("offline"); }), { message: "offline" });
-  const value = await getOrFetchCached(cache, "user", async () => { calls += 1; return "recovered"; });
-  assert.equal(value, "recovered"); assert.equal(calls, 2);
-});
 
-test("keeps different profile keys isolated", async () => {
+export { getGithubRequestMetrics };
+
+export type GithubData = {
+  fetchedAt?: string;
+  profile: any;
+  repos: any[];
+  contrib: { contributions: { date: string; count: number }[] } | null;
+};
+
+function isGithubData(value: any): value is GithubData {
+  return (
+    !!value &&
+    isGithubProfile(value.profile) &&
+    isGithubRepoList(value.repos) &&
+    (value.contrib === null || Array.isArray(value.contrib?.contributions))
+  );
+}
+
+// Pre-built snapshot written by GitHub Actions (scripts/build-profile.mjs).
+// Reading it first avoids browser calls to the GitHub API and its rate limits.
+async function fetchSnapshot(user: string): Promise<GithubData | null> {
+  try {
+    const res = await fetch(new URL(SNAPSHOT_PATH, document.baseURI).toString(), { cache: "no-cache" });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const data = json?.data;
+    if (!isGithubData(data) || data.profile.login.toLowerCase() !== user.toLowerCase()) return null;
+    return { ...data, fetchedAt: typeof json.fetchedAt === "string" ? json.fetchedAt : undefined };
+  } catch {
+    return null;
+  }
+}
+
+const inFlightRequests = new Map<string, Promise<GithubData>>();
+const profileCache = new Map<string, { value: GithubData; expiresAt: number }>();
+const profileCacheChannel = typeof BroadcastChannel === "undefined"
+  ? null
+  : (() => { try { return new BroadcastChannel("github-profile-cache-v1"); } catch { return null; } })();
+subscribeToCacheChannel(profileCache, profileCacheChannel, (key, value): value is GithubData =>
+  isGithubData(value) && value.profile.login.toLowerCase() === key,
+);
+
+export function fetchGithub(user: string, options: { forceLive?: boolean } = {}): Promise<GithubData> {
+  const normalizedUser = user.trim().toLowerCase();
+  const mode = options.forceLive ? "live" : "snapshot";
+  return coalesceRequest(inFlightRequests, `${normalizedUser}:${mode}`, () => getOrFetchCached(profileCache, normalizedUser, () => getSnapshotOrFetchLive(
+    () => shouldUseSnapshot(options.forceLive) ? fetchSnapshot(user) : Promise.resolve(null),
+    async () => {
+  // Live fallback when the snapshot is missing or invalid.
+  const profile = await getJson(`${API}/users/${user}`);
+  if (!isGithubProfile(profile, user)) throw new Error("Invalid profile data");
+
+  // GitHub paginates repository lists at 100 items. Continue until the final
+  // page so the displayed star total covers every public repository.
+  // Contribution data is optional and comes from a separate service. Start it
+  // while paginating GitHub repositories so its latency does not extend the
+  // critical path. getContributions already degrades gracefully on failure.
+  const contribPromise = getOptionalContributions(user, getJson);
+  const repos = await fetchAllGithubPages(
+    (page) => getJson(`${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`),
+    isGithubRepoList,
+  );
+  const contrib = await contribPromise;
+  return { profile, repos, contrib, fetchedAt: new Date().toISOString() };
+    },
+    (snapshot) => "fetchedAt" in snapshot && isSnapshotFresh(snapshot.fetchedAt),
+  ), {
+    skipCache: options.forceLive === true,
+    onCacheSet: (key, value, expiresAt) => publishCacheEntry(profileCacheChannel, key, value, expiresAt),
+  }));
+}
+
+
+test("bounds cache size and evicts the least recently used profile", async () => {
   const cache = new Map();
-  const [a, b] = await Promise.all([
-    getOrFetchCached(cache, "alice", async () => "A"),
-    getOrFetchCached(cache, "bob", async () => "B"),
-  ]);
-  assert.equal(a, "A"); assert.equal(b, "B"); assert.equal(cache.size, 2);
+  for (let i = 0; i < GITHUB_MEMORY_CACHE_MAX_ENTRIES; i += 1) {
+    setCacheEntry(cache, `user-${i}`, i, 10_000);
+  }
+  // Touch the oldest key; it should move to the most-recently-used position.
+  await getOrFetchCached(cache, "user-0", async () => -1, { now: 1 });
+  setCacheEntry(cache, "new-user", "new", 10_000);
+  assert.equal(cache.size, GITHUB_MEMORY_CACHE_MAX_ENTRIES);
+  assert.equal(cache.has("user-0"), true);
+  assert.equal(cache.has("user-1"), false);
+  assert.equal(cache.has("new-user"), true);
 });
 
-
-test("publishes a completed cache entry to sibling tabs", async () => {
-  const listeners = new Set(); const messages = [];
-  const channel = { addEventListener: (_, fn) => listeners.add(fn), removeEventListener: (_, fn) => listeners.delete(fn), postMessage: (message) => { messages.push(message); for (const fn of listeners) fn({ data: message }); } };
+test("applies the same cache bound to entries received from another tab", () => {
+  const listeners = new Set();
+  const channel = { addEventListener: (_, fn) => listeners.add(fn), removeEventListener: (_, fn) => listeners.delete(fn) };
   const cache = new Map();
-  subscribeToCacheChannel(cache, channel, (key, value) => key === "alice" && value?.profile === "alice");
-  const value = { profile: "alice" };
-  publishCacheEntry(channel, "alice", value, Date.now() + 10_000);
-  assert.equal(messages.length, 1); assert.equal(cache.get("alice").value, value);
-});
-
-test("ignores invalid, expired and unrelated broadcast messages", () => {
-  const listeners = new Set(); const channel = { addEventListener: (_, fn) => listeners.add(fn), removeEventListener: (_, fn) => listeners.delete(fn) };
-  const cache = new Map(); subscribeToCacheChannel(cache, channel, (key, value) => key === "alice" && value === "valid");
-  const send = (data) => { for (const fn of listeners) fn({ data }); };
-  send({ type: "other", key: "alice", value: "valid", expiresAt: Date.now() + 1000 });
-  send({ type: "github-profile-cache", key: "bob", value: "valid", expiresAt: Date.now() + 1000 });
-  send({ type: "github-profile-cache", key: "alice", value: "invalid", expiresAt: Date.now() + 1000 });
-  send({ type: "github-profile-cache", key: "alice", value: "valid", expiresAt: Date.now() - 1 });
-  assert.equal(cache.size, 0);
-});
-
-
-test("does not let an older in-flight tab overwrite a newer refresh", () => {
-  const listeners = new Set(); const channel = { addEventListener: (_, fn) => listeners.add(fn) };
-  const cache = new Map([["alice", { value: "new", expiresAt: 5000 }]]);
-  subscribeToCacheChannel(cache, channel, (key, value) => key === "alice" && typeof value === "string");
-  for (const fn of listeners) fn({ data: { type: "github-profile-cache", key: "alice", value: "old", expiresAt: 4000 } });
-  assert.equal(cache.get("alice").value, "new");
+  subscribeToCacheChannel(cache, channel, () => true);
+  for (let i = 0; i <= GITHUB_MEMORY_CACHE_MAX_ENTRIES; i += 1) {
+    for (const fn of listeners) fn({ data: { type: "github-profile-cache", key: `remote-${i}`, value: i, expiresAt: Date.now() + 10_000 } });
+  }
+  assert.equal(cache.size, GITHUB_MEMORY_CACHE_MAX_ENTRIES);
+  assert.equal(cache.has("remote-0"), false);
+  assert.equal(cache.has(`remote-${GITHUB_MEMORY_CACHE_MAX_ENTRIES}`), true);
 });
