@@ -7,6 +7,7 @@ import { getSnapshotOrFetchLive, isSnapshotFresh, shouldUseSnapshot } from "./gi
 import { coalesceRequest } from "./request-coalescer.mjs";
 import { getOrFetchCached, publishCacheEntry, subscribeToCacheChannel } from "./github-memory-cache.mjs";
 import { formatRateLimitWait, getRateLimitWaitMs, updateRateLimitState } from "./github-rate-limit.mjs";
+import { recordGithubRequest, getGithubRequestMetrics } from "./github-request-metrics.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -19,19 +20,32 @@ async function getJson(url: string): Promise<any> {
   const waitMs = getRateLimitWaitMs(githubRateLimit);
   if (waitMs > 0) throw new Error(formatRateLimitWait(waitMs));
   const controller = new AbortController();
+  const startedAt = Date.now();
   const timer = setTimeout(() => controller.abort(), CONFIG.requestTimeoutMs);
+  let status: number | null = null;
+  let remaining: number | null = null;
+  let outcome: "success" | "http_error" | "network_error" = "network_error";
   try {
     const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" }, signal: controller.signal });
+    status = res.status;
     updateRateLimitState(githubRateLimit, res.headers);
-    return await parseGitHubResponse(res);
+    const rawRemaining = res.headers.get("x-ratelimit-remaining");
+    remaining = rawRemaining !== null && /^\d+$/.test(rawRemaining) ? Number(rawRemaining) : null;
+    const data = await parseGitHubResponse(res);
+    outcome = "success";
+    return data;
   } catch (err) {
+    if (status !== null) outcome = "http_error";
     if (err instanceof Error && err.name === "AbortError") throw new Error("GitHub did not respond (timeout)");
     throw err;
   } finally {
+    recordGithubRequest(url, { status, remaining, outcome, durationMs: Date.now() - startedAt });
     clearTimeout(timer);
   }
 }
 
+
+export { getGithubRequestMetrics };
 
 export type GithubData = {
   fetchedAt?: string;
