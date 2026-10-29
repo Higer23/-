@@ -3,14 +3,14 @@ import assert from "node:assert/strict";
 import worker from "../worker/index.js";
 
 const ORIGIN = "https://higer23.github.io";
-const URL = "https://verify.example/api/turnstile/verify";
+const BASE_URL = "https://verify.example/api/turnstile/verify";
 const ENV = { TURNSTILE_SECRET: "test-secret" };
 
 function request({ method = "POST", path = "/api/turnstile/verify", origin = ORIGIN, headers = {}, body = '{"token":"test-token"}' } = {}) {
   const requestHeaders = new Headers(headers);
   if (origin !== null) requestHeaders.set("Origin", origin);
   if (body !== null && !requestHeaders.has("Content-Type")) requestHeaders.set("Content-Type", "application/json");
-  return new Request(new URL(path, URL), { method, headers: requestHeaders, body: method === "GET" || method === "HEAD" ? undefined : body });
+  return new Request(new URL(path, BASE_URL), { method, headers: requestHeaders, body: method === "GET" || method === "HEAD" ? undefined : body });
 }
 
 async function responseBody(response) {
