@@ -83,6 +83,9 @@ export async function fetchGithub(user: string): Promise<GithubData> {
     if (!Array.isArray(batch)) throw new Error("Invalid repository data");
     repos.push(...batch);
     if (batch.length < 100) break;
+    if (page === 10) {
+      throw new Error("Repository list exceeds the supported 1000-item limit");
+    }
   }
   const contrib = await contribPromise;
   return { profile, repos, contrib };
