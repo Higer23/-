@@ -5,6 +5,7 @@ import { fetchAllGithubPages } from "./github-pagination.mjs";
 import { getOptionalContributions } from "./github-contributions.mjs";
 import { getSnapshotOrFetchLive, isSnapshotFresh, shouldUseSnapshot } from "./github-cache.mjs";
 import { coalesceRequest } from "./request-coalescer.mjs";
+import { getOrFetchCached } from "./github-memory-cache.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -58,11 +59,12 @@ async function fetchSnapshot(user: string): Promise<GithubData | null> {
 }
 
 const inFlightRequests = new Map<string, Promise<GithubData>>();
+const profileCache = new Map<string, { value: GithubData; expiresAt: number }>();
 
 export function fetchGithub(user: string, options: { forceLive?: boolean } = {}): Promise<GithubData> {
   const normalizedUser = user.trim().toLowerCase();
   const mode = options.forceLive ? "live" : "snapshot";
-  return coalesceRequest(inFlightRequests, `${normalizedUser}:${mode}`, () => getSnapshotOrFetchLive(
+  return coalesceRequest(inFlightRequests, `${normalizedUser}:${mode}`, () => getOrFetchCached(profileCache, normalizedUser, () => getSnapshotOrFetchLive(
     () => shouldUseSnapshot(options.forceLive) ? fetchSnapshot(user) : Promise.resolve(null),
     async () => {
   // Live fallback when the snapshot is missing or invalid.
@@ -83,5 +85,5 @@ export function fetchGithub(user: string, options: { forceLive?: boolean } = {})
   return { profile, repos, contrib, fetchedAt: new Date().toISOString() };
     },
     (snapshot) => "fetchedAt" in snapshot && isSnapshotFresh(snapshot.fetchedAt),
-  ));
+  ), { skipCache: options.forceLive === true }));
 }
