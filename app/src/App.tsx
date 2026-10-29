@@ -18,6 +18,14 @@ const FALLBACK_AVATAR = "assets/img/avatar-fallback.svg";
 
 const norm = (s: string) => s.toLocaleLowerCase();
 
+const PROJ_TEXT: Record<string, Record<string, string>> = {
+  "higum": {en:: "Live web app deployed on Vercel.", tr:: "Vercel üzerinde canlı çalışan bir web uygulaması.", de:: "Web-App, live auf Vercel."},
+  "forum": {en:: "Discussion forum with a live demo.", tr:: "Canlı demosu olan bir tartışma forumu.", de:: "Diskussionsforum mit Live-Demo."},
+  "nachricht-portal": {en:: "Messaging portal with a live demo.", tr:: "Canlı demosu olan bir mesajlaşma portalı.", de:: "Nachrichtenportal mit Live-Demo."},
+  "anonim-mesaj": {en:: "Anonymous messaging app with a live demo.", tr:: "Canlı demosu olan anonim mesajlaşma uygulaması.", de:: "Anonyme Nachrichten-App mit Live-Demo."},
+  "gta6-discord-rpc": {en:: "Modular Discord Rich Presence client for Python (MIT).", tr:: "Python için modüler Discord Rich Presence istemcisi (MIT).", de:: "Modularer Discord-Rich-Presence-Client für Python (MIT)."},
+};
+
 export default function App() {
   const { t, locale } = useI18n();
   const { state, retry } = useGithub(CONFIG.user);
@@ -31,10 +39,13 @@ export default function App() {
 
   const PROJECTS = useMemo(
     () => [
-      { kicker: "SECURITY · BASH", title: "HigerZero", href: "https://github.com/Higer23/HigerZero", text: t("proj.hz") },
-      { kicker: "WEB APP · CLOUDFLARE", title: "Kontakt-Notizbuch", href: "https://github.com/Higer23/kontakt-notizbuch", text: t("proj.kn") },
+      { kicker: "WEB APP · VERCEL", title: "Higum", href: "https://github.com/Higer23/higum", text: PROJ_TEXT["higum"][locale as string] ?? PROJ_TEXT["higum"].en },
+      { kicker: "WEB APP", title: "Forum", href: "https://github.com/Higer23/forum", text: PROJ_TEXT["forum"][locale as string] ?? PROJ_TEXT["forum"].en },
+      { kicker: "WEB APP · TYPESCRIPT", title: "Nachricht-Portal", href: "https://github.com/Higer23/nachricht-portal", text: PROJ_TEXT["nachricht-portal"][locale as string] ?? PROJ_TEXT["nachricht-portal"].en },
+      { kicker: "WEB APP · VERCEL", title: "Anonim-Mesaj", href: "https://github.com/Higer23/anonim-mesaj", text: PROJ_TEXT["anonim-mesaj"][locale as string] ?? PROJ_TEXT["anonim-mesaj"].en },
+      { kicker: "PYTHON · DISCORD", title: "GTA6 Discord RPC", href: "https://github.com/Higer23/gta6-discord-rpc", text: PROJ_TEXT["gta6-discord-rpc"][locale as string] ?? PROJ_TEXT["gta6-discord-rpc"].en },
     ],
-    [t],
+    [t, locale],
   );
 
   useEffect(() => {
