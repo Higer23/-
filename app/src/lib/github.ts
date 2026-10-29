@@ -3,7 +3,7 @@ import { parseGitHubResponse } from "./github-response.mjs";
 import { isGithubProfile, isGithubRepoList } from "./github-payload.mjs";
 import { fetchAllGithubPages } from "./github-pagination.mjs";
 import { getOptionalContributions } from "./github-contributions.mjs";
-import { getSnapshotOrFetchLive } from "./github-cache.mjs";
+import { getSnapshotOrFetchLive, isSnapshotFresh } from "./github-cache.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -77,5 +77,6 @@ export async function fetchGithub(user: string): Promise<GithubData> {
   const contrib = await contribPromise;
   return { profile, repos, contrib };
     },
+    (snapshot) => "fetchedAt" in snapshot && isSnapshotFresh(snapshot.fetchedAt),
   );
 }
