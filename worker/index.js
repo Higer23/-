@@ -25,6 +25,41 @@ function json(data, status = 200, allowOrigin = false) {
   return new Response(JSON.stringify(data), { status, headers });
 }
 
+async function readBodyWithinLimit(request) {
+  if (!request.body) return "";
+  const reader = request.body.getReader();
+  const chunks = [];
+  let totalBytes = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      totalBytes += value.byteLength;
+      if (totalBytes > MAX_BODY_BYTES) {
+        await reader.cancel();
+        return null;
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    return undefined;
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -62,16 +97,20 @@ export default {
     }
 
     const declaredLength = Number(request.headers.get("Content-Length") || 0);
-    if (declaredLength > MAX_BODY_BYTES) {
+    if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
       return json({ error: "Request too large" }, 413, true);
+    }
+
+    const raw = await readBodyWithinLimit(request);
+    if (raw === null) {
+      return json({ error: "Request too large" }, 413, true);
+    }
+    if (raw === undefined) {
+      return json({ error: "Invalid JSON body" }, 400, true);
     }
 
     let body;
     try {
-      const raw = await request.text();
-      if (new TextEncoder().encode(raw).byteLength > MAX_BODY_BYTES) {
-        return json({ error: "Request too large" }, 413, true);
-      }
       body = JSON.parse(raw);
     } catch {
       return json({ error: "Invalid JSON body" }, 400, true);
