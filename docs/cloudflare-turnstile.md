@@ -29,7 +29,7 @@ The Worker uses a Cloudflare Workers rate-limiting binding named `VERIFY_RATE_LI
 
 ## Frontend configuration and verification
 
-The public Site Key is configured in `app/src/config.ts`; it is safe to expose in the browser. The `TURNSTILE_SECRET` must remain a Cloudflare Worker Secret and must never be added to frontend code. The frontend CSP in `app/index.html` allows the Turnstile script/frame and the Worker origin.
+The public Site Key is configured in `app/src/config.ts`; it is safe to expose in the browser. The widget named `higer23-github-pages` is restricted to the exact hostname `higer23.github.io`. The Worker secret must be the matching secret for that same widget; changing the frontend Site Key alone is not enough. The `TURNSTILE_SECRET` must remain a Cloudflare Worker Secret and must never be added to frontend code. After creating or rotating the widget, update the Worker secret in the Cloudflare dashboard (Workers & Pages → `higer23-turnstile-verify` → Settings → Variables and Secrets) with the secret belonging to `higer23-github-pages`. Do not commit or share the secret. The frontend CSP in `app/index.html` allows the Turnstile script/frame and the Worker origin.
 
 The gate handles expired widget tokens, verification failures, rate limiting (HTTP 429), temporary Worker errors (HTTP 502/503), and network failures with user-facing messages. Failed requests reset the widget so a fresh token is used for the next attempt. Verify the complete flow in a real browser on the published GitHub Pages origin; a build alone does not prove that the Turnstile hostname, CSP, CORS, and live secret all work together.
 
