@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Higer23 — GitHub profili</title>
+  <desc id="desc">GitHub projeleri, gelişim hikâyesi ve profil puanı.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#080b14"/><stop offset="1" stop-color="#15102a"/></linearGradient><radialGradient id="glow"><stop offset="0" stop-color="#8b5cf6" stop-opacity=".35"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1200" height="630" fill="url(#bg)"/><circle cx="950" cy="180" r="380" fill="url(#glow)"/>
+  <rect x="68" y="68" width="1064" height="494" rx="28" fill="#0b0e18" fill-opacity=".65" stroke="#34364d" stroke-width="2"/>
+  <path d="M112 142h64" stroke="#a78bfa" stroke-width="6" stroke-linecap="round"/>
+  <text x="112" y="210" fill="#b9a7ff" font-family="Inter,Arial,sans-serif" font-size="24" font-weight="700" letter-spacing="5">GITHUB PROFILE</text>
+  <text x="108" y="330" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="88" font-weight="800">Higer23</text>
+  <text x="112" y="390" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="30">Öğren, üret, yinele.</text>
+  <text x="112" y="465" fill="#94a3b8" font-family="Inter,Arial,sans-serif" font-size="22">Projeler · Gelişim hikâyesi · Açık GitHub verileri</text>
+  <text x="112" y="520" fill="#a78bfa" font-family="Inter,Arial,sans-serif" font-size="20">higer23.github.io/-/</text>
+  <circle cx="1010" cy="390" r="54" fill="#a78bfa" fill-opacity=".12" stroke="#a78bfa" stroke-opacity=".8" stroke-width="2"/><path d="M984 390l18 18 34-39" fill="none" stroke="#c4b5fd" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
