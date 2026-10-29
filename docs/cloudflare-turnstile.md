@@ -4,7 +4,7 @@ This document describes the separately deployed Cloudflare Worker at:
 
 `https://higer23-turnstile-verify.halilgercek023.workers.dev/api/turnstile/verify`
 
-**Important integration status:** the current React app's `EntranceGate` is a local interaction/challenge gate (`app/src/components/EntranceGate.tsx`). It does not load the Cloudflare Turnstile browser widget and does not call this Worker. The Worker is deployed and configured, but it is not currently part of the app's verification flow. The local gate is a client-side friction mechanism, not a server-verifiable security boundary. Do not describe it as Cloudflare Turnstile or rely on it to protect private resources.
+**Integration:** `EntranceGate` loads the official Cloudflare Turnstile browser widget, then sends its short-lived token to this Worker. The app opens only after the Worker confirms `success: true`. The existing local interaction challenge remains an additional client-side friction layer, not a substitute for server verification.
 
 ## Worker security behavior
 
@@ -27,9 +27,11 @@ The Worker uses a Cloudflare Workers rate-limiting binding named `VERIFY_RATE_LI
 5. Confirm the Turnstile widget allows hostname `higer23.github.io`.
 6. Test the Worker endpoint with a real widget token from the allowed hostname before considering the integration operational end-to-end. Do not put secret keys in frontend code, logs, GitHub, or chat.
 
-## Remaining integration work
+## Frontend configuration and verification
 
-To make the app use Cloudflare Turnstile, a follow-up change must add the public Turnstile Site Key to frontend configuration, load/render the official browser widget in the gate, send its short-lived token to the Worker endpoint, and open the app only after the Worker returns a successful verification. Handle expired/duplicate tokens and HTTP 429/503 with clear user-facing messages and a safe retry path. The Site Key is public; the `TURNSTILE_SECRET` must remain a Worker Secret. Add automated tests for the client verification flow and verify it in a real browser on the published GitHub Pages origin.
+The public Site Key is configured in `app/src/config.ts`; it is safe to expose in the browser. The `TURNSTILE_SECRET` must remain a Cloudflare Worker Secret and must never be added to frontend code. The frontend CSP in `app/index.html` allows the Turnstile script/frame and the Worker origin.
+
+The gate handles expired widget tokens, verification failures, rate limiting (HTTP 429), temporary Worker errors (HTTP 502/503), and network failures with user-facing messages. Failed requests reset the widget so a fresh token is used for the next attempt. Verify the complete flow in a real browser on the published GitHub Pages origin; a build alone does not prove that the Turnstile hostname, CSP, CORS, and live secret all work together.
 
 ## Hosting limitation
 

@@ -1,5 +1,9 @@
 export const CONFIG = {
   user: "Higer23",
+  turnstile: {
+    siteKey: "0x4AAAAAAFefxVQuDmaf4QKI",
+    verifyUrl: "https://higer23-turnstile-verify.halilgercek023.workers.dev/api/turnstile/verify",
+  },
   requestTimeoutMs: 8000,
   gate: {
     minFillMs: 1500,
