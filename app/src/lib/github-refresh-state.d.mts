@@ -1,0 +1,2 @@
+export function beginGithubFetch<T extends { status: string; data?: { profile?: { login?: string } }; refreshing?: boolean; refreshError?: string }>(previous: T, user: string, forceLive: boolean): T | { status: "loading" };
+export function failGithubFetch<T extends { status: string; data?: { profile?: { login?: string } }; refreshing?: boolean; refreshError?: string }>(previous: T, user: string, error: unknown): T | { status: "error"; error: string };
