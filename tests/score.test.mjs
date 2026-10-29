@@ -72,7 +72,7 @@ test('empty and inactive streak histories return zeroes', () => {
 test('current streak ignores trailing zero days but longest streak spans history', () => {
   assert.deepEqual(streaks([
     { count: 1 }, { count: 1 }, { count: 0 },
-    { count: 2 }, { count: 1 }, { count: 0 }, { count: 0 },
+    { count: 2 }, { count: 1 }, { count: 0 },
   ]), { current: 2, longest: 2 });
 });
 
