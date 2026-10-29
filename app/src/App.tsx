@@ -20,11 +20,11 @@ const FALLBACK_AVATAR = "assets/img/avatar-fallback.svg";
 const norm = (s: string) => s.toLocaleLowerCase();
 
 const PROJ_TEXT: Record<string, Record<string, string>> = {
-  "higum": {en:: "Live web app deployed on Vercel.", tr:: "Vercel üzerinde canlı çalışan bir web uygulaması.", de:: "Web-App, live auf Vercel."},
-  "forum": {en:: "Discussion forum with a live demo.", tr:: "Canlı demosu olan bir tartışma forumu.", de:: "Diskussionsforum mit Live-Demo."},
-  "nachricht-portal": {en:: "Messaging portal with a live demo.", tr:: "Canlı demosu olan bir mesajlaşma portalı.", de:: "Nachrichtenportal mit Live-Demo."},
-  "anonim-mesaj": {en:: "Anonymous messaging app with a live demo.", tr:: "Canlı demosu olan anonim mesajlaşma uygulaması.", de:: "Anonyme Nachrichten-App mit Live-Demo."},
-  "gta6-discord-rpc": {en:: "Modular Discord Rich Presence client for Python (MIT).", tr:: "Python için modüler Discord Rich Presence istemcisi (MIT).", de:: "Modularer Discord-Rich-Presence-Client für Python (MIT)."},
+  "higum": {en: "Live web app deployed on Vercel.", tr: "Vercel üzerinde canlı çalışan bir web uygulaması.", de: "Web-App, live auf Vercel."},
+  "forum": {en: "Discussion forum with a live demo.", tr: "Canlı demosu olan bir tartışma forumu.", de: "Diskussionsforum mit Live-Demo."},
+  "nachricht-portal": {en: "Messaging portal with a live demo.", tr: "Canlı demosu olan bir mesajlaşma portalı.", de: "Nachrichtenportal mit Live-Demo."},
+  "anonim-mesaj": {en: "Anonymous messaging app with a live demo.", tr: "Canlı demosu olan anonim mesajlaşma uygulaması.", de: "Anonyme Nachrichten-App mit Live-Demo."},
+  "gta6-discord-rpc": {en: "Modular Discord Rich Presence client for Python (MIT).", tr: "Python için modüler Discord Rich Presence istemcisi (MIT).", de: "Modularer Discord-Rich-Presence-Client für Python (MIT)."},
   "kontakt": { en: "Personal contact directory and notepad (Cloudflare Workers + D1 + R2).", tr: "Cloudflare Workers + D1 + R2 ile kişisel rehber ve not defteri.", de: "Persönliches Kontaktverzeichnis und Notizblock (Cloudflare Workers + D1 + R2)." },
 };
 
