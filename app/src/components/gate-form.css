@@ -12,7 +12,7 @@
   border-radius: 26px;
   background: var(--glass);
   border: 1px solid var(--line);
-  touch-action: none;
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
   margin: 8px 0 18px;
