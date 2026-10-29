@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getOrFetchCached, GITHUB_MEMORY_CACHE_TTL_MS } from "../app/src/lib/github-memory-cache.mjs";
+import { getOrFetchCached, GITHUB_MEMORY_CACHE_TTL_MS, subscribeToCacheChannel, publishCacheEntry } from "../app/src/lib/github-memory-cache.mjs";
 
 test("reuses a completed value during the short TTL", async () => {
   const cache = new Map(); let calls = 0;
@@ -41,4 +41,35 @@ test("keeps different profile keys isolated", async () => {
     getOrFetchCached(cache, "bob", async () => "B"),
   ]);
   assert.equal(a, "A"); assert.equal(b, "B"); assert.equal(cache.size, 2);
+});
+
+
+test("publishes a completed cache entry to sibling tabs", async () => {
+  const listeners = new Set(); const messages = [];
+  const channel = { addEventListener: (_, fn) => listeners.add(fn), removeEventListener: (_, fn) => listeners.delete(fn), postMessage: (message) => { messages.push(message); for (const fn of listeners) fn({ data: message }); } };
+  const cache = new Map();
+  subscribeToCacheChannel(cache, channel, (key, value) => key === "alice" && value?.profile === "alice");
+  const value = { profile: "alice" };
+  publishCacheEntry(channel, "alice", value, Date.now() + 10_000);
+  assert.equal(messages.length, 1); assert.equal(cache.get("alice").value, value);
+});
+
+test("ignores invalid, expired and unrelated broadcast messages", () => {
+  const listeners = new Set(); const channel = { addEventListener: (_, fn) => listeners.add(fn), removeEventListener: (_, fn) => listeners.delete(fn) };
+  const cache = new Map(); subscribeToCacheChannel(cache, channel, (key, value) => key === "alice" && value === "valid");
+  const send = (data) => { for (const fn of listeners) fn({ data }); };
+  send({ type: "other", key: "alice", value: "valid", expiresAt: Date.now() + 1000 });
+  send({ type: "github-profile-cache", key: "bob", value: "valid", expiresAt: Date.now() + 1000 });
+  send({ type: "github-profile-cache", key: "alice", value: "invalid", expiresAt: Date.now() + 1000 });
+  send({ type: "github-profile-cache", key: "alice", value: "valid", expiresAt: Date.now() - 1 });
+  assert.equal(cache.size, 0);
+});
+
+
+test("does not let an older in-flight tab overwrite a newer refresh", () => {
+  const listeners = new Set(); const channel = { addEventListener: (_, fn) => listeners.add(fn) };
+  const cache = new Map([["alice", { value: "new", expiresAt: 5000 }]]);
+  subscribeToCacheChannel(cache, channel, (key, value) => key === "alice" && typeof value === "string");
+  for (const fn of listeners) fn({ data: { type: "github-profile-cache", key: "alice", value: "old", expiresAt: 4000 } });
+  assert.equal(cache.get("alice").value, "new");
 });

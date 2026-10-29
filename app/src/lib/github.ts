@@ -5,7 +5,7 @@ import { fetchAllGithubPages } from "./github-pagination.mjs";
 import { getOptionalContributions } from "./github-contributions.mjs";
 import { getSnapshotOrFetchLive, isSnapshotFresh, shouldUseSnapshot } from "./github-cache.mjs";
 import { coalesceRequest } from "./request-coalescer.mjs";
-import { getOrFetchCached } from "./github-memory-cache.mjs";
+import { getOrFetchCached, publishCacheEntry, subscribeToCacheChannel } from "./github-memory-cache.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -60,6 +60,12 @@ async function fetchSnapshot(user: string): Promise<GithubData | null> {
 
 const inFlightRequests = new Map<string, Promise<GithubData>>();
 const profileCache = new Map<string, { value: GithubData; expiresAt: number }>();
+const profileCacheChannel = typeof BroadcastChannel === "undefined"
+  ? null
+  : (() => { try { return new BroadcastChannel("github-profile-cache-v1"); } catch { return null; } })();
+subscribeToCacheChannel(profileCache, profileCacheChannel, (key, value): value is GithubData =>
+  isGithubData(value) && value.profile.login.toLowerCase() === key,
+);
 
 export function fetchGithub(user: string, options: { forceLive?: boolean } = {}): Promise<GithubData> {
   const normalizedUser = user.trim().toLowerCase();
@@ -85,5 +91,8 @@ export function fetchGithub(user: string, options: { forceLive?: boolean } = {})
   return { profile, repos, contrib, fetchedAt: new Date().toISOString() };
     },
     (snapshot) => "fetchedAt" in snapshot && isSnapshotFresh(snapshot.fetchedAt),
-  ), { skipCache: options.forceLive === true }));
+  ), {
+    skipCache: options.forceLive === true,
+    onCacheSet: (key, value, expiresAt) => publishCacheEntry(profileCacheChannel, key, value, expiresAt),
+  }));
 }
