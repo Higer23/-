@@ -101,6 +101,25 @@ export default function App() {
     )
     .sort((a: { stargazers_count?: number }, b: { stargazers_count?: number }) => (b.stargazers_count ?? 0) - (a.stargazers_count ?? 0));
 
+  const activityTrend = useMemo(() => {
+    const now = new Date();
+    const months = Array.from({ length: 12 }, (_, index) => {
+      const date = new Date(now.getFullYear(), now.getMonth() - (11 - index), 1);
+      return { key: `${date.getFullYear()}-${date.getMonth()}`, label: date.toLocaleDateString(locale, { month: "short" }), count: 0 };
+    });
+    const byMonth = new Map(months.map((month) => [month.key, month]));
+    for (const repo of ok?.data.repos ?? []) {
+      const pushedAt = (repo as { pushed_at?: string }).pushed_at;
+      if (!pushedAt) continue;
+      const date = new Date(pushedAt);
+      if (Number.isNaN(date.getTime())) continue;
+      const month = byMonth.get(`${date.getFullYear()}-${date.getMonth()}`);
+      if (month) month.count += 1;
+    }
+    return months;
+  }, [ok, locale]);
+  const activityMax = Math.max(1, ...activityTrend.map((month) => month.count));
+
   const scoreInsights = useMemo(() => {
     if (!result) return [] as Array<{ text: string; kind: "warning" | "good" }>;
 
@@ -271,6 +290,17 @@ export default function App() {
                 </div>
               );
             })}
+          </div>
+        </Panel>
+
+        <Panel id="activity" kicker={locale === "tr" ? "SON 12 AY" : locale === "de" ? "LETZTE 12 MONATE" : "LAST 12 MONTHS"} title={locale === "tr" ? "Depo güncelleme eğilimi" : locale === "de" ? "Repository-Aktivität" : "Repository activity trend"}>
+          <p className="muted">{locale === "tr" ? "GitHub depolarının son gönderim tarihine göre aylık dağılım. Bu grafik commit veya katkı sayısı değildir." : locale === "de" ? "Monatliche Verteilung anhand des letzten Push-Datums der Repositories, keine Commit- oder Beitragszählung." : "Monthly distribution by each repository’s latest push date; this is not a commit or contribution count."}</p>
+          <div className="activity-trend" role="list" aria-label={locale === "tr" ? "Aylık depo güncellemeleri" : locale === "de" ? "Monatliche Repository-Aktivität" : "Monthly repository updates"}>
+            {activityTrend.map((month) => <div className="activity-month" role="listitem" key={month.key}>
+              <div className="bar" title={`${month.label}: ${month.count}`}><i style={{ height: `${Math.max(month.count ? 8 : 0, (month.count / activityMax) * 100)}%` }} /></div>
+              <span className="muted">{month.label}</span>
+              <b>{month.count}</b>
+            </div>)}
           </div>
         </Panel>
 
