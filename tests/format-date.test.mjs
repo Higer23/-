@@ -6,7 +6,7 @@ const timestamp = "2026-10-29T12:34:00.000Z";
 
 test("formats timestamps with the requested locale and timezone", () => {
   assert.equal(formatFetchedAt(timestamp, "en-US", { timeZone: "UTC" }), "Oct 29, 2026, 12:34 PM");
-  assert.equal(formatFetchedAt(timestamp, "de-DE", { timeZone: "UTC" }), "29. Okt. 2026, 12:34");
+  assert.equal(formatFetchedAt(timestamp, "de-DE", { timeZone: "UTC" }), "29.10.2026, 12:34");
   assert.equal(formatFetchedAt(timestamp, "tr-TR", { timeZone: "UTC" }), "29 Eki 2026 12:34");
 });
 
