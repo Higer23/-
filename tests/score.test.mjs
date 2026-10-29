@@ -41,3 +41,25 @@ test('boş bio uyarısı verir, fork depoları dil sayısına girmez', () => {
   assert.ok(r.notes.some((n) => n.includes('bio')));
   assert.equal(r.langs.length, 0);
 });
+
+test('grade boundaries remain stable', () => {
+  assert.equal(grade(80), 'A');
+  assert.equal(grade(79.9), 'B');
+  assert.equal(grade(70), 'B');
+  assert.equal(grade(60), 'C');
+});
+
+test('empty activity and repository lists are handled safely', () => {
+  assert.deepEqual(streaks([]), { current: 0, longest: 0 });
+  const result = computeScore({
+    profile: { ...baseProfile, public_repos: 0 },
+    repos: [],
+    contrib: null,
+    now: NOW,
+  });
+  assert.ok(result.score >= 0 && result.score <= 100);
+  assert.equal(result.stats.total, 0);
+  assert.equal(result.stats.current, 0);
+  assert.equal(result.stats.longest, 0);
+  assert.equal(result.parts.reduce((sum, part) => sum + part.val, 0), result.score);
+});
