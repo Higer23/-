@@ -199,3 +199,15 @@ footer{max-width:960px;margin:0 auto;padding:0 clamp(16px,4vw,32px) calc(40px + 
 #hakkimda .story p:last-child{margin-bottom:0}
 #hakkimda .story .lead2{font-size:clamp(1.08rem,2vw,1.25rem);line-height:1.7;font-weight:550;margin-bottom:1.4rem}
 @media(max-width:640px){#hakkimda .story p{font-size:.97rem;line-height:1.78;margin-bottom:1rem}}
+
+
+/* Local developer tooling; the component is not rendered in production builds. */
+.github-diagnostics{position:fixed;z-index:1000;right:16px;bottom:16px;width:min(760px,calc(100vw - 32px));max-height:45vh;overflow:auto;padding:14px 16px;border:1px solid var(--line,rgba(255,255,255,.18));border-radius:14px;background:rgba(12,16,25,.96);color:#f4f6fb;box-shadow:0 12px 40px rgba(0,0,0,.35);font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+.github-diagnostics-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}
+.github-diagnostics-head span{font-size:10px;letter-spacing:.12em;color:#a7e4bd}
+.github-diagnostics p{margin:7px 0;color:#d3d9e5}
+.github-diagnostics table{width:100%;border-collapse:collapse;text-align:left}
+.github-diagnostics th,.github-diagnostics td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.1);white-space:nowrap}
+.github-diagnostics th{font-weight:600}
+.github-diagnostics small{display:block;margin-top:8px;color:#aeb8c8}
+@media(max-width:520px){.github-diagnostics{right:8px;bottom:8px;width:calc(100vw - 16px);padding:10px;font-size:10px}.github-diagnostics th,.github-diagnostics td{padding:4px}}
