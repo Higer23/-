@@ -97,19 +97,25 @@ export default function App() {
   const scoreInsights = useMemo(() => {
     if (!result) return [] as Array<{ text: string; kind: "warning" | "good" }>;
 
-    const insights = (result.noteCodes ?? []).map((note) => ({
-      text: t(note.code as Key, note.vars as Record<string, string | number> | undefined),
-      kind: "warning" as const,
-    }));
+    const notes = result.noteCodes ?? [];
+    const strengths = notes.filter((note) => note.code === "note.strength");
+    const warnings = notes
+      .filter((note) => note.code !== "note.strength")
+      .map((note) => ({
+        text: t(note.code as Key, note.vars as Record<string, string | number> | undefined),
+        kind: "warning" as const,
+      }));
+    const strengthInsights = strengths.length > 0
+      ? strengths.map((note) => ({
+          text: t(note.code as Key, note.vars as Record<string, string | number> | undefined),
+          kind: "good" as const,
+        }))
+      : warnings.length === 0
+        ? [{ text: t("score.insights.strong", { score: result.score }), kind: "good" as const }]
+        : [];
 
-    if (insights.length === 0) {
-      return [{
-        text: t("score.insights.strong", { score: result.score }),
-        kind: "good" as const,
-      }];
-    }
-
-    return insights.slice(0, 4);
+    // Keep the panel concise: show up to three actionable warnings and one strength.
+    return [...warnings.slice(0, 3), ...strengthInsights.slice(0, 1)];
   }, [result, t]);
 
   const found = shownStats.length + shownParts.length + shownLangs.length + shownNotes.length + shownProjects.length;
