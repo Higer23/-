@@ -3,6 +3,7 @@ import { CONFIG } from "./config";
 import { useGithub } from "./lib/useGithub";
 import { useReveal } from "./lib/useReveal";
 import { useI18n } from "./lib/i18n";
+import { formatFetchedAt } from "./lib/format-date.mjs";
 import type { Key } from "./lib/locales/types";
 import Background from "./components/Background";
 import ProjectModal from "./components/ProjectModal";
@@ -45,6 +46,7 @@ export default function App() {
   const ok = state.status === "ok" ? state : null;
   const profile = ok?.data.profile;
   const result = ok?.result;
+  const formattedFetchedAt = formatFetchedAt(ok?.data.fetchedAt, locale);
 
   const PROJECTS = useMemo(
     () => [
@@ -329,9 +331,9 @@ export default function App() {
         </Panel>
 
       </main>
-      {ok?.data.fetchedAt && (
+      {formattedFetchedAt && (
         <p className="muted" style={{ fontSize: ".78rem" }}>
-          {t("snapshot.updated", { time: new Date(ok.data.fetchedAt).toLocaleString(locale) })}
+          {t("snapshot.updated", { time: formattedFetchedAt })}
         </p>
       )}
       {openProj && (
