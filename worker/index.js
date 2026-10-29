@@ -174,7 +174,7 @@ export default {
       return json(
         { success },
         success ? 200 : 403,
-        true,
+        origin,
       );
     } catch {
       return json({ success: false, error: "Verification failed" }, 502, origin);

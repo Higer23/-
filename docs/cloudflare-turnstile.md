@@ -8,7 +8,7 @@ This document describes the separately deployed Cloudflare Worker at:
 
 ## Worker security behavior
 
-The Worker accepts only the verification path, requires an Origin from the explicit production allowlist, accepts only POST JSON (apart from a valid CORS preflight), caps the request body and token size, and fails closed if required configuration is missing. A successful Siteverify response is accepted only when both `success === true` and `hostname === "higer23.github.io"`. The Origin check is an additional browser/CORS restriction, not authentication by itself; the Siteverify hostname check is essential.
+The Worker accepts only the verification path, requires an Origin from the explicit production allowlist, accepts only POST JSON (apart from a valid CORS preflight), caps the request body and token size, and fails closed if required configuration is missing. A successful Siteverify response is accepted only when `success === true` and the returned hostname is either `higer23.github.io` or `me.higer.tech`. The Origin check is an additional browser/CORS restriction, not authentication by itself; the Siteverify hostname check is essential.
 
 The Worker uses a Cloudflare Workers rate-limiting binding named `VERIFY_RATE_LIMITER`:
 
