@@ -8,6 +8,7 @@ import { coalesceRequest } from "./request-coalescer.mjs";
 import { getOrFetchCached, publishCacheEntry, subscribeToCacheChannel } from "./github-memory-cache.mjs";
 import { formatRateLimitWait, getRateLimitWaitMs, updateRateLimitState } from "./github-rate-limit.mjs";
 import { recordGithubRequest, getGithubRequestMetrics } from "./github-request-metrics.mjs";
+import { fetchWithNetworkRetry } from "./github-network-retry.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -26,7 +27,7 @@ async function getJson(url: string): Promise<any> {
   let remaining: number | null = null;
   let outcome: "success" | "http_error" | "network_error" = "network_error";
   try {
-    const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" }, signal: controller.signal });
+    const res = await fetchWithNetworkRetry(() => fetch(url, { headers: { Accept: "application/vnd.github+json" }, signal: controller.signal }));
     status = res.status;
     updateRateLimitState(githubRateLimit, res.headers);
     const rawRemaining = res.headers.get("x-ratelimit-remaining");
