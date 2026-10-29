@@ -12,8 +12,13 @@ async function getJson(url: string): Promise<any> {
     const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" }, signal: controller.signal });
     if (res.status === 403 || res.status === 429) throw new Error("GitHub rate limit reached, try again later");
     if (res.status === 404) throw new Error("Profile not found");
-    if (!res.ok) throw new Error(`GitHub ${res.status}`);
-    return await res.json();
+    if (!res.ok) throw new Error(`GitHub request failed (HTTP ${res.status})`);
+    try {
+      return await res.json();
+    } catch (err) {
+      if (err instanceof SyntaxError) throw new Error("GitHub returned invalid JSON");
+      throw err;
+    }
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") throw new Error("GitHub did not respond (timeout)");
     throw err;
