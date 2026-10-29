@@ -3,6 +3,7 @@ import { parseGitHubResponse } from "./github-response.mjs";
 import { isGithubProfile, isGithubRepoList } from "./github-payload.mjs";
 import { fetchAllGithubPages } from "./github-pagination.mjs";
 import { getOptionalContributions } from "./github-contributions.mjs";
+import { getSnapshotOrFetchLive } from "./github-cache.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -56,9 +57,9 @@ async function fetchSnapshot(user: string): Promise<GithubData | null> {
 }
 
 export async function fetchGithub(user: string): Promise<GithubData> {
-  const snapshot = await fetchSnapshot(user);
-  if (snapshot) return snapshot;
-
+  return getSnapshotOrFetchLive(
+    () => fetchSnapshot(user),
+    async () => {
   // Live fallback when the snapshot is missing or invalid.
   const profile = await getJson(`${API}/users/${user}`);
   if (!isGithubProfile(profile, user)) throw new Error("Invalid profile data");
@@ -75,4 +76,6 @@ export async function fetchGithub(user: string): Promise<GithubData> {
   );
   const contrib = await contribPromise;
   return { profile, repos, contrib };
+    },
+  );
 }
