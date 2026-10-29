@@ -1,5 +1,6 @@
 import { CONFIG } from "../config";
 import { parseGitHubResponse } from "./github-response.mjs";
+import { isGithubProfile, isGithubRepoList } from "./github-payload.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -40,8 +41,8 @@ export type GithubData = {
 function isGithubData(value: any): value is GithubData {
   return (
     !!value &&
-    typeof value.profile?.login === "string" &&
-    Array.isArray(value.repos) &&
+    isGithubProfile(value.profile) &&
+    isGithubRepoList(value.repos) &&
     (value.contrib === null || Array.isArray(value.contrib?.contributions))
   );
 }
@@ -67,7 +68,7 @@ export async function fetchGithub(user: string): Promise<GithubData> {
 
   // Live fallback when the snapshot is missing or invalid.
   const profile = await getJson(`${API}/users/${user}`);
-  if (!profile || !profile.login) throw new Error("Invalid profile data");
+  if (!isGithubProfile(profile, user)) throw new Error("Invalid profile data");
 
   // GitHub paginates repository lists at 100 items. Continue until the final
   // page so the displayed star total covers every public repository.
@@ -78,7 +79,7 @@ export async function fetchGithub(user: string): Promise<GithubData> {
   const repos: any[] = [];
   for (let page = 1; page <= 10; page += 1) {
     const batch = await getJson(`${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`);
-    if (!Array.isArray(batch)) throw new Error("Invalid repository data");
+    if (!isGithubRepoList(batch)) throw new Error("Invalid repository data");
     repos.push(...batch);
     if (batch.length < 100) break;
     if (page === 10) {
