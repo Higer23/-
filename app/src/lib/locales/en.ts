@@ -50,6 +50,8 @@ const en: Dict = {
   "score.title": "The effort behind the numbers.",
   "score.grade": "GitHub score grade",
   "score.desc": "Score out of 100, calculated only from open data on GitHub. Total: {score}/100",
+  "score.insights.title": "Why this score?",
+  "score.insights.strong": "Strength: this profile shows a clear signal of ongoing development, and {score}/100 is a solid start.",
   "stat.followers": "Followers",
   "stat.repos": "Public repos",
   "stat.stars": "Total stars",
