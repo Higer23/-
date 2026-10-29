@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import "./user-lookup.css";
 
 const USER_RE = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/;
 
@@ -32,25 +33,28 @@ export default function UserLookup({ locale, active, defaultUser, onLookup }: Pr
   };
 
   return (
-    <section aria-label={s.hint} style={{ margin: "16px 0", display: "flex", flexDirection: "column", gap: 8 }}>
-      <form onSubmit={submit} style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "flex-end" }}>
-        <label style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 220px" }}>
-          <span style={{ fontSize: "0.85rem", opacity: 0.7 }}>{s.label}</span>
-          <input
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder={s.placeholder}
-            autoComplete="off"
-            spellCheck={false}
-            maxLength={40}
-            style={{ padding: "8px 10px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "transparent", color: "inherit" }}
-          />
-        </label>
-        <button type="submit" className="btn">{s.btn}</button>
+    <section className="ul-wrap" aria-label={s.hint}>
+      <form className="ul-form" onSubmit={submit}>
+        <div className="ul-group">
+          <label className="ul-label" htmlFor="ul-user">{s.label}</label>
+          <div className="ul-field">
+            <input
+              id="ul-user"
+              className="ul-input"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder={s.placeholder}
+              autoComplete="off"
+              spellCheck={false}
+              maxLength={40}
+            />
+          </div>
+        </div>
+        <button type="submit" className="ul-btn">{s.btn}</button>
       </form>
-      {error ? <p role="alert" style={{ color: "#ff7b7b", margin: 0 }}>{error}</p> : null}
+      {error ? <p role="alert" className="ul-error">{error}</p> : null}
       {active.toLowerCase() !== defaultUser.toLowerCase() ? (
-        <button type="button" onClick={() => onLookup(defaultUser)} style={{ alignSelf: "flex-start" }}>{s.reset}</button>
+        <button type="button" className="ul-reset" onClick={() => onLookup(defaultUser)}>{s.reset}</button>
       ) : null}
     </section>
   );
