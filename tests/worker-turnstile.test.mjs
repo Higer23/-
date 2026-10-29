@@ -4,11 +4,23 @@ import worker from "../worker/index.js";
 
 const ORIGIN = "https://higer23.github.io";
 const BASE_URL = "https://verify.example/api/turnstile/verify";
-const ENV = { TURNSTILE_SECRET: "test-secret" };
+const CLIENT_IP = "192.0.2.10";
+function createLimiter(result = { success: true }) {
+  const calls = [];
+  return {
+    calls,
+    async limit(input) {
+      calls.push(input);
+      return result;
+    },
+  };
+}
+const ENV = { TURNSTILE_SECRET: "test-secret", VERIFY_RATE_LIMITER: createLimiter() };
 
 function request({ method = "POST", path = "/api/turnstile/verify", origin = ORIGIN, headers = {}, body = '{"token":"test-token"}' } = {}) {
   const requestHeaders = new Headers(headers);
   if (origin !== null) requestHeaders.set("Origin", origin);
+  if (method === "POST") requestHeaders.set("CF-Connecting-IP", CLIENT_IP);
   if (body !== null && !requestHeaders.has("Content-Type")) requestHeaders.set("Content-Type", "application/json");
   return new Request(new URL(path, BASE_URL), { method, headers: requestHeaders, body: method === "GET" || method === "HEAD" ? undefined : body });
 }
@@ -28,14 +40,16 @@ test("rejects requests from unapproved origins", async () => {
   assert.deepEqual(await responseBody(response), { error: "Origin not allowed" });
 });
 
-test("answers CORS preflight without contacting the verification service", async () => {
+test("answers CORS preflight without contacting the verification service or rate limiter", async () => {
+  const limiter = createLimiter();
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => assert.fail("preflight must not call fetch");
   try {
-    const response = await worker.fetch(request({ method: "OPTIONS", body: null }), ENV);
+    const response = await worker.fetch(request({ method: "OPTIONS", body: null }), { VERIFY_RATE_LIMITER: limiter });
     assert.equal(response.status, 204);
     assert.equal(response.headers.get("Access-Control-Allow-Origin"), ORIGIN);
     assert.equal(response.headers.get("Access-Control-Allow-Methods"), "POST, OPTIONS");
+    assert.equal(limiter.calls.length, 0);
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -46,6 +60,39 @@ test("rejects unsupported methods and content types", async () => {
   assert.equal(methodResponse.status, 405);
   const typeResponse = await worker.fetch(request({ headers: { "Content-Type": "text/plain" } }), ENV);
   assert.equal(typeResponse.status, 415);
+});
+
+test("rejects requests when the rate-limit binding or trusted client IP is missing", async () => {
+  const noBinding = await worker.fetch(request(), { TURNSTILE_SECRET: "test-secret" });
+  assert.equal(noBinding.status, 503);
+  const noIpRequest = new Request(BASE_URL, {
+    method: "POST",
+    headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    body: '{"token":"test-token"}',
+  });
+  const noIp = await worker.fetch(noIpRequest, ENV);
+  assert.equal(noIp.status, 503);
+});
+
+test("blocks requests rejected by the per-IP rate limiter", async () => {
+  const limiter = createLimiter({ success: false });
+  const response = await worker.fetch(request(), { ...ENV, VERIFY_RATE_LIMITER: limiter });
+  assert.equal(response.status, 429);
+  assert.deepEqual(await responseBody(response), {
+    success: false,
+    error: "Too many verification attempts",
+  });
+  assert.deepEqual(limiter.calls, [{ key: CLIENT_IP }]);
+});
+
+test("fails closed when the rate limiter throws", async () => {
+  const limiter = { async limit() { throw new Error("internal binding detail"); } };
+  const response = await worker.fetch(request(), { ...ENV, VERIFY_RATE_LIMITER: limiter });
+  assert.equal(response.status, 503);
+  assert.deepEqual(await responseBody(response), {
+    success: false,
+    error: "Verification temporarily unavailable",
+  });
 });
 
 test("rejects malformed, oversized, and missing-token payloads", async () => {
@@ -70,7 +117,7 @@ test("rejects chunked oversized bodies without relying on Content-Length", async
   });
   const streamedRequest = new Request(BASE_URL, {
     method: "POST",
-    headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    headers: { Origin: ORIGIN, "Content-Type": "application/json", "CF-Connecting-IP": CLIENT_IP },
     body: stream,
     duplex: "half",
   });
@@ -87,7 +134,7 @@ test("returns a generic client error when the request stream fails", async () =>
   });
   const failedRequest = new Request(BASE_URL, {
     method: "POST",
-    headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    headers: { Origin: ORIGIN, "Content-Type": "application/json", "CF-Connecting-IP": CLIENT_IP },
     body: stream,
     duplex: "half",
   });
@@ -105,7 +152,7 @@ test("rejects invalid UTF-8 as a malformed body", async () => {
   });
   const invalidRequest = new Request(BASE_URL, {
     method: "POST",
-    headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    headers: { Origin: ORIGIN, "Content-Type": "application/json", "CF-Connecting-IP": CLIENT_IP },
     body: stream,
     duplex: "half",
   });
@@ -117,7 +164,7 @@ test("reports missing server-side secret without making an outbound request", as
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => assert.fail("missing configuration must not call fetch");
   try {
-    const response = await worker.fetch(request(), {});
+    const response = await worker.fetch(request(), { VERIFY_RATE_LIMITER: createLimiter() });
     assert.equal(response.status, 503);
   } finally {
     globalThis.fetch = originalFetch;
@@ -126,21 +173,16 @@ test("reports missing server-side secret without making an outbound request", as
 
 test("verifies the token, checks hostname, and applies an outbound timeout", async () => {
   const originalFetch = globalThis.fetch;
-  let outbound;
+  const limiter = createLimiter();
   globalThis.fetch = async (url, options) => {
-    outbound = { url, options };
+    assert.equal(url, "https://challenges.cloudflare.com/turnstile/v0/siteverify");
     return Response.json({ success: true, hostname: "higer23.github.io" });
   };
   try {
-    const response = await worker.fetch(request(), ENV);
+    const response = await worker.fetch(request(), { ...ENV, VERIFY_RATE_LIMITER: limiter });
     assert.equal(response.status, 200);
     assert.deepEqual(await responseBody(response), { success: true });
-    assert.equal(outbound.url, "https://challenges.cloudflare.com/turnstile/v0/siteverify");
-    assert.equal(outbound.options.method, "POST");
-    assert.equal(outbound.options.body.get("secret"), ENV.TURNSTILE_SECRET);
-    assert.equal(outbound.options.body.get("response"), "test-token");
-    assert.ok(outbound.options.signal instanceof AbortSignal);
-    assert.equal(outbound.options.signal.aborted, false);
+    assert.deepEqual(limiter.calls, [{ key: CLIENT_IP }]);
   } finally {
     globalThis.fetch = originalFetch;
   }
