@@ -34,3 +34,15 @@ test("stops after the configured retry limit", async () => {
   }, { wait: async () => {}, maxRetries: 1 }), /offline/);
   assert.equal(attempts, 2);
 });
+
+
+test("does not retry network errors after the request signal is aborted", async () => {
+  const controller = new AbortController();
+  controller.abort();
+  let attempts = 0;
+  await assert.rejects(fetchWithNetworkRetry(async () => {
+    attempts += 1;
+    throw new TypeError("network failed after abort");
+  }, { signal: controller.signal, wait: async () => assert.fail("must not wait after timeout") }), /network failed after abort/);
+  assert.equal(attempts, 1);
+});

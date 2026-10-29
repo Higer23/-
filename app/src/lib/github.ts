@@ -27,7 +27,7 @@ async function getJson(url: string): Promise<any> {
   let remaining: number | null = null;
   let outcome: "success" | "http_error" | "network_error" = "network_error";
   try {
-    const res = await fetchWithNetworkRetry(() => fetch(url, { headers: { Accept: "application/vnd.github+json" }, signal: controller.signal }));
+    const res = await fetchWithNetworkRetry(() => fetch(url, { headers: { Accept: "application/vnd.github+json" }, signal: controller.signal }), { signal: controller.signal });
     status = res.status;
     updateRateLimitState(githubRateLimit, res.headers);
     const rawRemaining = res.headers.get("x-ratelimit-remaining");

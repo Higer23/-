@@ -6,7 +6,7 @@ export async function fetchWithNetworkRetry(fetcher, options = {}) {
     try {
       return await fetcher();
     } catch (error) {
-      if (error?.name === "AbortError" || !(error instanceof TypeError) || attempt >= maxRetries) {
+      if (options.signal?.aborted || error?.name === "AbortError" || !(error instanceof TypeError) || attempt >= maxRetries) {
         throw error;
       }
       await wait(250 * (2 ** attempt));
