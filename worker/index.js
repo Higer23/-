@@ -3,6 +3,7 @@ const ALLOWED_HOSTNAME = "higer23.github.io";
 const VERIFY_PATH = "/api/turnstile/verify";
 const MAX_BODY_BYTES = 4096;
 const MAX_TOKEN_LENGTH = 2048;
+const SITEVERIFY_TIMEOUT_MS = 10_000;
 
 function json(data, status = 200, allowOrigin = false) {
   const headers = {
@@ -96,6 +97,7 @@ export default {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: form,
+          signal: AbortSignal.timeout(SITEVERIFY_TIMEOUT_MS),
         },
       );
 
