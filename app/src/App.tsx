@@ -25,8 +25,8 @@ const PROJ_TEXT: Record<string, Record<string, string>> = {
   "forum": {en: "Discussion forum with a live demo.", tr: "Canlı demosu olan bir tartışma forumu.", de: "Diskussionsforum mit Live-Demo."},
   "nachricht-portal": {en: "Messaging portal with a live demo.", tr: "Canlı demosu olan bir mesajlaşma portalı.", de: "Nachrichtenportal mit Live-Demo."},
   "anonim-mesaj": {en: "Anonymous messaging app with a live demo.", tr: "Canlı demosu olan anonim mesajlaşma uygulaması.", de: "Anonyme Nachrichten-App mit Live-Demo."},
-  "gta6-discord-rpc": {en: "Modular Discord Rich Presence client for Python (MIT).", tr: "Python için modüler Discord Rich Presence istemcisi (MIT).", de: "Modularer Discord-Rich-Presence-Client für Python (MIT)."},
-  "kontakt": { en: "Personal contact directory and notepad (Cloudflare Workers + D1 + R2).", tr: "Cloudflare Workers + D1 + R2 ile kişisel rehber ve not defteri.", de: "Persönliches Kontaktverzeichnis und Notizblock (Cloudflare Workers + D1 + R2)." },
+  "gta6-discord-rpc": {en: "Modular Discord Rich Presence client for Python (MIT).", tr: "Python için modüler Discord Rich Presence istemcisi (MIT).", de: "Modularer Discord-Rich-Presence-Client (MIT)."},
+  "kontakt": { en: "Personal contact directory and notepad (Cloudflare Workers + D1 + R2).", tr: "Cloudflare Workers + D1 + R2 ile kişisel rehber ve not defteri.", de: "Persönliches Kontaktverzeichnis und Notizbuch (Cloudflare Workers + D1 + R2)." },
 };
 
 const INSPECT: Record<string, string> = { tr: "İncele", en: "Inspect", de: "Ansehen" };
@@ -53,7 +53,7 @@ export default function App() {
       { kicker: "WEB APP · VERCEL", title: "Anonim-Mesaj", href: "https://github.com/Higer23/anonim-mesaj", text: PROJ_TEXT["anonim-mesaj"][locale as string] ?? PROJ_TEXT["anonim-mesaj"].en },
       { kicker: "PYTHON · DISCORD", title: "GTA6 Discord RPC", href: "https://github.com/Higer23/gta6-discord-rpc", text: PROJ_TEXT["gta6-discord-rpc"][locale as string] ?? PROJ_TEXT["gta6-discord-rpc"].en },
     ],
-    [t, locale],
+    [locale],
   );
 
   useEffect(() => {
@@ -93,6 +93,30 @@ export default function App() {
   );
   const shownNotes = noteTexts.filter((n) => hit(n));
   const shownProjects = PROJECTS.filter((p) => hit(`${p.title} ${p.kicker} ${p.text}`));
+
+  const scoreInsights = useMemo(() => {
+    if (!result) return [] as Array<{ text: string; kind: "warning" | "good" }>;
+
+    const notes = result.noteCodes ?? [];
+    const strengths = notes.filter((note) => note.code === "note.strength");
+    const warnings = notes
+      .filter((note) => note.code !== "note.strength")
+      .map((note) => ({
+        text: t(note.code as Key, note.vars as Record<string, string | number> | undefined),
+        kind: "warning" as const,
+      }));
+    const strengthInsights = strengths.length > 0
+      ? strengths.map((note) => ({
+          text: t(note.code as Key, note.vars as Record<string, string | number> | undefined),
+          kind: "good" as const,
+        }))
+      : warnings.length === 0
+        ? [{ text: t("score.insights.strong", { score: result.score }), kind: "good" as const }]
+        : [];
+
+    // Keep the panel concise: show up to three actionable warnings and one strength.
+    return [...warnings.slice(0, 3), ...strengthInsights.slice(0, 1)];
+  }, [result, t]);
 
   const found = shownStats.length + shownParts.length + shownLangs.length + shownNotes.length + shownProjects.length;
   const info = q ? (found ? t("search.count", { n: found }) : t("search.none")) : "";
@@ -156,6 +180,20 @@ export default function App() {
             <div className="grade" role="img" aria-label={t("score.grade")}>{result ? result.grade : "–"}</div>
             <p className="muted">{t("score.desc", { score: result ? result.score : "–" })}</p>
           </div>
+
+          {scoreInsights.length > 0 && (
+            <div className="score-insights" aria-live="polite">
+              <div className="score-insights-label">{t("score.insights.title")}</div>
+              <ul className="score-insights-list">
+                {scoreInsights.map((item, index) => (
+                  <li key={`${index}-${item.text}`} className={item.kind === "good" ? "good" : "warn"}>
+                    {item.text}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div>
             {state.status === "loading" && <Loader />}
             {shownParts.map((p: { label: string; txt: string; val: number; cap: number }) => (
