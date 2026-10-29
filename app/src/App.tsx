@@ -25,17 +25,28 @@ const PROJ_TEXT: Record<string, Record<string, string>> = {
   "forum": {en: "Discussion forum with a live demo.", tr: "Canlı demosu olan bir tartışma forumu.", de: "Diskussionsforum mit Live-Demo."},
   "nachricht-portal": {en: "Messaging portal with a live demo.", tr: "Canlı demosu olan bir mesajlaşma portalı.", de: "Nachrichtenportal mit Live-Demo."},
   "anonim-mesaj": {en: "Anonymous messaging app with a live demo.", tr: "Canlı demosu olan anonim mesajlaşma uygulaması.", de: "Anonyme Nachrichten-App mit Live-Demo."},
-  "gta6-discord-rpc": {en: "Modular Discord Rich Presence client for Python (MIT).", tr: "Python için modüler Discord Rich Presence istemcisi (MIT).", de: "Modularer Discord-Rich-Presence-Client für Python (MIT)."},
-  "kontakt": { en: "Personal contact directory and notepad (Cloudflare Workers + D1 + R2).", tr: "Cloudflare Workers + D1 + R2 ile kişisel rehber ve not defteri.", de: "Persönliches Kontaktverzeichnis und Notizblock (Cloudflare Workers + D1 + R2)." },
+  "gta6-discord-rpc": {en: "Modular Discord Rich Presence client for Python (MIT).", tr: "Python için modüler Discord Rich Presence istemcisi (MIT).", de: "Modularer Discord-Rich-Presence-Client (MIT)."},
+  "kontakt": { en: "Personal contact directory and notepad (Cloudflare Workers + D1 + R2).", tr: "Cloudflare Workers + D1 + R2 ile kişisel rehber ve not defteri.", de: "Persönliches Kontaktverzeichnis und Notizbuch (Cloudflare Workers + D1 + R2)." },
 };
 
 const INSPECT: Record<string, string> = { tr: "İncele", en: "Inspect", de: "Ansehen" };
+const REPO_FILTERS = [
+  { key: "all", label: "All" },
+  { key: "web", label: "Web" },
+  { key: "ts", label: "TypeScript" },
+  { key: "py", label: "Python" },
+  { key: "cloudflare", label: "Cloudflare" },
+  { key: "demo", label: "Demo" },
+] as const;
 
 export default function App() {
   const { t, locale } = useI18n();
   const [lookup, setLookup] = useState<string>(CONFIG.user);
   const { state, retry } = useGithub(lookup);
   const [query, setQuery] = useState("");
+  const [repoQuery, setRepoQuery] = useState("");
+  const [repoFilter, setRepoFilter] = useState<(typeof REPO_FILTERS)[number]["key"]>("all");
+  const [repoSort, setRepoSort] = useState<"name" | "featured">("featured");
   const [avatarFailed, setAvatarFailed] = useState(false);
   const [openProj, setOpenProj] = useState<{ title: string; kicker: string; text: string; href: string } | null>(null);
   const aboutRef = useReveal<HTMLElement>();
@@ -53,8 +64,33 @@ export default function App() {
       { kicker: "WEB APP · VERCEL", title: "Anonim-Mesaj", href: "https://github.com/Higer23/anonim-mesaj", text: PROJ_TEXT["anonim-mesaj"][locale as string] ?? PROJ_TEXT["anonim-mesaj"].en },
       { kicker: "PYTHON · DISCORD", title: "GTA6 Discord RPC", href: "https://github.com/Higer23/gta6-discord-rpc", text: PROJ_TEXT["gta6-discord-rpc"][locale as string] ?? PROJ_TEXT["gta6-discord-rpc"].en },
     ],
-    [t, locale],
+    [locale],
   );
+
+  const filteredProjects = useMemo(() => {
+    let list = PROJECTS.filter((p) => {
+      const haystack = `${p.title} ${p.kicker} ${p.text}`.toLowerCase();
+      const matchesQuery = !repoQuery || haystack.includes(repoQuery.toLowerCase());
+      const kicker = p.kicker.toLowerCase();
+      const text = p.text.toLowerCase();
+
+      const matchesFilter =
+        repoFilter === "all" ||
+        (repoFilter === "web" && kicker.includes("web")) ||
+        (repoFilter === "ts" && kicker.includes("typescript")) ||
+        (repoFilter === "py" && kicker.includes("python")) ||
+        (repoFilter === "cloudflare" && kicker.includes("cloudflare")) ||
+        (repoFilter === "demo" && text.includes("demo"));
+
+      return matchesQuery && matchesFilter;
+    });
+
+    if (repoSort === "name") {
+      list = [...list].sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    return list;
+  }, [PROJECTS, repoFilter, repoQuery, repoSort]);
 
   useEffect(() => {
     if (result) document.title = t("doc.title", { score: result.score });
@@ -92,7 +128,7 @@ export default function App() {
     (c) => t(c.code as Key, c.vars as unknown as Record<string, string | number> | undefined),
   );
   const shownNotes = noteTexts.filter((n) => hit(n));
-  const shownProjects = PROJECTS.filter((p) => hit(`${p.title} ${p.kicker} ${p.text}`));
+  const shownProjects = filteredProjects.filter((p) => hit(`${p.title} ${p.kicker} ${p.text}`));
 
   const found = shownStats.length + shownParts.length + shownLangs.length + shownNotes.length + shownProjects.length;
   const info = q ? (found ? t("search.count", { n: found }) : t("search.none")) : "";
@@ -184,6 +220,40 @@ export default function App() {
         </section>
 
         <Panel id="projeler" kicker={t("proj.kicker")} title={t("proj.title")}>
+          <div className="repo-tools">
+            <input
+              aria-label="Filter projects"
+              className="repo-search"
+              type="text"
+              value={repoQuery}
+              onChange={(e) => setRepoQuery(e.target.value)}
+              placeholder="Filter projects..."
+            />
+
+            <div className="repo-filter-bar">
+              {REPO_FILTERS.map((filter) => (
+                <button
+                  key={filter.key}
+                  type="button"
+                  className={`repo-filter-button ${repoFilter === filter.key ? "active" : ""}`}
+                  onClick={() => setRepoFilter(filter.key)}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+
+            <select
+              aria-label="Sort projects"
+              className="repo-sort"
+              value={repoSort}
+              onChange={(e) => setRepoSort(e.target.value as "name" | "featured")}
+            >
+              <option value="featured">Featured</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
+
           {shownProjects.map((p) => (
             <article className="proj" key={p.title}>
               <p className="kicker">{p.kicker}</p>
