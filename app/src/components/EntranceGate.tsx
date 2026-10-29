@@ -66,6 +66,7 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   const [lockLeft, setLockLeft] = useState(0);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReady, setTurnstileReady] = useState(false);
+  const [widgetLoadFailed, setWidgetLoadFailed] = useState(false);
   const [verifying, setVerifying] = useState(false);
 
   const startedAt = useRef(Date.now());
@@ -78,10 +79,10 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
   const turnstileWidgetId = useRef<string | null>(null);
 
   const turnstileMessages = lang === "tr"
-    ? { loadError: "Güvenlik doğrulaması yüklenemedi. Sayfayı yenileyip tekrar dene.", expired: "Doğrulama süresi doldu. Lütfen tekrar doğrula.", rateLimited: "Çok fazla doğrulama isteği. Lütfen bir dakika bekleyip tekrar dene.", unavailable: "Doğrulama servisi geçici olarak kullanılamıyor. Lütfen tekrar dene.", failed: "Güvenlik doğrulaması başarısız. Lütfen tekrar dene.", network: "Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.", verifying: "Doğrulanıyor…", widget: "Cloudflare güvenlik doğrulaması" }
+    ? { loadError: "Güvenlik doğrulaması yüklenemedi. Sayfayı yenileyip tekrar dene.", expired: "Doğrulama süresi doldu. Lütfen tekrar doğrula.", rateLimited: "Çok fazla doğrulama isteği. Lütfen bir dakika bekleyip tekrar dene.", unavailable: "Doğrulama servisi geçici olarak kullanılamıyor. Lütfen tekrar dene.", failed: "Güvenlik doğrulaması başarısız. Lütfen tekrar dene.", network: "Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.", verifying: "Doğrulanıyor…", widget: "Cloudflare güvenlik doğrulaması", retry: "Doğrulamayı yeniden yükle" }
     : lang === "de"
-      ? { loadError: "Sicherheitsprüfung konnte nicht geladen werden. Bitte lade die Seite neu.", expired: "Die Prüfung ist abgelaufen. Bitte erneut bestätigen.", rateLimited: "Zu viele Prüfungen. Bitte warte eine Minute und versuche es erneut.", unavailable: "Der Prüfdienst ist vorübergehend nicht verfügbar. Bitte erneut versuchen.", failed: "Sicherheitsprüfung fehlgeschlagen. Bitte erneut versuchen.", network: "Verbindung fehlgeschlagen. Prüfe deine Internetverbindung.", verifying: "Wird überprüft…", widget: "Cloudflare-Sicherheitsprüfung" }
-      : { loadError: "Security verification could not load. Refresh the page and try again.", expired: "The verification expired. Please complete it again.", rateLimited: "Too many verification attempts. Wait one minute and try again.", unavailable: "The verification service is temporarily unavailable. Please try again.", failed: "Security verification failed. Please try again.", network: "Could not connect. Check your connection and try again.", verifying: "Verifying…", widget: "Cloudflare security verification" };
+      ? { loadError: "Sicherheitsprüfung konnte nicht geladen werden. Bitte lade die Seite neu.", expired: "Die Prüfung ist abgelaufen. Bitte erneut bestätigen.", rateLimited: "Zu viele Prüfungen. Bitte warte eine Minute und versuche es erneut.", unavailable: "Der Prüfdienst ist vorübergehend nicht verfügbar. Bitte erneut versuchen.", failed: "Sicherheitsprüfung fehlgeschlagen. Bitte erneut versuchen.", network: "Verbindung fehlgeschlagen. Prüfe deine Internetverbindung.", verifying: "Wird überprüft…", widget: "Cloudflare-Sicherheitsprüfung", retry: "Prüfung neu laden" }
+      : { loadError: "Security verification could not load. Refresh the page and try again.", expired: "The verification expired. Please complete it again.", rateLimited: "Too many verification attempts. Wait one minute and try again.", unavailable: "The verification service is temporarily unavailable. Please try again.", failed: "Security verification failed. Please try again.", network: "Could not connect. Check your connection and try again.", verifying: "Verifying…", widget: "Cloudflare security verification", retry: "Reload verification" };
 
   useEffect(() => {
     let disposed = false;
@@ -114,13 +115,14 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
         });
         turnstileWidgetId.current = widgetId;
         setTurnstileReady(true);
+        setWidgetLoadFailed(false);
       } catch {
-        if (!disposed) setError(turnstileMessages.loadError);
+        if (!disposed) { setWidgetLoadFailed(true); setError(turnstileMessages.loadError); }
       }
     };
 
     const onScriptError = () => {
-      if (!disposed) setError(turnstileMessages.loadError);
+      if (!disposed) { setWidgetLoadFailed(true); setError(turnstileMessages.loadError); }
     };
 
     if (!script) {
@@ -130,6 +132,12 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
       script.defer = true;
       script.dataset.cloudflareTurnstile = "true";
     }
+    const loadTimeout = window.setTimeout(() => {
+      if (!disposed && !window.turnstile) {
+        setWidgetLoadFailed(true);
+        setError(turnstileMessages.loadError);
+      }
+    }, 15000);
     script.addEventListener("load", renderWidget);
     script.addEventListener("error", onScriptError);
     if (window.turnstile) renderWidget();
@@ -137,6 +145,7 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
 
     return () => {
       disposed = true;
+      window.clearTimeout(loadTimeout);
       script?.removeEventListener("load", renderWidget);
       script?.removeEventListener("error", onScriptError);
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
@@ -346,6 +355,12 @@ export default function EntranceGate({ children }: { children: ReactNode }) {
             <p className="turnstile-gate__error gate-error" role="alert">
               {error}
             </p>
+          )}
+
+          {widgetLoadFailed && (
+            <button type="button" className="turnstile-gate__button gate-submit" onClick={() => window.location.reload()}>
+              {turnstileMessages.retry}
+            </button>
           )}
 
           <button type="submit" className="turnstile-gate__button gate-submit" disabled={lockLeft > 0 || verifying || !turnstileReady || !turnstileToken}>
