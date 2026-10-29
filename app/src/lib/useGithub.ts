@@ -13,18 +13,22 @@ export type GithubState =
 export function useGithub(user: string) {
   const [state, setState] = useState<GithubState>({ status: "loading" });
   const [nonce, setNonce] = useState(0);
+  const [forceLive, setForceLive] = useState(false);
 
   useEffect(() => {
     let alive = true;
     setState({ status: "loading" });
-    fetchGithub(user)
+    fetchGithub(user, { forceLive })
       .then((data) => alive && setState({ status: "ok", data, result: computeScore(data) }))
       .catch((e: unknown) => alive && setState({ status: "error", error: e instanceof Error ? e.message : String(e) }));
     return () => {
       alive = false;
     };
-  }, [user, nonce]);
+  }, [user, nonce, forceLive]);
 
-  const retry = useCallback(() => setNonce((n) => n + 1), []);
+  const retry = useCallback(() => {
+    setForceLive(true);
+    setNonce((n) => n + 1);
+  }, []);
   return { state, retry };
 }

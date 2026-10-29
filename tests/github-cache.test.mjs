@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getSnapshotOrFetchLive, isSnapshotFresh, SNAPSHOT_MAX_AGE_MS } from "../app/src/lib/github-cache.mjs";
+import { getSnapshotOrFetchLive, isSnapshotFresh, shouldUseSnapshot, SNAPSHOT_MAX_AGE_MS } from "../app/src/lib/github-cache.mjs";
 
 const now = Date.parse("2026-10-29T12:00:00.000Z");
 
@@ -48,4 +48,10 @@ test("falls back to live data when snapshot loading rejects", async () => {
 test("propagates live API errors when no usable snapshot exists", async () => {
   const error = new Error("GitHub unavailable");
   await assert.rejects(getSnapshotOrFetchLive(async () => null, async () => { throw error; }), error);
+});
+
+test("manual refresh bypasses the prebuilt snapshot", () => {
+  assert.equal(shouldUseSnapshot(false), true);
+  assert.equal(shouldUseSnapshot(undefined), true);
+  assert.equal(shouldUseSnapshot(true), false);
 });

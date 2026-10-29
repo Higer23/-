@@ -3,7 +3,7 @@ import { parseGitHubResponse } from "./github-response.mjs";
 import { isGithubProfile, isGithubRepoList } from "./github-payload.mjs";
 import { fetchAllGithubPages } from "./github-pagination.mjs";
 import { getOptionalContributions } from "./github-contributions.mjs";
-import { getSnapshotOrFetchLive, isSnapshotFresh } from "./github-cache.mjs";
+import { getSnapshotOrFetchLive, isSnapshotFresh, shouldUseSnapshot } from "./github-cache.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -56,9 +56,9 @@ async function fetchSnapshot(user: string): Promise<GithubData | null> {
   }
 }
 
-export async function fetchGithub(user: string): Promise<GithubData> {
+export async function fetchGithub(user: string, options: { forceLive?: boolean } = {}): Promise<GithubData> {
   return getSnapshotOrFetchLive(
-    () => fetchSnapshot(user),
+    () => shouldUseSnapshot(options.forceLive) ? fetchSnapshot(user) : Promise.resolve(null),
     async () => {
   // Live fallback when the snapshot is missing or invalid.
   const profile = await getJson(`${API}/users/${user}`);
@@ -75,7 +75,7 @@ export async function fetchGithub(user: string): Promise<GithubData> {
     isGithubRepoList,
   );
   const contrib = await contribPromise;
-  return { profile, repos, contrib };
+  return { profile, repos, contrib, fetchedAt: new Date().toISOString() };
     },
     (snapshot) => "fetchedAt" in snapshot && isSnapshotFresh(snapshot.fetchedAt),
   );
