@@ -6,17 +6,23 @@ import { getOptionalContributions } from "./github-contributions.mjs";
 import { getSnapshotOrFetchLive, isSnapshotFresh, shouldUseSnapshot } from "./github-cache.mjs";
 import { coalesceRequest } from "./request-coalescer.mjs";
 import { getOrFetchCached, publishCacheEntry, subscribeToCacheChannel } from "./github-memory-cache.mjs";
+import { formatRateLimitWait, getRateLimitWaitMs, updateRateLimitState } from "./github-rate-limit.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
 
 // Timeout, rate-limit and invalid-response errors. Messages are technical (English);
 // the UI wraps them in the localized status text.
+const githubRateLimit = { remaining: null as number | null, resetAt: null as number | null };
+
 async function getJson(url: string): Promise<any> {
+  const waitMs = getRateLimitWaitMs(githubRateLimit);
+  if (waitMs > 0) throw new Error(formatRateLimitWait(waitMs));
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), CONFIG.requestTimeoutMs);
   try {
     const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" }, signal: controller.signal });
+    updateRateLimitState(githubRateLimit, res.headers);
     return await parseGitHubResponse(res);
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") throw new Error("GitHub did not respond (timeout)");
