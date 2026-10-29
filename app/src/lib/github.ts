@@ -77,6 +77,6 @@ export async function fetchGithub(user: string): Promise<GithubData> {
   const contrib = await contribPromise;
   return { profile, repos, contrib };
     },
-    (snapshot) => isSnapshotFresh(snapshot.fetchedAt),
+    (snapshot) => "fetchedAt" in snapshot && isSnapshotFresh(snapshot.fetchedAt),
   );
 }
