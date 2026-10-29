@@ -11,6 +11,7 @@ import Progress from "./components/Progress";
 import Panel from "./components/Panel";
 import Loader from "./components/Loader";
 import SearchBox from "./components/SearchBox";
+import CompareMode from "./components/CompareMode";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { DonateButton, LearnMore, StarButton } from "./components/Buttons";
 
@@ -36,6 +37,7 @@ export default function App() {
   const [lookup, setLookup] = useState<string>(CONFIG.user);
   const { state, retry } = useGithub(lookup);
   const [query, setQuery] = useState("");
+  const [compareMode, setCompareMode] = useState(false);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const [openProj, setOpenProj] = useState<{ title: string; kicker: string; text: string; href: string } | null>(null);
   const aboutRef = useReveal<HTMLElement>();
@@ -179,6 +181,11 @@ export default function App() {
         <UserLookup locale={locale as string} active={lookup} defaultUser={CONFIG.user} onLookup={setLookup} />
 
         <SearchBox value={query} onChange={setQuery} info={info} />
+
+        <div className="ctas" style={{ justifyContent: "center", marginTop: 16 }}>
+          <button className="btn" type="button" aria-expanded={compareMode} aria-controls="compare-mode" onClick={() => setCompareMode((value) => !value)}>{compareMode ? (locale === "tr" ? "Karşılaştırmayı kapat" : locale === "de" ? "Vergleich schließen" : "Close comparison") : (locale === "tr" ? "Profili karşılaştır" : locale === "de" ? "Profile vergleichen" : "Compare profiles")}</button>
+        </div>
+        {compareMode && <CompareMode locale={locale as string} currentLogin={profile?.login ?? lookup} currentScore={result?.score} currentStars={result?.stats.stars} currentFollowers={profile?.followers} currentRepos={profile?.public_repos} /> }
 
         <Panel id="puan" kicker={t("score.kicker")} title={t("score.title")}>
           <div className="score-row">
