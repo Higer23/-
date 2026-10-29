@@ -5,6 +5,7 @@ import { useReveal } from "./lib/useReveal";
 import { useI18n } from "./lib/i18n";
 import type { Key } from "./lib/locales/types";
 import Background from "./components/Background";
+import ProjectModal from "./components/ProjectModal";
 import Progress from "./components/Progress";
 import Panel from "./components/Panel";
 import Loader from "./components/Loader";
@@ -18,11 +19,23 @@ const FALLBACK_AVATAR = "assets/img/avatar-fallback.svg";
 
 const norm = (s: string) => s.toLocaleLowerCase();
 
+const PROJ_TEXT: Record<string, Record<string, string>> = {
+  "higum": {en: "Live web app deployed on Vercel.", tr: "Vercel üzerinde canlı çalışan bir web uygulaması.", de: "Web-App, live auf Vercel."},
+  "forum": {en: "Discussion forum with a live demo.", tr: "Canlı demosu olan bir tartışma forumu.", de: "Diskussionsforum mit Live-Demo."},
+  "nachricht-portal": {en: "Messaging portal with a live demo.", tr: "Canlı demosu olan bir mesajlaşma portalı.", de: "Nachrichtenportal mit Live-Demo."},
+  "anonim-mesaj": {en: "Anonymous messaging app with a live demo.", tr: "Canlı demosu olan anonim mesajlaşma uygulaması.", de: "Anonyme Nachrichten-App mit Live-Demo."},
+  "gta6-discord-rpc": {en: "Modular Discord Rich Presence client for Python (MIT).", tr: "Python için modüler Discord Rich Presence istemcisi (MIT).", de: "Modularer Discord-Rich-Presence-Client für Python (MIT)."},
+  "kontakt": { en: "Personal contact directory and notepad (Cloudflare Workers + D1 + R2).", tr: "Cloudflare Workers + D1 + R2 ile kişisel rehber ve not defteri.", de: "Persönliches Kontaktverzeichnis und Notizblock (Cloudflare Workers + D1 + R2)." },
+};
+
+const INSPECT: Record<string, string> = { tr: "İncele", en: "Inspect", de: "Ansehen" };
+
 export default function App() {
   const { t, locale } = useI18n();
   const { state, retry } = useGithub(CONFIG.user);
   const [query, setQuery] = useState("");
   const [avatarFailed, setAvatarFailed] = useState(false);
+  const [openProj, setOpenProj] = useState<{ title: string; kicker: string; text: string; href: string } | null>(null);
   const aboutRef = useReveal<HTMLElement>();
 
   const ok = state.status === "ok" ? state : null;
@@ -31,10 +44,14 @@ export default function App() {
 
   const PROJECTS = useMemo(
     () => [
-      { kicker: "SECURITY · BASH", title: "HigerZero", href: "https://github.com/Higer23/HigerZero", text: t("proj.hz") },
-      { kicker: "WEB APP · CLOUDFLARE", title: "Kontakt-Notizbuch", href: "https://github.com/Higer23/kontakt-notizbuch", text: t("proj.kn") },
+      { kicker: "WEB APP · VERCEL", title: "Higum", href: "https://github.com/Higer23/higum", text: PROJ_TEXT["higum"][locale as string] ?? PROJ_TEXT["higum"].en },
+      { kicker: "WEB APP", title: "Forum", href: "https://github.com/Higer23/forum", text: PROJ_TEXT["forum"][locale as string] ?? PROJ_TEXT["forum"].en },
+      { kicker: "WEB APP · TYPESCRIPT", title: "Nachricht-Portal", href: "https://github.com/Higer23/nachricht-portal", text: PROJ_TEXT["nachricht-portal"][locale as string] ?? PROJ_TEXT["nachricht-portal"].en },
+      { kicker: "WEB APP · VERCEL", title: "Anonim-Mesaj", href: "https://github.com/Higer23/anonim-mesaj", text: PROJ_TEXT["anonim-mesaj"][locale as string] ?? PROJ_TEXT["anonim-mesaj"].en },
+      { kicker: "PYTHON · DISCORD", title: "GTA6 Discord RPC", href: "https://github.com/Higer23/gta6-discord-rpc", text: PROJ_TEXT["gta6-discord-rpc"][locale as string] ?? PROJ_TEXT["gta6-discord-rpc"].en },
+      { kicker: "WEB APP · CLOUDFLARE", title: "Kontakt-Notizbuch", href: "https://github.com/Higer023/kontakt-notizbuch", text: PROJ_TEXT["kontakt"][locale as string] ?? PROJ_TEXT["kontakt"].en },
     ],
-    [t],
+    [t, locale],
   );
 
   useEffect(() => {
@@ -168,7 +185,7 @@ export default function App() {
               <p className="kicker">{p.kicker}</p>
               <h3>{p.title}</h3>
               <p className="muted">{p.text}</p>
-              <a href={p.href} rel="noopener noreferrer">{t("proj.view")}</a>
+              <button type="button" className="btn" onClick={() => setOpenProj(p)}>{INSPECT[locale as string] ?? INSPECT.en}</button>
             </article>
           ))}
         </Panel>
@@ -211,8 +228,12 @@ export default function App() {
           {t("snapshot.updated", { time: new Date(ok.data.fetchedAt).toLocaleString(locale) })}
         </p>
       )}
+      {openProj && (
+        <ProjectModal title={openProj.title} kicker={openProj.kicker} text={openProj.text} href={openProj.href} locale={locale as string} onClose={() => setOpenProj(null)} />
+      )}
       <footer>
         {t("footer.text")} <span style={{ color: "var(--accent)" }}>Higer23</span> · {t("footer.design")}
+        <a href="https://instagram.com/higer.23" target="_blank" rel="noopener noreferrer">Instagram</a>
       </footer>
     </>
   );
