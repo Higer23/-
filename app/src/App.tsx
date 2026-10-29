@@ -190,13 +190,17 @@ export default function App() {
           <p className="muted" style={{ fontSize: ".78rem", marginTop: 22 }}>{t("hero.note")}</p>
         </section>
 
-        <p className={`status${state.status === "error" ? " err" : ""}`} role="status">
+        <p className={`status${state.status === "error" || (state.status === "ok" && state.refreshError) ? " err" : ""}`} role="status" aria-live="polite">
           {state.status === "loading" && t("status.loading")}
           {state.status === "error" && t("status.error", { msg: state.error })}
-          {state.status === "ok" && t("status.ok")}
+          {state.status === "ok" && state.refreshing && (locale === "tr" ? "Güncel veriler alınıyor; mevcut veriler gösteriliyor…" : locale === "de" ? "Aktuelle Daten werden geladen; bisherige Daten bleiben sichtbar…" : "Refreshing data; showing the last available results…")}
+          {state.status === "ok" && !state.refreshing && !state.refreshError && t("status.ok")}
+          {state.status === "ok" && state.refreshError && (locale === "tr" ? `Yenileme başarısız: ${state.refreshError}. Önceki veriler gösteriliyor.` : locale === "de" ? `Aktualisierung fehlgeschlagen: ${state.refreshError}. Bisherige Daten werden angezeigt.` : `Refresh failed: ${state.refreshError}. Showing the previous data.`)}
         </p>
         {state.status !== "loading" && (
-          <button className="btn" type="button" id="retry" onClick={retry}>{t("status.retry")}</button>
+          <button className="btn" type="button" id="retry" onClick={retry} disabled={state.status === "ok" && state.refreshing}>
+            {state.status === "ok" && state.refreshing ? (locale === "tr" ? "Yenileniyor…" : locale === "de" ? "Wird aktualisiert…" : "Refreshing…") : t("status.retry")}
+          </button>
         )}
 
         <UserLookup locale={locale as string} active={lookup} defaultUser={CONFIG.user} onLookup={setLookup} />

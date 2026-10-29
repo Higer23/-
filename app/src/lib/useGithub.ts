@@ -8,7 +8,7 @@ type Result = ReturnType<typeof computeScore>;
 export type GithubState =
   | { status: "loading" }
   | { status: "error"; error: string }
-  | { status: "ok"; data: Data; result: Result };
+  | { status: "ok"; data: Data; result: Result; refreshing?: boolean; refreshError?: string };
 
 export function useGithub(user: string) {
   const [state, setState] = useState<GithubState>({ status: "loading" });
@@ -17,10 +17,19 @@ export function useGithub(user: string) {
 
   useEffect(() => {
     let alive = true;
-    setState({ status: "loading" });
+    setState((previous) =>
+      forceLive && previous.status === "ok" && previous.data.profile.login.toLowerCase() === user.toLowerCase()
+        ? { ...previous, refreshing: true, refreshError: undefined }
+        : { status: "loading" },
+    );
     fetchGithub(user, { forceLive })
       .then((data) => alive && setState({ status: "ok", data, result: computeScore(data) }))
-      .catch((e: unknown) => alive && setState({ status: "error", error: e instanceof Error ? e.message : String(e) }));
+      .catch((e: unknown) => alive && setState((previous) => {
+        const message = e instanceof Error ? e.message : String(e);
+        return previous.status === "ok" && previous.data.profile.login.toLowerCase() === user.toLowerCase()
+          ? { ...previous, refreshing: false, refreshError: message }
+          : { status: "error", error: message };
+      }));
     return () => {
       alive = false;
     };
