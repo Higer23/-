@@ -192,3 +192,10 @@ footer{max-width:960px;margin:0 auto;padding:0 clamp(16px,4vw,32px) calc(40px + 
 .activity-month .bar i{display:block;width:100%;min-height:0;border-radius:5px 5px 0 0;background:var(--accent);opacity:.85}
 .activity-month b{font-variant-numeric:tabular-nums}
 @media(max-width:640px){.activity-trend{gap:4px}.activity-month{font-size:.65rem}.activity-month .bar{height:68px}}
+
+/* Story section readability polish */
+#hakkimda .story{max-width:74ch;margin:0 auto}
+#hakkimda .story p{font-size:1rem;line-height:1.82;letter-spacing:.005em;margin:0 0 1.15rem;text-wrap:pretty}
+#hakkimda .story p:last-child{margin-bottom:0}
+#hakkimda .story .lead2{font-size:clamp(1.08rem,2vw,1.25rem);line-height:1.7;font-weight:550;margin-bottom:1.4rem}
+@media(max-width:640px){#hakkimda .story p{font-size:.97rem;line-height:1.78;margin-bottom:1rem}}
