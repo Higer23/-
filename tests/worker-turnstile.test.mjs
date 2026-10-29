@@ -79,6 +79,23 @@ test("rejects chunked oversized bodies without relying on Content-Length", async
   assert.equal(cancelled, true);
 });
 
+test("returns a generic client error when the request stream fails", async () => {
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.error(new Error("sensitive internal stream detail"));
+    },
+  });
+  const failedRequest = new Request(BASE_URL, {
+    method: "POST",
+    headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    body: stream,
+    duplex: "half",
+  });
+  const response = await worker.fetch(failedRequest, ENV);
+  assert.equal(response.status, 400);
+  assert.deepEqual(await responseBody(response), { error: "Invalid JSON body" });
+});
+
 test("rejects invalid UTF-8 as a malformed body", async () => {
   const stream = new ReadableStream({
     start(controller) {
@@ -151,6 +168,21 @@ test("maps upstream HTTP and network failures to gateway errors", async () => {
     globalThis.fetch = async () => { throw new TypeError("offline"); };
     const networkFailure = await worker.fetch(request(), ENV);
     assert.equal(networkFailure.status, 502);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("does not expose upstream response parsing errors", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response("internal upstream detail", { status: 200 });
+  try {
+    const response = await worker.fetch(request(), ENV);
+    assert.equal(response.status, 502);
+    assert.deepEqual(await responseBody(response), {
+      success: false,
+      error: "Verification failed",
+    });
   } finally {
     globalThis.fetch = originalFetch;
   }
