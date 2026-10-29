@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { fetchGithub } from "./github";
 // Saf puan mantığı: testler de bu dosyayı kullanır (tests/score.test.mjs).
 import { computeScore } from "./score.js";
+import { beginGithubFetch, failGithubFetch } from "./github-refresh-state.mjs";
 
 type Data = Awaited<ReturnType<typeof fetchGithub>>;
 type Result = ReturnType<typeof computeScore>;
@@ -17,19 +18,10 @@ export function useGithub(user: string) {
 
   useEffect(() => {
     let alive = true;
-    setState((previous) =>
-      forceLive && previous.status === "ok" && previous.data.profile.login.toLowerCase() === user.toLowerCase()
-        ? { ...previous, refreshing: true, refreshError: undefined }
-        : { status: "loading" },
-    );
+    setState((previous) => beginGithubFetch(previous, user, forceLive));
     fetchGithub(user, { forceLive })
       .then((data) => alive && setState({ status: "ok", data, result: computeScore(data) }))
-      .catch((e: unknown) => alive && setState((previous) => {
-        const message = e instanceof Error ? e.message : String(e);
-        return previous.status === "ok" && previous.data.profile.login.toLowerCase() === user.toLowerCase()
-          ? { ...previous, refreshing: false, refreshError: message }
-          : { status: "error", error: message };
-      }));
+      .catch((e: unknown) => alive && setState((previous) => failGithubFetch(previous, user, e)));
     return () => {
       alive = false;
     };
