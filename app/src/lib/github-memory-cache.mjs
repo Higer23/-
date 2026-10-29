@@ -13,7 +13,8 @@ export function setCacheEntry(cache, key, value, expiresAt, maxEntries = GITHUB_
 }
 
 export async function getOrFetchCached(cache, key, fetcher, options = {}) {
-  const now = options.now ?? Date.now();
+  const getNow = typeof options.now === "function" ? options.now : () => options.now ?? Date.now();
+  const now = getNow();
   const ttlMs = options.ttlMs ?? GITHUB_MEMORY_CACHE_TTL_MS;
   const skipCache = options.skipCache === true;
   const cached = cache.get(key);
@@ -25,7 +26,8 @@ export async function getOrFetchCached(cache, key, fetcher, options = {}) {
   if (cached && cached.expiresAt <= now) cache.delete(key);
 
   const value = await fetcher();
-  const expiresAt = now + ttlMs;
+  // Start the TTL when the fetch completes, not when a slow request began.
+  const expiresAt = getNow() + ttlMs;
   setCacheEntry(cache, key, value, expiresAt);
   options.onCacheSet?.(key, value, expiresAt);
   return value;

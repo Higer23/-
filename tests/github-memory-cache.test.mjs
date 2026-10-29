@@ -100,3 +100,20 @@ test("applies the same cache bound to entries received from another tab", () => 
   assert.equal(cache.has("remote-0"), false);
   assert.equal(cache.has(`remote-${GITHUB_MEMORY_CACHE_MAX_ENTRIES}`), true);
 });
+
+
+test("starts the cache TTL after a slow fetch completes", async () => {
+  const cache = new Map();
+  let clock = 1_000;
+  const value = await getOrFetchCached(cache, "slow-user", async () => {
+    clock = 8_000;
+    return "fresh";
+  }, { now: () => clock, ttlMs: 500 });
+  assert.equal(value, "fresh");
+  assert.equal(cache.get("slow-user").expiresAt, 8_500);
+  const reused = await getOrFetchCached(cache, "slow-user", async () => "unexpected", {
+    now: () => 8_499,
+    ttlMs: 500,
+  });
+  assert.equal(reused, "fresh");
+});
