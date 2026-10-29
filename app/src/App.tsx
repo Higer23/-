@@ -125,15 +125,15 @@ export default function App() {
         <section className="hero" id="top" aria-labelledby="name">
           <img className="avatar" src={avatarSrc} width={112} height={112} alt={t("hero.avatar")} fetchPriority="high" onError={() => setAvatarFailed(true)} />
           <p className="kicker">{t("hero.kicker")}</p>
-          <h1 id="name">{profile ? profile.name || profile.login : t("hero.loading")}</h1>
+          <h1 id="name">{profile ? profile.name || profile.login : state.status === "error" ? lookup : t("hero.loading")}</h1>
           <p className="handle">
-            <a href="https://github.com/Higer23" rel="noopener noreferrer">@Higer23</a> <span aria-hidden="true">·</span>{" "}
+            <a href={`https://github.com/${profile?.login ?? lookup}`} rel="noopener noreferrer">@{profile?.login ?? lookup}</a> <span aria-hidden="true">·</span>{" "}
             <span style={{ color: "var(--muted)" }}>{t("hero.tagline")}</span>
           </p>
           <p className="lead">{profile?.bio ?? ""}</p>
           <div className="ctas">
             <LearnMore href="#projeler">{t("hero.explore")}</LearnMore>
-            <StarButton href="https://github.com/Higer23?tab=repositories" count={stars}>{t("hero.allStars")}</StarButton>
+            <StarButton href={`https://github.com/${profile?.login ?? lookup}?tab=repositories`} count={stars}>{t("hero.allStars")}</StarButton>
           </div>
           <p className="muted" style={{ fontSize: ".78rem", marginTop: 22 }}>{t("hero.note")}</p>
         </section>
