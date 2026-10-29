@@ -2,6 +2,7 @@ import { CONFIG } from "../config";
 import { parseGitHubResponse } from "./github-response.mjs";
 import { isGithubProfile, isGithubRepoList } from "./github-payload.mjs";
 import { fetchAllGithubPages } from "./github-pagination.mjs";
+import { getOptionalContributions } from "./github-contributions.mjs";
 
 const API = "https://api.github.com";
 const SNAPSHOT_PATH = "data/profile.json";
@@ -22,15 +23,6 @@ async function getJson(url: string): Promise<any> {
   }
 }
 
-// Contribution data comes from a third-party service; failures degrade gracefully.
-async function getContributions(user: string) {
-  try {
-    const data = await getJson(`https://github-contributions-api.jogruber.de/v4/${user}?y=last`);
-    return Array.isArray(data.contributions) ? data : null;
-  } catch {
-    return null;
-  }
-}
 
 export type GithubData = {
   fetchedAt?: string;
@@ -76,7 +68,7 @@ export async function fetchGithub(user: string): Promise<GithubData> {
   // Contribution data is optional and comes from a separate service. Start it
   // while paginating GitHub repositories so its latency does not extend the
   // critical path. getContributions already degrades gracefully on failure.
-  const contribPromise = getContributions(user);
+  const contribPromise = getOptionalContributions(user, getJson);
   const repos = await fetchAllGithubPages(
     (page) => getJson(`${API}/users/${user}/repos?per_page=100&sort=pushed&page=${page}`),
     isGithubRepoList,
