@@ -9,7 +9,7 @@ export default function SearchBox({ value, onChange, info }: { value: string; on
   const g2 = `sxg2${id}`;
   return (
     <section className="search-wrap" aria-label={t("search.aria")}>
-      <div id="sx">
+      <div id="sx" className="sx-root">
         <div className="sx-glow" />
         <div className="sx-dark" />
         <div className="sx-dark" />

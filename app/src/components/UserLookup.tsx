@@ -35,12 +35,20 @@ export default function UserLookup({ locale, active, defaultUser, onLookup }: Pr
   return (
     <section className="ul-wrap" aria-label={s.hint}>
       <form className="ul-form" onSubmit={submit}>
-        <div className="ul-group">
-          <label className="ul-label" htmlFor="ul-user">{s.label}</label>
-          <div className="ul-field">
+        <label className="ul-label" htmlFor="ul-user">{s.label}</label>
+        <div className="sx-root">
+          <div className="sx-glow" />
+          <div className="sx-dark" />
+          <div className="sx-dark" />
+          <div className="sx-dark" />
+          <div className="sx-white" />
+          <div className="sx-border" />
+          <div className="sx-main">
             <input
               id="ul-user"
-              className="ul-input"
+              className="sx-input"
+              type="text"
+              name="username"
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder={s.placeholder}
@@ -48,9 +56,17 @@ export default function UserLookup({ locale, active, defaultUser, onLookup }: Pr
               spellCheck={false}
               maxLength={40}
             />
+            <div className="sx-mask" />
+            <div className="sx-pink" />
+            <div className="sx-fborder" />
+            <button type="submit" className="sx-clear" aria-label={s.btn}>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d6d6e6" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </button>
+            <div className="sx-icon ul-at" aria-hidden="true">@</div>
           </div>
         </div>
-        <button type="submit" className="ul-btn">{s.btn}</button>
       </form>
       {error ? <p role="alert" className="ul-error">{error}</p> : null}
       {active.toLowerCase() !== defaultUser.toLowerCase() ? (
