@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-30T13:03:55.500Z",
+  "fetchedAt": "2026-10-30T22:26:10.851Z",
   "data": {
     "profile": {
       "login": "Higer23",
@@ -10,21 +10,11 @@
       "location": "Deutschland Döverden",
       "company": "@Higer023 ",
       "followers": 6,
-      "public_repos": 34,
+      "public_repos": 33,
       "created_at": "2025-04-20T02:45:06Z",
       "html_url": "https://github.com/Higer23"
     },
     "repos": [
-      {
-        "name": "higum",
-        "full_name": "Higer23/higum",
-        "html_url": "https://github.com/Higer23/higum",
-        "description": "Higum — privacy-focused school community forum, built with a zero-cost-first approach.",
-        "fork": false,
-        "language": "JavaScript",
-        "stargazers_count": 0,
-        "pushed_at": "2026-10-30T12:29:46Z"
-      },
       {
         "name": "snapchat",
         "full_name": "Higer23/snapchat",
@@ -33,7 +23,7 @@
         "fork": false,
         "language": "JavaScript",
         "stargazers_count": 7,
-        "pushed_at": "2026-10-30T11:54:40Z"
+        "pushed_at": "2026-10-30T21:50:15Z"
       },
       {
         "name": "-",
@@ -43,7 +33,7 @@
         "fork": false,
         "language": "TypeScript",
         "stargazers_count": 1,
-        "pushed_at": "2026-10-30T05:56:32Z"
+        "pushed_at": "2026-10-30T13:03:56Z"
       },
       {
         "name": "higum-pages",
@@ -1816,11 +1806,11 @@
         },
         {
           "date": "2026-10-29",
-          "count": 156
+          "count": 107
         },
         {
           "date": "2026-10-30",
-          "count": 65
+          "count": 21
         }
       ]
     }
