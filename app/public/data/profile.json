@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-29T22:49:37.947Z",
+  "fetchedAt": "2026-10-30T05:56:31.436Z",
   "data": {
     "profile": {
       "login": "Higer23",
@@ -10,21 +10,11 @@
       "location": "Deutschland Döverden",
       "company": "@Higer023 ",
       "followers": 6,
-      "public_repos": 32,
+      "public_repos": 34,
       "created_at": "2025-04-20T02:45:06Z",
       "html_url": "https://github.com/Higer23"
     },
     "repos": [
-      {
-        "name": "-",
-        "full_name": "Higer23/-",
-        "html_url": "https://github.com/Higer23/-",
-        "description": "Kişisel GitHub profil puanlama sitesi: canlı GitHub verileri, kısa hayat hikayesi, bağış ve eleştiri bölümü",
-        "fork": false,
-        "language": "TypeScript",
-        "stargazers_count": 1,
-        "pushed_at": "2026-10-29T22:49:01Z"
-      },
       {
         "name": "snapchat",
         "full_name": "Higer23/snapchat",
@@ -33,7 +23,37 @@
         "fork": false,
         "language": "JavaScript",
         "stargazers_count": 7,
-        "pushed_at": "2026-10-29T22:14:08Z"
+        "pushed_at": "2026-10-30T03:43:46Z"
+      },
+      {
+        "name": "higum",
+        "full_name": "Higer23/higum",
+        "html_url": "https://github.com/Higer23/higum",
+        "description": "Higum — privacy-focused school community forum, built with a zero-cost-first approach.",
+        "fork": false,
+        "language": "JavaScript",
+        "stargazers_count": 0,
+        "pushed_at": "2026-10-30T02:37:34Z"
+      },
+      {
+        "name": "higum-pages",
+        "full_name": "Higer23/higum-pages",
+        "html_url": "https://github.com/Higer23/higum-pages",
+        "description": "Higum — public, static GitHub Pages frontend for the privacy-focused school forum prototype.",
+        "fork": false,
+        "language": "CSS",
+        "stargazers_count": 0,
+        "pushed_at": "2026-10-30T01:25:43Z"
+      },
+      {
+        "name": "-",
+        "full_name": "Higer23/-",
+        "html_url": "https://github.com/Higer23/-",
+        "description": "Kişisel GitHub profil puanlama sitesi: canlı GitHub verileri, kısa hayat hikayesi, bağış ve eleştiri bölümü",
+        "fork": false,
+        "language": "TypeScript",
+        "stargazers_count": 1,
+        "pushed_at": "2026-10-29T23:24:54Z"
       },
       {
         "name": "forum",
@@ -338,10 +358,6 @@
     ],
     "contrib": {
       "contributions": [
-        {
-          "date": "2025-10-29",
-          "count": 0
-        },
         {
           "date": "2025-10-30",
           "count": 0
@@ -1800,7 +1816,11 @@
         },
         {
           "date": "2026-10-29",
-          "count": 154
+          "count": 156
+        },
+        {
+          "date": "2026-10-30",
+          "count": 48
         }
       ]
     }
