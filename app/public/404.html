@@ -15,11 +15,18 @@
     *,*::before,*::after{box-sizing:border-box}
     html,body{height:100%;margin:0}
     html{background:var(--bg)}
-    body{color:var(--text);font:400 16px/1.6 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden;background:#000}
+    body{color:var(--text);font:400 16px/1.6 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden;min-height:100%;position:relative;
+      background:
+        radial-gradient(60% 40% at 20% 30%,rgba(255,255,255,.18),transparent 70%),
+        radial-gradient(50% 35% at 80% 70%,rgba(255,255,255,.12),transparent 70%),
+        linear-gradient(115deg,#050505 0%,#3a3a3a 22%,#f2f2f2 36%,#101010 52%,#6a6a6a 68%,#f0f0f0 80%,#080808 100%);
+      background-size:200% 200%,200% 200%,260% 260%;
+      animation:silkFallback 26s ease-in-out infinite alternate}
+    @keyframes silkFallback{0%{background-position:0% 0%,100% 100%,0% 50%}100%{background-position:100% 100%,0% 0%,100% 50%}}
     a{color:var(--accent);text-decoration:none}
     a:hover{text-decoration:underline}
     :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-    #bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block;background:#000}
+    #bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block}
     .top{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px clamp(16px,4vw,32px);background:rgba(3,4,7,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
     .brand{color:var(--text);font-weight:800;letter-spacing:-.02em;white-space:nowrap}
     .brand:hover{text-decoration:none}
@@ -157,13 +164,14 @@
       apply(sel.value);
     });
 
+    /* ---------- ARKA PLAN: SilkWaves (siyah-beyaz preset) ---------- */
     var canvas = document.getElementById("bg");
-    var gl = canvas.getContext("webgl", { antialias: false, alpha: false, powerPreference: "low-power" });
-    if (!gl) return;
+    var gl = canvas.getContext("webgl", { antialias: false, alpha: true, premultipliedAlpha: false, powerPreference: "low-power" });
+    if (!gl) { console.warn("404: WebGL yok, CSS arka plan kullanılıyor"); return; }
 
     var VS = "attribute vec2 a;varying vec2 v_uv;void main(){v_uv=a*.5+.5;gl_Position=vec4(a,0.,1.);}";
     var FS = [
-      "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif",
+      "precision highp float;",
       "varying vec2 v_uv;",
       "uniform vec2 u_resolution;uniform vec4 u_color,u_tint;uniform float u_time,u_speed,u_scale,u_contrast,u_glow,u_amplitude,u_density,u_grain,u_sharpness;",
       "vec2 hash22(vec2 p){vec3 p3=fract(p.xyx*vec3(0.1031,0.1030,0.0973));p3+=dot(p3,p3.yzx+33.33);return fract((p3.xx+p3.yz)*p3.zy);}",
@@ -186,13 +194,14 @@
     function sh(type, src) {
       var s = gl.createShader(type);
       gl.shaderSource(s, src); gl.compileShader(s);
-      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn("404 shader:", gl.getShaderInfoLog(s)); return null; }
+      return s;
     }
     var vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
     if (!vs || !fs) return;
     var prog = gl.createProgram();
     gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn("404 link:", gl.getProgramInfoLog(prog)); return; }
     gl.useProgram(prog);
 
     var buf = gl.createBuffer();
@@ -204,10 +213,10 @@
 
     function hex(h) { var n = parseInt(h.slice(1), 16); return [((n>>16)&255)/255, ((n>>8)&255)/255, (n&255)/255, 1]; }
     var U = function (n) { return gl.getUniformLocation(prog, n); };
-    gl.uniform1f(U("u_speed"), 1); gl.uniform1f(U("u_scale"), 1); gl.uniform1f(U("u_contrast"), 1);
-    gl.uniform1f(U("u_glow"), 0.7); gl.uniform1f(U("u_amplitude"), 0.03); gl.uniform1f(U("u_density"), 1);
-    gl.uniform1f(U("u_grain"), 1); gl.uniform1f(U("u_sharpness"), 1);
-    gl.uniform4fv(U("u_color"), hex("#ffffff")); gl.uniform4fv(U("u_tint"), hex("#ffd49a"));
+    gl.uniform1f(U("u_speed"), 0.55); gl.uniform1f(U("u_scale"), 1.1); gl.uniform1f(U("u_contrast"), 1.35);
+    gl.uniform1f(U("u_glow"), 0.3); gl.uniform1f(U("u_amplitude"), 0.06); gl.uniform1f(U("u_density"), 0.7);
+    gl.uniform1f(U("u_grain"), 1.8); gl.uniform1f(U("u_sharpness"), 1.25);
+    gl.uniform4fv(U("u_color"), hex("#ffffff")); gl.uniform4fv(U("u_tint"), hex("#ffffff"));
 
     var mobileMq = window.matchMedia("(max-width: 800px), (pointer: coarse)");
     var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
